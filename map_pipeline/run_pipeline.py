@@ -34,15 +34,18 @@ def safe_imwrite(filepath, img):
             print(f"  警告: 无法保存图片 {filepath}")
 
 
-def draw_grid_preview(grid_map, start_grid, goal_grid, save_path, cell_size=4, draw_grid_lines=True):
+def draw_grid_preview(grid_map, start_grid, goal_grid, save_path, cell_size=4, draw_grid_lines=True, show_window=True):
     """
     绘制栅格地图预览图，并标记起终点。
+    绘制后既保存到文件,也用 cv2.imshow 显示一个预览窗口（与 interactive_picker 同样的方式）,
+    用户按任意键关闭后继续。
     :param grid_map: 二维数组 (0空闲, 1障碍)
     :param start_grid: (row, col)
     :param goal_grid: (row, col)
     :param save_path: 保存路径
     :param cell_size: 每个格子的像素大小，默认4
     :param draw_grid_lines: 是否绘制栅格线，默认 True
+    :param show_window: 是否弹出预览窗口，默认 True
     """
     rows, cols = grid_map.shape
     img_height = rows * cell_size
@@ -79,8 +82,26 @@ def draw_grid_preview(grid_map, start_grid, goal_grid, save_path, cell_size=4, d
     cx_goal = int((gc + 0.5) * cell_size)
     cv2.circle(img, (cx_goal, cy_goal), max(3, cell_size // 2), (0, 0, 255), -1)
 
-    # 保存
+    # 保存文件
     safe_imwrite(save_path, img)
+
+    # 弹出预览窗口（与 interactive_picker 同样的方式）
+    if show_window:
+        window_name = "Grid Preview (any key to close)"
+        max_w, max_h = 1000, 700
+        scale = min(max_w / img_width, max_h / img_height, 1.0)
+        disp_w, disp_h = max(1, int(img_width * scale)), max(1, int(img_height * scale))
+        display_img = cv2.resize(img, (disp_w, disp_h))
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL | cv2.WINDOW_GUI_EXPANDED)
+        cv2.resizeWindow(window_name, disp_w, disp_h)
+        cv2.putText(display_img, "Grid Preview (press any key to close)",
+                    (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+        cv2.putText(display_img, "Green=Start  Red=Goal",
+                    (10, disp_h - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.imshow(window_name, display_img)
+        print("\n栅格预览窗口已弹出，按任意键关闭...")
+        cv2.waitKey(0)
+        cv2.destroyWindow(window_name)
 
 
 def main():

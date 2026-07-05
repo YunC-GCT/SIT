@@ -1,6 +1,6 @@
 import rclpy
 import math
-import threading
+import time
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 
@@ -39,25 +39,12 @@ class Ros2PathExecutor:
         self.timer = None
         self.pub = None
         self._stop_flag = False
-        self._stop_event = threading.Event()   # 用于键盘停止
         self.deltas = []
         self.turn_angles = []
         self.index = 0
         self.phase = 'turn'
         self.progress = 0.0
         self.twist = Twist()
-
-    def _keyboard_listener(self):
-        """监听键盘输入，按 p 并回车即停止"""
-        while not self._stop_event.is_set():
-            try:
-                key = input()
-                if key.strip().lower() == 'p':
-                    self.node.get_logger().info("用户按下 p 键，正在停止小车...")
-                    self._stop_event.set()
-                    break
-            except EOFError:
-                break
 
     def execute_path(self, deltas, turn_angles):
         rclpy.init(args=None)
@@ -72,33 +59,25 @@ class Ros2PathExecutor:
         self.progress = 0.0
         self.twist = Twist()
         self._stop_flag = False
-        self._stop_event.clear()
 
-        # 启动键盘监听线程
-        keyboard_thread = threading.Thread(target=self._keyboard_listener, daemon=True)
-        keyboard_thread.start()
-
-        self.node.get_logger().info(f"开始跟踪，共 {len(self.deltas)} 段（按 p 并回车可停止）")
+        self.node.get_logger().info(f"开始跟踪，共 {len(self.deltas)} 段（按 Ctrl+C 退出,退出前会自动停车）")
 
         try:
             rclpy.spin(self.node)
         except KeyboardInterrupt:
-            self.node.get_logger().info("键盘中断，正在停止...")
+            self.node.get_logger().info("收到 Ctrl+C，准备先停车再退出程序...")
         except Exception as e:
             self.node.get_logger().error(f"运行异常: {e}")
         finally:
+            # 退出程序前先把小车停下,这是 Ctrl+C 流程的核心
             self._stop_robot()
             if self.node is not None:
                 self.node.destroy_node()
-            rclpy.shutdown()
-            print("[Ros2Interface] 节点已关闭，小车已停止。")
+            if rclpy.ok():
+                rclpy.shutdown()
+            print("[Ros2Interface] 小车已停止，程序退出。")
 
     def _timer_callback(self):
-        # 检查键盘停止信号
-        if self._stop_event.is_set():
-            self._stop_robot()
-            return
-
         if self._stop_flag or self.index >= len(self.deltas):
             self._stop_robot()
             return
@@ -136,9 +115,20 @@ class Ros2PathExecutor:
         )
 
     def _stop_robot(self):
-        if self.pub is not None:
-            self.pub.publish(Twist())
+        """
+        真正让小车停下来:取消控制循环 → 连续发多次零速度 Twist →
+        给底层 DDS 一小段时间把消息送出去,最后再 destroy 节点。
+        多次发送是为了确保至少一帧被电机驱动订阅端收到,
+        避免 destroy 太快导致唯一一帧零速度消息被丢弃。
+        """
         if self.timer is not None and not self.timer.is_canceled():
             self.timer.cancel()
+        if self.pub is not None:
+            zero = Twist()
+            for _ in range(10):
+                self.pub.publish(zero)
+                time.sleep(0.02)
+            time.sleep(0.1)  # 给 DDS 一点时间把消息送出去
+        self._stop_flag = True
         if self.node is not None:
-            self.node.get_logger().info("路径完成或中断，小车已停止。")
+            self.node.get_logger().info("小车已停止（Twist 零速度已发出）。")
