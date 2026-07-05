@@ -1,0 +1,23 @@
+path_planner:
+  interactive: true
+  default_algorithm: "astar"
+  available_algorithms:
+    - astar
+    - dijkstra
+    - prm
+    - rrt
+    - rrt_star
+  algorithm_params:
+    prm:
+      num_samples: 500
+      k_neighbors: 10
+      max_edge_len: 30
+    rrt:
+      max_iter: 2000
+      step_size: 5
+      goal_sample_rate: 0.1
+    rrt_star:
+      max_iter: 2000
+      step_size: 5
+      goal_sample_rate: 0.1
+      search_radius: 10.0

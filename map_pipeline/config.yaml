@@ -1,0 +1,6 @@
+# 默认栅格化参数
+default_width: 500          # 默认目标栅格宽度（列数）
+threshold: 0                # 0 表示使用 OTSU 自动阈值，否则为固定灰度值 (0-255)
+obstacle_ratio: 0.5         # 栅格单元内黑色像素占比超过此值则视为障碍
+invert: false               # 是否反转二值图（true: 白色为障碍）
+blur_ksize: 5               # 高斯模糊核大小（奇数）
