@@ -96,10 +96,7 @@ SIT_LJGH_PROJECT/
     ├── config.yaml
     ├── run_follower.py           # 加载路径 → ROS2 执行
     └── src/
-        ├── hardware_interface.py # 抽象基类
-        ├── ros2_interface.py     # ROS2 节点 + 状态机 + 安全停车
-        ├── robot_model.py        # MecanumModel(预留仿真)
-        └── trajectory_logger.py  # CSV 日志工具
+        └── ros2_interface.py     # ROS2 节点 + 状态机 + 安全停车
 ```
 
 ---
@@ -225,18 +222,15 @@ finally:
 
 | 文件 | 类 / 函数 | 功能 |
 |---|---|---|
-| `hardware_interface.py` | `HardwareInterface` | 抽象基类 |
 | `ros2_interface.py` | `Ros2PathExecutor` | ROS2 节点 + 状态机 + 安全停车 |
 | `ros2_interface.py` | `delta_to_dir` | 栅格位移 → 方向代号(N/E/S/W) |
 | `ros2_interface.py` | `compute_turn_angles` | 方向序列 → 转向角序列(度) |
-| `robot_model.py` | `MecanumModel` | 麦克纳姆轮运动学模型(预留仿真) |
-| `trajectory_logger.py` | `save_csv` | CSV 日志 |
 
 **config.yaml 关键参数**
 
 ```yaml
 motion_control:
-  mode: "ros2"                  # "ros2" 或 "simulation"
+  mode: "ros2"                  # 当前仅支持 "ros2" 模式
   grid_size: 0.3                # 每栅格对应实际米数
   turn_speed: 2.0               # 转向角速度 (rad/s)
   move_speed: 0.3               # 直行线速度 (m/s)
@@ -253,11 +247,11 @@ motion_control:
     → run_planner.py
     → 把 path_data.npy 复制到 motion_control/data/input/
     → run_follower.py
-    → 询问:r 重新选点 / m 切换地图 / q 退出
+    → 询问:m 切换地图 / q 退出
 [循环结束]
 ```
 
-**安全中断**:全局捕获 SIGINT,先终止当前子进程(子进程的 `finally` 会触发停车),再退出主程序。
+**安全中断**:全局捕获 SIGINT,**向子进程转发 Ctrl+C**(Windows 用 `CTRL_C_EVENT`,POSIX 用 `SIGINT`)。子进程必须以新进程组方式启动(Windows `CREATE_NEW_PROCESS_GROUP` / POSIX `start_new_session`),否则信号传不过去。子进程收到 Ctrl+C 后走自己的 `finally` 块 → `_stop_robot()` → 连续 10 次零速度 Twist + 100ms DDS 缓冲,确保至少一帧零速度被电机订阅端收到,然后才退出。**避免了直接 `terminate()` 强杀子进程导致唯一一帧零速度消息被 DDS 丢弃的问题。**
 
 ---
 
@@ -294,7 +288,7 @@ python main.py
    - 单选 → 看预览图,输入 `y` 确认
    - 多选 → 看对比图,挑一条
 6. **小车循迹**:小车自动沿路径行驶,完成自动停
-7. **循环**:任务完成后可输入 `r` 重新选点 / `m` 切换地图 / `q` 退出
+7. **循环**:任务完成后可输入 `m` 切换地图 / `q` 退出
 8. **中断**:任何时候 **Ctrl+C**,程序会**先让小车停车再退出**
 
 ### 5.5 单跑某个管线
@@ -353,9 +347,8 @@ motion_control →  /cmd_vel (ROS2 Twist 消息)
 | 想做的事 | 改哪里 |
 |---|---|
 | 新增路径规划算法 | `path_planner/src/planners/` 加文件实现 `GlobalPlanner`,在 `planner_factory.py` 注册 |
-| 新增控制器(PID/MPC) | `motion_control/src/` 加类继承 `HardwareInterface`,在 `run_follower.py` 按配置实例化 |
-| 启用仿真模式 | 用 `robot_model.py` 搭建闭环仿真,在 `run_follower.py` 添加仿真分支 |
-| 重新选点 | 实现 `map_pipeline/run_re_pick.py`,复用 `interactive_picker` + `coordinate_mapper` |
+| 新增控制器 | `motion_control/src/ros2_interface.py` 加新类(参考 `Ros2PathExecutor`),在 `run_follower.py` 按配置实例化 |
+| 调整栅格化参数 | `map_pipeline/config.yaml` 改 `threshold` / `blur_ksize` / `obstacle_ratio` / `invert` |
 
 ---
 

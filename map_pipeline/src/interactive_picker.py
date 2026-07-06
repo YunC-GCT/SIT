@@ -51,15 +51,15 @@ def pick_points(image: np.ndarray, window_name: str = "Select Start & Goal") -> 
     cv2.setMouseCallback(window_name, on_mouse)
 
     print("\n请点击起点，再点击终点，按任意键确认，或按 R 重置。")
+    closed_early = False
     while True:
         key = cv2.waitKey(50) & 0xFF
         try:
             visible = cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE)
         except cv2.error:
             visible = -1
-        if visible < 1:  # 窗口被关闭
-            print("窗口已关闭，使用默认点（图片左上角和右下角）。")
-            clicks = [(0, 0), (w-1, h-1)]
+        if visible < 1:  # 窗口被 X 关掉
+            closed_early = True
             break
         if key in (ord('r'), ord('R')):
             clicks.clear()
@@ -68,8 +68,16 @@ def pick_points(image: np.ndarray, window_name: str = "Select Start & Goal") -> 
             break
 
     cv2.destroyWindow(window_name)
+
+    if closed_early:
+        raise RuntimeError(
+            "选点窗口被关闭，未选择起终点。请重新运行选点步骤。"
+        )
     if len(clicks) < 2:
-        clicks = [(0, 0), (w-1, h-1)]
+        raise RuntimeError(
+            f"起终点未选全（已选 {len(clicks)} 个，需要 2 个）。请重新选点。"
+        )
+
     start_pixel = clicks[0]
     goal_pixel = clicks[1]
     print(f"已选择起点像素: {start_pixel}, 终点像素: {goal_pixel}")

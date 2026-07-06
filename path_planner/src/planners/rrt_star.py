@@ -103,8 +103,11 @@ class RRTStarPlanner(GlobalPlanner):
 
         # 树节点：(坐标, 累计代价, 父节点索引)
         tree_nodes = [(start, 0.0, -1)]
-        best_path = None
+        # 只在循环里记录 best_cost + best_parent_idx,不再中途 extract。
+        # 因为后续 rewire 会改变某些节点的 parent,如果中途 extract,得到的 path
+        # 会基于过期的父节点链,不是最终最优。统一在循环结束后再 extract。
         best_cost = float('inf')
+        best_parent_idx = -1
 
         for _ in range(self.max_iter):
             if random.random() < self.goal_sample_rate:
@@ -136,16 +139,22 @@ class RRTStarPlanner(GlobalPlanner):
 
             self._rewire(tree_nodes, new_idx, near_indices)
 
+            # 检查是否可以直接连到 goal,记录最优连接点
             if self._distance((new_r, new_c), goal) <= self.step_size:
                 if self._collision_free((new_r, new_c), goal):
-                    goal_cost = cost + self._distance((new_r, new_c), goal)
-                    if goal_cost < best_cost:
-                        best_cost = goal_cost
-                        tree_nodes.append((goal, goal_cost, new_idx))
-                        best_path = self._extract_path(tree_nodes)
-                        tree_nodes.pop()  # 删除临时目标节点，保持树结构
+                    candidate_cost = cost + self._distance((new_r, new_c), goal)
+                    if candidate_cost < best_cost:
+                        best_cost = candidate_cost
+                        best_parent_idx = new_idx
 
-        return best_path if best_path else []
+        # 循环结束后统一 extract:此时 tree_nodes 的 parent 链已稳定,
+        # 临时插入 goal 节点 + 提取路径 + 删除,避免中途凝固的快照问题。
+        if best_parent_idx == -1:
+            return []
+        tree_nodes.append((goal, best_cost, best_parent_idx))
+        best_path = self._extract_path(tree_nodes)
+        tree_nodes.pop()
+        return best_path
 
     def _extract_path(self, tree_nodes):
         path = []

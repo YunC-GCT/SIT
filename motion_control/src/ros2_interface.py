@@ -38,7 +38,6 @@ class Ros2PathExecutor:
         self.node = None
         self.timer = None
         self.pub = None
-        self._stop_flag = False
         self.deltas = []
         self.turn_angles = []
         self.index = 0
@@ -58,7 +57,6 @@ class Ros2PathExecutor:
         self.phase = 'turn'
         self.progress = 0.0
         self.twist = Twist()
-        self._stop_flag = False
 
         self.node.get_logger().info(f"开始跟踪，共 {len(self.deltas)} 段（按 Ctrl+C 退出,退出前会自动停车）")
 
@@ -78,7 +76,7 @@ class Ros2PathExecutor:
             print("[Ros2Interface] 小车已停止，程序退出。")
 
     def _timer_callback(self):
-        if self._stop_flag or self.index >= len(self.deltas):
+        if self.index >= len(self.deltas):
             self._stop_robot()
             return
 
@@ -129,6 +127,5 @@ class Ros2PathExecutor:
                 self.pub.publish(zero)
                 time.sleep(0.02)
             time.sleep(0.1)  # 给 DDS 一点时间把消息送出去
-        self._stop_flag = True
         if self.node is not None:
             self.node.get_logger().info("小车已停止（Twist 零速度已发出）。")

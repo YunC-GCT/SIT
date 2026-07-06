@@ -1,10 +1,7 @@
 motion_control:
-  mode: "ros2"                  # "ros2" 或 "simulation"
+  mode: "ros2"                  # 当前仅支持 "ros2" 模式
   path_file: "data/input/path_data.npy"
   grid_size: 0.3                # 每个栅格的边长（米），实车行走时一个格子对应多少米
   turn_speed: 2.0               # 转向角速度 (rad/s)
   move_speed: 0.3               # 直行线速度 (m/s)
   timer_period: 0.1             # 控制周期（秒）
-  output:
-    trajectory_csv: "data/output/trajectory.csv"
-    control_log: "data/output/control_log.csv"

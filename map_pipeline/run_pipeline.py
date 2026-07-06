@@ -22,9 +22,10 @@ def safe_imwrite(filepath, img):
         # 首先尝试 cv2.imwrite（部分新版本已支持中文）
         success = cv2.imwrite(filepath, img)
         if not success:
-            raise Exception("cv2.imwrite 返回 False")
-    except:
+            raise RuntimeError("cv2.imwrite 返回 False")
+    except Exception as e:
         # 失败时使用 imencode + 二进制写入
+        print(f"  [safe_imwrite] cv2.imwrite 失败 ({e}),改用 imencode + 二进制写入...")
         ext = os.path.splitext(filepath)[1]
         success, encoded = cv2.imencode(ext, img)
         if success:

@@ -15,18 +15,33 @@ def tune_resolution(default_width: int, img_width: int, img_height: int,
     :return: 最终确认的宽度
     """
     current_width = default_width
+    invalid_attempts = 0
+    MAX_INVALID = 5
     while True:
         rows, cols = preview_func(current_width)
         print(f"\n当前栅格尺寸: {rows} 行 × {cols} 列 (宽度={current_width} 列)")
-        user_input = input("输入新栅格宽度（正整数,直接回车保持当前进入下一步）: ").strip()
+        user_input = input(
+            "输入新栅格宽度（正整数,直接回车保持当前进入下一步,q=退出）: "
+        ).strip()
         if user_input == "":
             print(f"已确认栅格宽度: {current_width}")
             return current_width
+        if user_input.lower() in ('q', 'quit', 'exit'):
+            raise SystemExit("用户在调宽步骤主动退出。")
         try:
             new_width = int(user_input)
             if new_width < 1:
-                print("宽度必须为正整数，请重新输入（或直接回车保持当前）。")
-                continue
-            current_width = new_width
+                print("宽度必须为正整数,请重新输入(直接回车保持当前,q=退出)。")
+                invalid_attempts += 1
+            else:
+                current_width = new_width
+                invalid_attempts = 0  # 成功一次就清零
         except ValueError:
-            print("输入无效，请输入正整数（或直接回车保持当前）。")
+            print("输入无效,请输入正整数(直接回车保持当前,q=退出)。")
+            invalid_attempts += 1
+
+        if invalid_attempts >= MAX_INVALID:
+            raise SystemExit(
+                f"连续 {MAX_INVALID} 次无效输入,自动退出调宽步骤。"
+                f"当前栅格宽度仍为 {current_width}。"
+            )
