@@ -9,6 +9,7 @@ import heapq
 import numpy as np
 from typing import List, Tuple
 from ..planner_base import GlobalPlanner, Path
+from ..grid_utils import line_of_sight
 
 class PRMPlanner(GlobalPlanner):
     def __init__(self, grid: np.ndarray, num_samples: int = 500, k_neighbors: int = 10,
@@ -43,36 +44,6 @@ class PRMPlanner(GlobalPlanner):
         points = list(set(points))
         return points
 
-    def _bresenham_collision(self, p1, p2):
-        """
-        使用 Bresenham 算法检查从 p1 到 p2 的直线是否穿过障碍物。
-        :return: True 表示有碰撞（不安全），False 表示安全
-        """
-        r1, c1 = p1
-        r2, c2 = p2
-        dr = abs(r2 - r1)
-        dc = abs(c2 - c1)
-        sr = 1 if r1 < r2 else -1
-        sc = 1 if c1 < c2 else -1
-        err = dr - dc
-
-        r, c = r1, c1
-        while True:
-            if not (0 <= r < self.rows and 0 <= c < self.cols):
-                return True   # 超出边界视为碰撞
-            if self.grid[r, c] == 1:
-                return True
-            if r == r2 and c == c2:
-                break
-            e2 = 2 * err
-            if e2 > -dc:
-                err -= dc
-                r += sr
-            if e2 < dr:
-                err += dr
-                c += sc
-        return False
-
     def _distance(self, p1, p2):
         """两点之间的欧氏距离（栅格坐标）"""
         return math.hypot(p1[0] - p2[0], p1[1] - p2[1])
@@ -93,7 +64,7 @@ class PRMPlanner(GlobalPlanner):
             for d, j in dists[:self.k_neighbors]:
                 if d > self.max_edge_len:
                     break   # 太远的不连接
-                if not self._bresenham_collision(points[i], points[j]):
+                if line_of_sight(self.grid, self.rows, self.cols, points[i], points[j]):
                     road_map[i].append(j)
                     road_map[j].append(i)  # 无向图
         return road_map, points

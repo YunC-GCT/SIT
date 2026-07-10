@@ -93,7 +93,7 @@ def draw_grid_preview(grid_map, start_grid, goal_grid, save_path, cell_size=4, d
         scale = min(max_w / img_width, max_h / img_height, 1.0)
         disp_w, disp_h = max(1, int(img_width * scale)), max(1, int(img_height * scale))
         display_img = cv2.resize(img, (disp_w, disp_h))
-        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL | cv2.WINDOW_GUI_EXPANDED)
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
         cv2.resizeWindow(window_name, disp_w, disp_h)
         cv2.putText(display_img, "Grid Preview (press any key to close)",
                     (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
@@ -150,9 +150,11 @@ def main():
     blur_ksize = config.get('blur_ksize', 5)
     invert = config.get('invert', False)
     obstacle_ratio = config.get('obstacle_ratio', 0.5)
+    grid_size_m = config.get('grid_size', 0.3)
 
     binary = binarize(img, threshold=threshold, blur_ksize=blur_ksize, invert=invert)
-    grid_map, _ = create_grid_map(binary, target_width, obstacle_ratio=obstacle_ratio)
+    grid_map, _ = create_grid_map(binary, target_width, obstacle_ratio=obstacle_ratio,
+                                   grid_size=grid_size_m)
 
     # 6. 坐标映射
     start_grid = map_pixel_to_grid(start_px[0], start_px[1], grid_map)

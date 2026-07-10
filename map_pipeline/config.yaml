@@ -4,3 +4,4 @@ threshold: 0                # 0 表示使用 OTSU 自动阈值，否则为固定
 obstacle_ratio: 0.5         # 栅格单元内黑色像素占比超过此值则视为障碍
 invert: false               # 是否反转二值图（true: 白色为障碍）
 blur_ksize: 5               # 高斯模糊核大小（奇数）
+grid_size: 0.3              # 每个栅格对应的真实世界物理尺寸（米）

@@ -94,6 +94,39 @@ def run_script(script_path):
         current_process = None
 
 
+def select_and_load_map(base_dir, map_pipe, maps_dir):
+    """选择已有地图或创建新地图，将 grid_map.npz + start_goal.txt 复制到 path_planner/data/input/。
+    返回 True 表示成功，False 表示需退出。
+    """
+    planner_input = os.path.join(base_dir, 'path_planner', 'data', 'input')
+    os.makedirs(planner_input, exist_ok=True)
+
+    if not os.path.exists(maps_dir) or not os.listdir(maps_dir):
+        print("\n[Main] 没有已栅格化的地图,现在开始处理新地图...")
+        return run_script(map_pipe)
+    
+    maps = [d for d in os.listdir(maps_dir) if os.path.isdir(os.path.join(maps_dir, d))]
+    print("\n当前已栅格化的地图:")
+    for i, m in enumerate(maps, 1):
+        print(f"  [{i}] {m}")
+    print("输入地图编号选择地图,或直接按回车开始处理新地图。")
+    choice = input("请输入编号(或回车): ").strip()
+    if choice:
+        try:
+            idx = int(choice) - 1
+            current_map = maps[idx]
+            src_dir = os.path.join(maps_dir, current_map)
+            shutil.copy(os.path.join(src_dir, 'grid_map.npz'), planner_input)
+            shutil.copy(os.path.join(src_dir, 'start_goal.txt'), planner_input)
+            print(f"[Main] 已加载地图: {current_map}")
+            return True
+        except (ValueError, IndexError):
+            print("[Main] 无效选择,退出。")
+            return False
+    else:
+        return run_script(map_pipe)
+
+
 def main():
     signal.signal(signal.SIGINT, global_signal_handler)
 
@@ -108,33 +141,9 @@ def main():
     follower = os.path.join(base_dir, 'motion_control', 'run_follower.py')
     maps_dir = os.path.join(base_dir, 'map_pipeline', 'data', 'output', 'maps')
 
-    if not os.path.exists(maps_dir) or not os.listdir(maps_dir):
-        print("\n[Main] 没有已栅格化的地图,现在开始处理新地图...")
-        if not run_script(map_pipe):
-            return
-    else:
-        maps = [d for d in os.listdir(maps_dir) if os.path.isdir(os.path.join(maps_dir, d))]
-        print("\n当前已栅格化的地图:")
-        for i, m in enumerate(maps, 1):
-            print(f"  [{i}] {m}")
-        print("输入地图编号选择地图,或直接按回车开始处理新地图。")
-        choice = input("请输入编号(或回车): ").strip()
-        if choice:
-            try:
-                idx = int(choice) - 1
-                current_map = maps[idx]
-                src_dir = os.path.join(maps_dir, current_map)
-                planner_input = os.path.join(base_dir, 'path_planner', 'data', 'input')
-                os.makedirs(planner_input, exist_ok=True)
-                shutil.copy(os.path.join(src_dir, 'grid_map.npz'), planner_input)
-                shutil.copy(os.path.join(src_dir, 'start_goal.txt'), planner_input)
-                print(f"[Main] 已加载地图: {current_map}")
-            except (ValueError, IndexError):
-                print("[Main] 无效选择,退出。")
-                return
-        else:
-            if not run_script(map_pipe):
-                return
+    # 首次选图
+    if not select_and_load_map(base_dir, map_pipe, maps_dir):
+        return
 
     while True:
         print("\n" + "=" * 40)
@@ -145,10 +154,14 @@ def main():
             break
 
         path_src = os.path.join(base_dir, 'path_planner', 'data', 'output', 'path_data.npy')
+        grid_src = os.path.join(base_dir, 'path_planner', 'data', 'input', 'grid_map.npz')
         if os.path.exists(path_src):
             control_input = os.path.join(base_dir, 'motion_control', 'data', 'input')
             os.makedirs(control_input, exist_ok=True)
             shutil.copy(path_src, control_input)
+            # 同时拷贝 grid_map.npz（含 grid_size），供 motion_control 校验尺度
+            if os.path.exists(grid_src):
+                shutil.copy(grid_src, control_input)
         else:
             print("[Main] 未找到路径文件,无法进行运动控制。")
             break
@@ -161,10 +174,14 @@ def main():
             break
 
         print("\n任务完成。")
-        # 原来这里的 'r' 分支引用不存在的 run_re_pick.py,直接去掉
-        cmd = input("输入 'm' 切换地图,'q' 退出: ").strip().lower()
-        if cmd in ('m', 'q'):
+        cmd = input("输入 'm' 切换地图, 'q' 退出, 回车原地重跑: ").strip().lower()
+        if cmd == 'q':
             break
+        elif cmd == 'm':
+            print("[Main] 切换地图，重新选择...")
+            if not select_and_load_map(base_dir, map_pipe, maps_dir):
+                break
+        # 其他输入（含回车）= 原地重跑（同一张地图再规划+循迹一次）
 
     print("[Main] 程序退出。")
 

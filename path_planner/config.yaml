@@ -1,23 +1,35 @@
+# 路径规划配置文件
+#
+# ★ 新增算法步骤：
+#   1. 在 src/planners/ 下新建文件，实现 GlobalPlanner(ABC) 的 plan(start, goal) 方法
+#   2. 在 src/planner_factory.py 的 _registry 加一行注册（含默认参数）
+#   3. 在下方 available_algorithms 添加算法名（可选在 algorithm_params 覆盖默认参数）
+#
 path_planner:
   interactive: true
   default_algorithm: "astar"
+
+  # 终端可选算法列表（必须是 planner_factory._registry 中已注册的名称）
   available_algorithms:
     - astar
     - dijkstra
     - prm
     - rrt
     - rrt_star
+
+  # 算法参数覆盖（可选）：此处的 key 会覆盖 planner_factory 中的出厂默认值
+  # 不配置的算法使用出厂默认值，不配置的参数也使用出厂默认值
   algorithm_params:
     prm:
-      num_samples: 500
-      k_neighbors: 10
-      max_edge_len: 30
+      num_samples: 500      # 随机采样点数
+      k_neighbors: 10       # K 近邻连接数
+      max_edge_len: 30      # 单边最大长度（栅格单元）
     rrt:
-      max_iter: 2000
-      step_size: 5
-      goal_sample_rate: 0.1
+      max_iter: 2000        # 最大迭代次数
+      step_size: 5          # 扩展步长（栅格单元）
+      goal_sample_rate: 0.1 # 直接采样目标的概率
     rrt_star:
       max_iter: 2000
       step_size: 5
       goal_sample_rate: 0.1
-      search_radius: 10.0
+      search_radius: 10.0   # 重布线搜索半径

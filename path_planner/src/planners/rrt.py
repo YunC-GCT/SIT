@@ -8,6 +8,7 @@ import random
 import numpy as np
 from typing import List, Tuple
 from ..planner_base import GlobalPlanner, Path
+from ..grid_utils import line_of_sight
 
 class RRTPlanner(GlobalPlanner):
     def __init__(self, grid: np.ndarray, max_iter: int = 2000, step_size: float = 5.0,
@@ -25,12 +26,19 @@ class RRTPlanner(GlobalPlanner):
         self.rows, self.cols = grid.shape
 
     def _sample_free(self):
-        """随机采样一个自由栅格点"""
-        while True:
+        """随机采样一个自由栅格点，加入迭代上限防止全障碍物时死循环"""
+        max_attempts = self.rows * self.cols * 10
+        for _ in range(max_attempts):
             r = random.randint(0, self.rows - 1)
             c = random.randint(0, self.cols - 1)
             if self.grid[r, c] == 0:
                 return (r, c)
+        # 兜底：线性扫描找第一个自由格子
+        for r in range(self.rows):
+            for c in range(self.cols):
+                if self.grid[r, c] == 0:
+                    return (r, c)
+        raise RuntimeError("地图中没有空闲栅格，无法采样")
 
     def _distance(self, p1, p2):
         return math.hypot(p1[0]-p2[0], p1[1]-p2[1])
@@ -51,31 +59,6 @@ class RRTPlanner(GlobalPlanner):
         new_c = from_node[1] + ratio * (to_point[1] - from_node[1])
         return (new_r, new_c)
 
-    def _collision_free(self, p1, p2):
-        """Bresenham 直线检测是否穿过障碍物"""
-        r1, c1 = int(round(p1[0])), int(round(p1[1]))
-        r2, c2 = int(round(p2[0])), int(round(p2[1]))
-        dr = abs(r2 - r1)
-        dc = abs(c2 - c1)
-        sr = 1 if r1 < r2 else -1
-        sc = 1 if c1 < c2 else -1
-        err = dr - dc
-        r, c = r1, c1
-        while True:
-            if not (0 <= r < self.rows and 0 <= c < self.cols):
-                return False
-            if self.grid[r, c] == 1:
-                return False
-            if r == r2 and c == c2:
-                break
-            e2 = 2 * err
-            if e2 > -dc:
-                err -= dc
-                r += sr
-            if e2 < dr:
-                err += dr
-                c += sc
-        return True
 
     def plan(self, start: Tuple[int, int], goal: Tuple[int, int]) -> Path:
         if not self.grid[start[0], start[1]] == 0 or not self.grid[goal[0], goal[1]] == 0:
@@ -100,13 +83,13 @@ class RRTPlanner(GlobalPlanner):
             new_c = max(0, min(self.cols-1, new_c))
 
             # 检查整条线段是否无碰撞
-            if self._collision_free(nearest, (new_r, new_c)):
+            if line_of_sight(self.grid, self.rows, self.cols, nearest, (new_r, new_c)):
                 new_idx = len(tree_nodes)
                 tree_nodes.append(((new_r, new_c), nearest_idx))
 
                 # 检查是否到达目标附近
                 if self._distance((new_r, new_c), goal) <= self.step_size:
-                    if self._collision_free((new_r, new_c), goal):
+                    if line_of_sight(self.grid, self.rows, self.cols, (new_r, new_c), goal):
                         # 将目标加入树
                         tree_nodes.append((goal, new_idx))
                         return self._extract_path(tree_nodes)

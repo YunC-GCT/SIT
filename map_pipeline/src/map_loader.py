@@ -35,7 +35,8 @@ def binarize(img: np.ndarray, threshold: int = 0, blur_ksize: int = 5,
     return binary
 
 def create_grid_map(binary: np.ndarray, target_width: int,
-                    obstacle_ratio: float = 0.5) -> Tuple[GridMap, float]:
+                    obstacle_ratio: float = 0.5,
+                    grid_size: float = 0.3) -> Tuple[GridMap, float]:
     """
     根据目标栅格宽度（列数）自动计算行数（保持宽高比），生成栅格地图
     :returns: (GridMap, scale)  scale = 原图宽度 / 栅格列数
@@ -59,4 +60,5 @@ def create_grid_map(binary: np.ndarray, target_width: int,
             black_ratio = np.sum(cell == 0) / cell.size
             if black_ratio > obstacle_ratio:
                 grid_map[i, j] = 1
-    return GridMap(grid_map, int(cell_w), int(cell_h), (used_h, used_w)), cell_w
+    return GridMap(grid_map, int(cell_w), int(cell_h), (used_h, used_w),
+                   grid_size=grid_size), cell_w

@@ -5,3 +5,10 @@ motion_control:
   turn_speed: 2.0               # 转向角速度 (rad/s)
   move_speed: 0.3               # 直行线速度 (m/s)
   timer_period: 0.1             # 控制周期（秒）
+  odom_topic: "/odom"           # 段切换 odom 闭环依赖的话题（BEST_EFFORT QoS）
+  initial_heading: "east"       # 小车初始朝向:north/east/south/west
+                                 # 麦轮全向模式下，此值固定为小车物理朝向，
+                                 # 所有速度指令均以此为基准坐标系（全程不旋转）
+  # chunk_size: 预留字段。0 = 一次性发完（当前默认）；>0 = 每 N 段切分一次做偏差检查。
+  # 当前版本未启用多段发送（无 odom 中断 / re-plan 需求），仅在 Ros2PathExecutor 留接口。
+  chunk_size: 0

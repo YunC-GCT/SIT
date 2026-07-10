@@ -45,7 +45,7 @@ def pick_points(image: np.ndarray, window_name: str = "Select Start & Goal") -> 
             clicks.append((orig_x, orig_y))
             _draw()
 
-    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL | cv2.WINDOW_GUI_EXPANDED)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
     cv2.resizeWindow(window_name, disp_w, disp_h)
     _draw()
     cv2.setMouseCallback(window_name, on_mouse)

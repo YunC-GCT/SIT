@@ -40,6 +40,13 @@ log/
 # ---------- Jupyter ----------
 .ipynb_checkpoints/
 
+# ---------- Agent skills (local) ----------
+.reasonix/
+reasonix.toml
+
+# ---------- Generated map outputs (user-specific) ----------
+map_pipeline/data/output/maps/
+
 # =====================================================
 # 说明:
 # 下面这些文件 **不** 忽略,因为它们是项目必要的数据:
