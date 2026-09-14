@@ -22,6 +22,19 @@
 | `pipeline_config.START_GOAL_FILENAME` | `= "start_goal.txt"` | |
 | `pipeline_config.PATH_DATA_FILENAME` | `= "path_data.npy"` | |
 | `validate_start_goal(filepath, max_rows, max_cols)` | `-> (start, goal)` | 校验起终点文件，错误时友好报错 |
+| `core.RunBatch` | `class` | 创建独立运行批次目录，维护 `manifest.json`、模块状态和日志路径 |
+| `core.make_result(module, run_id, status, ...)` | `-> dict` | 生成统一外层 JSON 结果，含版本、状态、输入、输出、参数、日志、错误和时间 |
+| `core.make_error(code, ..., stage, reason, input_ref, suggestion)` | `-> dict` | 生成结构化错误，供模块失败和下游恢复提示使用 |
+| `core.write_result(path, result)` | `-> str` | 校验并原子写入结果；失败结果不会覆盖已有成功结果 |
+| `core.read_result(path)` | `-> dict` | 读取并校验统一 JSON 结果 |
+| `core.require_success(path, module=None)` | `-> dict` | 下游读取入口：拒绝无版本、非成功或模块不匹配结果 |
+| `core.grid_map_payload(...)` | `-> dict` | 地图 JSON 表达，记录 row/col 坐标、维度、类型、单位和栅格尺度 |
+| `core.path_payload(points)` | `-> dict` | 原始路径/平滑路径 JSON 表达，记录点数组形状、类型、单位和坐标含义 |
+| `core.path_segment_payload(...)` | `-> dict` | 控制器使用的路径段 JSON 表达，含方向角、转向角、距离、预计时间和运动类型 |
+| `core.metric_payload(values, units)` | `-> dict` | 指标 JSON 表达，值和单位分离 |
+| `core.module_entry(name, status, ...)` | `-> dict` | 运行批次或结果中的模块清单项 |
+| `python -m core.contracts validate <result.json>` | CLI | 校验统一 JSON 结果，可加 `--require-success` 和 `--module` |
+| `python tools/minimal_contract_module.py` | CLI | 最小示例模块，生成成功或 `--fail` 失败运行批次、日志和结果 |
 
 ---
 
