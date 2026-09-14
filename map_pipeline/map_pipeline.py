@@ -8,17 +8,14 @@ MapPipeline — map_pipeline 的统一深接口。
 但外部调用者不需要知道这些细节。
 """
 import os
-import sys
 from typing import Tuple
-import numpy as np
 
 from .src.map_loader import load_image, binarize, create_grid_map
 from .src.grid_map import GridMap
-from .src.coordinate_mapper import map_pixel_to_grid
+from .src.coordinate_mapper import map_pixel_to_grid, validate_grid_points
+from core import grid_map_payload, make_result, write_result
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.dirname(BASE_DIR))
-from pipeline_config import validate_start_goal
 
 
 class MapPipeline:
@@ -49,10 +46,13 @@ class MapPipeline:
         binary = binarize(img, threshold=self.threshold,
                           blur_ksize=self.blur_ksize, invert=self.invert)
 
-        img_h, img_w = binary.shape
-        cell_w = img_w / self.default_width
-        grid_cols = self.default_width
-        grid_rows = max(1, int(img_h / cell_w))
+        for name, point in (("start", start_px), ("goal", goal_px)):
+            x, y = point
+            if not (0 <= x < img.shape[1] and 0 <= y < img.shape[0]):
+                raise ValueError(
+                    f"{name} 像素坐标超出图片范围: ({x}, {y}), "
+                    f"shape=({img.shape[0]},{img.shape[1]})"
+                )
 
         grid_map, _ = create_grid_map(binary, self.default_width,
                                        obstacle_ratio=self.obstacle_ratio,
@@ -61,18 +61,37 @@ class MapPipeline:
         start_grid = map_pixel_to_grid(start_px[0], start_px[1], grid_map)
         goal_grid = map_pixel_to_grid(goal_px[0], goal_px[1], grid_map)
 
-        # 自动调整到空闲格
-        if not grid_map.is_free(*start_grid):
-            start_grid = grid_map.find_nearest_free(*start_grid)
-        if not grid_map.is_free(*goal_grid):
-            goal_grid = grid_map.find_nearest_free(*goal_grid)
+        # 起终点必须由用户明确选在空闲格，不静默移动到其他位置。
+        start_grid, goal_grid = validate_grid_points(
+            grid_map,
+            start_grid,
+            goal_grid,
+        )
 
         return grid_map, start_grid, goal_grid
 
     def save_outputs(self, grid_map: GridMap, start_grid: Tuple[int, int],
-                     goal_grid: Tuple[int, int], output_dir: str):
-        """保存栅格地图 + 起终点到指定目录。"""
+                     goal_grid: Tuple[int, int], output_dir: str,
+                     run_id: str = "standalone"):
+        """保存版本化地图 JSON 到指定目录。"""
         os.makedirs(output_dir, exist_ok=True)
-        grid_map.save(os.path.join(output_dir, 'grid_map.npz'))
-        with open(os.path.join(output_dir, 'start_goal.txt'), 'w') as f:
-            f.write(f"{start_grid[0]} {start_grid[1]}\n{goal_grid[0]} {goal_grid[1]}\n")
+        result_path = os.path.join(output_dir, "map_result.json")
+        result = make_result(
+            "map_pipeline",
+            run_id,
+            "success",
+            outputs={
+                "map": grid_map_payload(
+                    grid_map.grid.astype(int).tolist(),
+                    grid_size_m=float(grid_map.grid_size),
+                    start=start_grid,
+                    goal=goal_grid,
+                )
+            },
+            parameters={
+                "default_width": grid_map.cols,
+                "grid_size": float(grid_map.grid_size),
+            },
+        )
+        write_result(result_path, result)
+        return result_path

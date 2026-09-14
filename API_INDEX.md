@@ -45,6 +45,8 @@
 | 接口 | 签名 | 说明 |
 |------|------|------|
 | **`run_pipeline.py`** | `main()` | `[UI]` 交互式全流程 |
+| **`json_pipeline.py`** | `main()` | CLI；支持显式栅格/像素起终点和无显示器预览 |
+| `json_pipeline.process(...)` | `-> dict` | 生成版本化地图 JSON，障碍起终点直接失败 |
 | **`MapPipeline`** | `class` | **编程调用深接口** |
 
 ### MapPipeline 类
@@ -52,8 +54,8 @@
 | 方法 | 签名 | 说明 |
 |------|------|------|
 | `__init__(config: dict)` | — | 从 config.yaml 字典取 default_width/threshold/grid_size 等 |
-| `process(image_path, start_px, goal_px)` | `-> (GridMap, start_grid, goal_grid)` | 一站式：load→二值化→栅格化→坐标映射→BFS 修正障碍点 |
-| `save_outputs(grid_map, start, goal, dir)` | — | 保存 grid_map.npz + start_goal.txt |
+| `process(image_path, start_px, goal_px)` | `-> (GridMap, start_grid, goal_grid)` | 一站式：load→二值化→栅格化→坐标映射→校验起终点 |
+| `save_outputs(grid_map, start, goal, dir, run_id)` | `-> result.json path` | 保存版本化地图 JSON |
 
 ### GridMap 类
 
@@ -73,6 +75,8 @@
 | `binarize(img, threshold, blur_ksize, invert)` | `-> ndarray` | threshold=0→OTSU 自动 |
 | `create_grid_map(binary, width, ratio, grid_size)` | `-> (GridMap, scale)` | 按目标列数降采样 |
 | `map_pixel_to_grid(x, y, grid_map)` | `-> (row, col)` | 像素→栅格，边界裁剪 |
+| `validate_grid_point(grid_map, point, name)` | `-> (row, col)` | 校验坐标范围及空闲状态，不移动坐标 |
+| `validate_grid_points(grid_map, start, goal)` | `-> (start, goal)` | 校验起点和终点必须位于空闲栅格 |
 | `pick_points(img)` | `-> (px1, px2)` | `[UI]` cv2 鼠标选点 |
 | `tune_resolution(default, w, h, preview)` | `-> int` | `[UI]` 终端调栅格宽度 |
 

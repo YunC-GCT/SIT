@@ -41,7 +41,22 @@ def create_grid_map(binary: np.ndarray, target_width: int,
     根据目标栅格宽度（列数）自动计算行数（保持宽高比），生成栅格地图
     :returns: (GridMap, scale)  scale = 原图宽度 / 栅格列数
     """
+    if not isinstance(binary, np.ndarray) or binary.ndim != 2:
+        raise ValueError("binary 必须是二维 numpy 数组")
     img_h, img_w = binary.shape
+    if img_h < 1 or img_w < 1:
+        raise ValueError("binary 不能为空")
+    if not isinstance(target_width, int) or target_width < 1:
+        raise ValueError("target_width 必须是正整数")
+    if target_width > img_w:
+        raise ValueError(
+            f"target_width ({target_width}) 不能大于图片宽度 ({img_w})"
+        )
+    if not 0 <= obstacle_ratio <= 1:
+        raise ValueError("obstacle_ratio 必须在 [0, 1] 范围内")
+    if grid_size <= 0:
+        raise ValueError("grid_size 必须为正数")
+
     # 计算列数与行数
     grid_cols = target_width
     cell_w = img_w / grid_cols
