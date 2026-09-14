@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 """
 基于快速随机树（RRT）的全局路径规划器（栅格版本）
 在栅格地图上随机采样，逐步扩展树结构，直到找到连接目标的无碰撞路径。
 """
 
 import math
-import random
 import numpy as np
 from typing import List, Tuple
 from ..planner_base import GlobalPlanner, Path
@@ -12,14 +13,14 @@ from ..grid_utils import line_of_sight
 
 class RRTPlanner(GlobalPlanner):
     def __init__(self, grid: np.ndarray, max_iter: int = 2000, step_size: float = 5.0,
-                 goal_sample_rate: float = 0.1):
+                 goal_sample_rate: float = 0.1, seed: int | None = None):
         """
         :param grid: 栅格地图，0=空闲，1=障碍
         :param max_iter: 最大迭代次数
         :param step_size: 扩展步长（栅格单位）
         :param goal_sample_rate: 直接采样目标的概率（0~1）
         """
-        super().__init__(grid)
+        super().__init__(grid, seed=seed)
         self.max_iter = max_iter
         self.step_size = step_size
         self.goal_sample_rate = goal_sample_rate
@@ -29,8 +30,8 @@ class RRTPlanner(GlobalPlanner):
         """随机采样一个自由栅格点，加入迭代上限防止全障碍物时死循环"""
         max_attempts = self.rows * self.cols * 10
         for _ in range(max_attempts):
-            r = random.randint(0, self.rows - 1)
-            c = random.randint(0, self.cols - 1)
+            r = self.rng.randint(0, self.rows - 1)
+            c = self.rng.randint(0, self.cols - 1)
             if self.grid[r, c] == 0:
                 return (r, c)
         # 兜底：线性扫描找第一个自由格子
@@ -68,7 +69,7 @@ class RRTPlanner(GlobalPlanner):
         tree_nodes = [(start, -1)]
         for _ in range(self.max_iter):
             # 按概率采样目标点
-            if random.random() < self.goal_sample_rate:
+            if self.rng.random() < self.goal_sample_rate:
                 sample = goal
             else:
                 sample = self._sample_free()

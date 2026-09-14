@@ -1,17 +1,27 @@
 # path_planner — 路径规划
 
-> 栅格地图上运行五种全局路径规划算法，单选/多选对比，输出最优路径。
+> 栅格地图上运行五种全局路径规划算法，输出统一 JSON 原始路径和实验指标。
 
 ---
 
 ## 快速开始
 
 ```bash
-# 确保 data/input/ 下有 grid_map.npz + start_goal.txt
-python run_planner.py
+# map_pipeline 已生成 map_result.json 后运行单个算法
+python -m path_planner.run_planner \
+  --map-result runs/map-001/map_pipeline/result.json \
+  --algorithm astar \
+  --run-root runs \
+  --run-id planner-001
+
+# 研究模式：一次运行多个算法并使用同一随机种子
+python -m path_planner.run_planner \
+  --map-result runs/map-001/map_pipeline/result.json \
+  --research --seed 42
 ```
 
-选算法：序号 `1` / 逗号分隔 `1,3,5` / 全选 `all` → 计算 → 预览 → 确认保存 `path_data.npy`
+结果保存在 `runs/<run-id>/path_planner/result.json`，失败结果仍会保留
+结构化错误和 `module.log`。
 
 ---
 
@@ -65,14 +75,23 @@ from src.grid_utils import line_of_sight
 line_of_sight(grid, rows, cols, (r1,c1), (r2,c2))
 ```
 
-### 多算法对比
+### 统一规划接口
 
 ```python
-from src.comparator import compare_paths
-results = compare_paths(['astar','rrt'], grid, start, goal, create_planner,
-                         algo_params={'rrt': {'max_iter': 3000}})
-for name, d in results.items():
-    print(f"{name}: {d['steps']}步, {d['time']:.4f}s")
+from path_planner.src.planner_pipeline import run_algorithm, run_planning
+
+result = run_algorithm(
+    grid, (0, 0), (10, 10), "rrt",
+    parameters={"max_iter": 3000},
+    seed=42,
+)
+
+comparison = run_planning(
+    grid, (0, 0), (10, 10), ["astar", "rrt"],
+    parameters={"rrt": {"max_iter": 3000}},
+    seed=42,
+    mode="research",
+)
 ```
 
 ---
@@ -96,5 +115,18 @@ path_planner:
 
 | 方向 | 格式 |
 |------|------|
-| **输入** | `grid_map.npz` + `start_goal.txt`（`validate_start_goal()` 校验：行数/整数/非负/边界） |
-| **输出** | `path_data.npy` — N×2 int，每行 `[row, col]` |
+| **输入** | `map_pipeline` 的 success JSON（含二维 grid、grid_size_m、start、goal） |
+| **输出** | `result.json` — 原始路径、算法参数、随机种子和统一指标 |
+
+### 指标
+
+单算法结果的 `outputs.metrics.values` 包含：
+
+- `found_path`：是否找到路径
+- `planning_time_s`：规划耗时
+- `raw_node_count`：原始路径节点数
+- `raw_path_length_grid` / `raw_path_length_m`：栅格和物理路径长度
+- `random_seed`：本次运行使用的随机种子
+
+研究模式的 `outputs.comparisons` 为相同输入下各算法结果的数组；
+某个算法无解时，该项为 `failed` 并包含 `NO_PATH` 结构化错误，其他算法仍可比较。

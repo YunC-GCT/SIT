@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 """
 基于 RRT* 的全局路径规划器（栅格版本）
 继承 RRT，在其基础上增加重选父节点和重布线，使路径渐进最优。
 """
 
-import random
 from typing import List, Tuple
 from .rrt import RRTPlanner
 from ..planner_base import Path
@@ -14,9 +15,10 @@ class RRTStarPlanner(RRTPlanner):
     """RRT* = RRT + choose_parent + rewire。继承 _sample_free / _distance / _nearest_node / _steer。"""
 
     def __init__(self, grid, max_iter: int = 2000, step_size: float = 5.0,
-                 goal_sample_rate: float = 0.1, search_radius: float = 10.0):
+                 goal_sample_rate: float = 0.1, search_radius: float = 10.0,
+                 seed: int | None = None):
         super().__init__(grid, max_iter=max_iter, step_size=step_size,
-                         goal_sample_rate=goal_sample_rate)
+                         goal_sample_rate=goal_sample_rate, seed=seed)
         self.search_radius = search_radius
 
     def _nearby_nodes(self, tree_nodes, point):
@@ -57,7 +59,7 @@ class RRTStarPlanner(RRTPlanner):
         best_parent_idx = -1
 
         for _ in range(self.max_iter):
-            if random.random() < self.goal_sample_rate:
+            if self.rng.random() < self.goal_sample_rate:
                 sample = goal
             else:
                 sample = self._sample_free()

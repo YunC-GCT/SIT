@@ -1,0 +1,253 @@
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+import numpy as np
+
+from core import (
+    STATUS_FAILED,
+    STATUS_SUCCESS,
+    grid_map_payload,
+    make_result,
+    read_result,
+    write_result,
+)
+from path_planner.src.planner_pipeline import run_algorithm, run_planning
+
+
+class PlannerPipelineTests(unittest.TestCase):
+    def test_all_registered_algorithms_share_the_same_result_shape(self):
+        grid = np.zeros((12, 12), dtype=np.uint8)
+        parameters = {
+            "prm": {"num_samples": 120, "k_neighbors": 20, "max_edge_len": 20.0},
+            "rrt": {"max_iter": 800, "step_size": 3.0, "goal_sample_rate": 0.3},
+            "rrt_star": {
+                "max_iter": 800,
+                "step_size": 3.0,
+                "goal_sample_rate": 0.3,
+                "search_radius": 8.0,
+            },
+        }
+
+        for algorithm in ("astar", "dijkstra", "prm", "rrt", "rrt_star"):
+            with self.subTest(algorithm=algorithm):
+                result = run_algorithm(
+                    grid,
+                    (0, 0),
+                    (11, 11),
+                    algorithm,
+                    parameters=parameters.get(algorithm),
+                    seed=17,
+                    grid_size_m=0.25,
+                    run_id="planner-shape",
+                )
+
+                self.assertEqual(result["schema_version"], "1.0")
+                self.assertEqual(result["module"], "path_planner")
+                self.assertEqual(result["status"], STATUS_SUCCESS)
+                self.assertEqual(result["outputs"]["raw_path"]["coordinate_system"]["axes"], ["row", "col"])
+                points = result["outputs"]["raw_path"]["points"]["values"]
+                self.assertEqual(points[0], [0, 0])
+                self.assertEqual(points[-1], [11, 11])
+
+                metrics = result["outputs"]["metrics"]["values"]
+                self.assertTrue(metrics["found_path"])
+                self.assertGreaterEqual(metrics["planning_time_s"], 0.0)
+                self.assertGreaterEqual(metrics["raw_node_count"], 2)
+                self.assertGreater(metrics["raw_path_length_m"], 0.0)
+                self.assertEqual(result["parameters"]["algorithm"], algorithm)
+                self.assertEqual(result["parameters"]["seed"], 17)
+
+    def test_random_planner_seed_reproduces_raw_path(self):
+        grid = np.zeros((16, 16), dtype=np.uint8)
+        parameters = {"max_iter": 1000, "step_size": 3.0, "goal_sample_rate": 0.25}
+
+        first = run_algorithm(
+            grid,
+            (0, 0),
+            (15, 15),
+            "rrt",
+            parameters=parameters,
+            seed=123,
+            run_id="reproducible",
+        )
+        second = run_algorithm(
+            grid,
+            (0, 0),
+            (15, 15),
+            "rrt",
+            parameters=parameters,
+            seed=123,
+            run_id="reproducible",
+        )
+
+        self.assertEqual(first["status"], STATUS_SUCCESS)
+        self.assertEqual(second["status"], STATUS_SUCCESS)
+        self.assertEqual(
+            first["outputs"]["raw_path"]["points"]["values"],
+            second["outputs"]["raw_path"]["points"]["values"],
+        )
+        self.assertEqual(first["parameters"]["seed"], 123)
+        self.assertEqual(first["outputs"]["metrics"]["values"]["random_seed"], 123)
+
+    def test_rrt_star_seed_reproduces_raw_path(self):
+        grid = np.zeros((16, 16), dtype=np.uint8)
+        parameters = {
+            "max_iter": 1000,
+            "step_size": 3.0,
+            "goal_sample_rate": 0.25,
+            "search_radius": 8.0,
+        }
+
+        first = run_algorithm(
+            grid,
+            (0, 0),
+            (15, 15),
+            "rrt_star",
+            parameters=parameters,
+            seed=123,
+            run_id="reproducible",
+        )
+        second = run_algorithm(
+            grid,
+            (0, 0),
+            (15, 15),
+            "rrt_star",
+            parameters=parameters,
+            seed=123,
+            run_id="reproducible",
+        )
+
+        self.assertEqual(first["status"], STATUS_SUCCESS)
+        self.assertEqual(second["status"], STATUS_SUCCESS)
+        self.assertEqual(
+            first["outputs"]["raw_path"]["points"]["values"],
+            second["outputs"]["raw_path"]["points"]["values"],
+        )
+        self.assertEqual(first["outputs"]["metrics"]["values"]["random_seed"], 123)
+
+    def test_no_path_is_a_failed_result_with_structured_error(self):
+        grid = np.zeros((7, 7), dtype=np.uint8)
+        grid[3, :] = 1
+        result = run_algorithm(
+            grid,
+            (0, 0),
+            (6, 6),
+            "astar",
+            run_id="no-path",
+        )
+
+        self.assertEqual(result["status"], STATUS_FAILED)
+        self.assertEqual(result["errors"][0]["code"], "NO_PATH")
+        self.assertEqual(result["errors"][0]["module"], "path_planner")
+        self.assertEqual(result["errors"][0]["stage"], "plan")
+        self.assertFalse(result["outputs"]["metrics"]["values"]["found_path"])
+        self.assertEqual(result["outputs"]["raw_path"]["points"]["values"], [])
+
+    def test_invalid_parameters_are_a_failed_result_with_structured_error(self):
+        result = run_algorithm(
+            np.zeros((4, 4), dtype=np.uint8),
+            (0, 0),
+            (3, 3),
+            "rrt",
+            parameters={"goal_sample_rate": 2.0},
+            run_id="bad-parameters",
+        )
+
+        self.assertEqual(result["status"], STATUS_FAILED)
+        self.assertEqual(result["errors"][0]["code"], "INVALID_PARAMETERS")
+        self.assertEqual(result["errors"][0]["stage"], "validate")
+        self.assertIn("goal_sample_rate", result["errors"][0]["reason"])
+
+    def test_research_mode_returns_comparable_results_for_one_run(self):
+        result = run_planning(
+            np.zeros((8, 8), dtype=np.uint8),
+            (0, 0),
+            (7, 7),
+            ["astar", "dijkstra"],
+            parameters={},
+            seed=5,
+            grid_size_m=0.5,
+            run_id="research-001",
+            mode="research",
+        )
+
+        self.assertEqual(result["status"], STATUS_SUCCESS)
+        comparisons = result["outputs"]["comparisons"]
+        self.assertEqual([item["algorithm"] for item in comparisons], ["astar", "dijkstra"])
+        self.assertTrue(all(item["status"] == STATUS_SUCCESS for item in comparisons))
+        self.assertEqual(comparisons[0]["raw_path"]["points"]["shape"][1], 2)
+        self.assertEqual(comparisons[0]["metrics"]["units"]["raw_path_length_m"], "m")
+
+    def test_research_mode_is_failed_when_all_selected_algorithms_find_no_path(self):
+        grid = np.zeros((6, 6), dtype=np.uint8)
+        grid[3, :] = 1
+        result = run_planning(
+            grid,
+            (0, 0),
+            (5, 5),
+            ["astar", "dijkstra"],
+            run_id="research-no-path",
+            mode="research",
+        )
+
+        self.assertEqual(result["status"], STATUS_FAILED)
+        self.assertEqual(len(result["errors"]), 2)
+        self.assertTrue(
+            all(item["status"] == STATUS_FAILED for item in result["outputs"]["comparisons"])
+        )
+
+
+class PlannerCliTests(unittest.TestCase):
+    def test_cli_reads_map_result_and_writes_an_isolated_planner_result(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            map_result_path = os.path.join(tmp, "map.json")
+            map_result = make_result(
+                "map_pipeline",
+                "map-001",
+                STATUS_SUCCESS,
+                outputs={
+                    "map": grid_map_payload(
+                        np.zeros((5, 6), dtype=np.uint8),
+                        grid_size_m=0.25,
+                        start=(0, 0),
+                        goal=(4, 5),
+                    )
+                },
+            )
+            write_result(map_result_path, map_result)
+
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "path_planner.run_planner",
+                    "--map-result",
+                    map_result_path,
+                    "--algorithm",
+                    "astar",
+                    "--run-root",
+                    tmp,
+                    "--run-id",
+                    "planner-001",
+                ],
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            result_path = Path(tmp) / "planner-001" / "path_planner" / "result.json"
+            result = read_result(str(result_path))
+            self.assertEqual(result["run_id"], "planner-001")
+            self.assertEqual(result["inputs"]["map_result"], os.path.abspath(map_result_path))
+            self.assertEqual(result["outputs"]["metrics"]["values"]["found_path"], True)
+
+
+if __name__ == "__main__":
+    unittest.main()

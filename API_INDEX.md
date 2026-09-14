@@ -88,7 +88,9 @@
 
 | 接口 | 签名 | 说明 |
 |------|------|------|
-| **`run_planner.py`** | `main()` | `[UI]` 选算法→计算→可视化→保存 |
+| **`run_planner.py`** | `main(argv)` | JSON CLI；读取 map_pipeline 结果并保存规划结果 |
+| **`path_planner.src.planner_pipeline.run_algorithm`** | `run_algorithm(grid, start, goal, algorithm, parameters, seed, ...)` | 单算法统一结果 |
+| **`path_planner.src.planner_pipeline.run_planning`** | `run_planning(grid, start, goal, algorithms, parameters, seed, ...)` | 研究模式多算法比较 |
 
 ### 规划器基类
 
@@ -96,14 +98,16 @@
 |------|------|------|
 | `Path` | `= List[Tuple[int,int]]` | 类型别名 |
 | `GlobalPlanner` | `ABC` | 抽象基类 |
-| `GlobalPlanner.__init__(grid)` | — | |
+| `GlobalPlanner.__init__(grid, seed=None)` | — | 局部随机源和栅格输入 |
 | `GlobalPlanner.plan(start, goal)` | `-> Path` | 抽象方法；无解返回 `[]` |
 
 ### 工厂（新增算法改这里）
 
 | 接口 | 签名 | 说明 |
 |------|------|------|
-| `create_planner(name, grid, params=None)` | `-> GlobalPlanner` | params 覆盖默认参数 |
+| `create_planner(name, grid, params=None, seed=None)` | `-> GlobalPlanner` | params 覆盖默认参数并支持随机种子 |
+| `validate_algorithm_parameters(name, params=None)` | `-> dict` | 校验算法参数 |
+| `resolve_algorithm_parameters(name, params=None)` | `-> dict` | 返回含默认值的有效参数 |
 | `list_algorithms()` | `-> List[str]` | 所有已注册算法名 |
 | `get_algorithm_info(name)` | `-> (类名, 默认参数字典)` | |
 
@@ -122,8 +126,7 @@
 | 接口 | 签名 | 说明 |
 |------|------|------|
 | `line_of_sight(grid, rows, cols, p1, p2)` | `-> bool` | Bresenham 碰撞检测；True=畅通 |
-| `compare_paths(names, grid, start, goal, factory, params)` | `-> {name: {path, steps, time}}` | 多算法计时对比 |
-| `save_final_path(path, path)` | — | 存 .npy |
+| `compare_paths(names, grid, start, goal, factory, params)` | `-> {name: {path, steps, time}}` | 旧内部对比辅助函数；统一 JSON 结果使用 `run_planning` |
 | `draw_path(grid, path, start, goal)` | `-> ndarray` | `[UI]` cv2 路径预览图 |
 | `draw_comparison(grid, results, start, goal)` | `-> ndarray` | `[UI]` cv2 多算法对比图 |
 | `show(title, img)` | — | `[UI]` cv2 弹窗封装 |
@@ -174,8 +177,8 @@
   │    (grid + grid_size)                     │
   │    start_goal.txt ────────────────────────┤
   │                                           │
-  ├─── path_planner ─── path_data.npy ────────┤
-  │    (N×2 int)                              │
+  ├─── path_planner ─── result.json ──────────┤
+  │    (raw_path + metrics)                   │
   │                                           │
   └─── motion_control ─── /cmd_vel ───▶ 小车
        (grid_map.npz 用于校验 grid_size)

@@ -167,13 +167,17 @@ def path_payload(
 ) -> dict:
     """Build a canonical row/col path payload."""
     normalized = [[int(row), int(col)] for row, col in points]
+    points_payload = array_payload(
+        normalized,
+        dtype=dtype,
+        units=units or {"coordinates": "grid_cell"},
+        coordinate_system=coordinate_system or ROW_COL_COORDINATE_SYSTEM,
+    )
+    # 空路径仍然是一个 N×2 的坐标矩阵；普通 JSON 空数组无法保留第二维。
+    if not normalized:
+        points_payload["shape"] = [0, 2]
     return {
-        "points": array_payload(
-            normalized,
-            dtype=dtype,
-            units=units or {"coordinates": "grid_cell"},
-            coordinate_system=coordinate_system or ROW_COL_COORDINATE_SYSTEM,
-        ),
+        "points": points_payload,
         "coordinate_system": coordinate_system or ROW_COL_COORDINATE_SYSTEM,
     }
 
@@ -347,7 +351,12 @@ def _validate_array_payload(payload: Any, name: str) -> None:
     if not isinstance(payload["shape"], list) or not all(isinstance(item, int) for item in payload["shape"]):
         raise ContractError(f"{name}.shape 必须是整数数组")
     actual_shape = _shape_of(payload["values"])
-    if payload["shape"] != actual_shape:
+    empty_matrix_shape = (
+        isinstance(payload["values"], list)
+        and not payload["values"]
+        and payload["shape"] == [0, 2]
+    )
+    if payload["shape"] != actual_shape and not empty_matrix_shape:
         raise ContractError(f"{name}.shape 与 values 实际维度不一致")
     if not isinstance(payload["dtype"], str) or not payload["dtype"]:
         raise ContractError(f"{name}.dtype 必须是非空字符串")

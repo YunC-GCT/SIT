@@ -8,6 +8,8 @@
 config.yaml 的 algorithm_params 可以按需覆盖默认值；
 available_algorithms 控制终端可选列表。
 """
+from numbers import Integral, Real
+
 from .planners.a_star import AStarPlanner
 from .planners.dijkstra import DijkstraPlanner
 from .planners.prm import PRMPlanner
@@ -25,8 +27,68 @@ _registry = {
                                       'goal_sample_rate': 0.1, 'search_radius': 10.0}),
 }
 
+RANDOM_ALGORITHMS = frozenset({"prm", "rrt", "rrt_star"})
 
-def create_planner(name, grid, params=None):
+
+class PlannerParameterError(ValueError):
+    """规划器参数不符合统一参数契约。"""
+
+
+def _is_number(value):
+    return isinstance(value, Real) and not isinstance(value, bool)
+
+
+def validate_algorithm_parameters(name, params=None):
+    """Validate and normalize one algorithm's constructor parameters."""
+    if name not in _registry:
+        raise PlannerParameterError(
+            f"未知算法: {name}，可选: {list(_registry.keys())}"
+        )
+    if params is None:
+        return {}
+    if not isinstance(params, dict):
+        raise PlannerParameterError("算法参数必须是 JSON 对象")
+
+    defaults = _registry[name][1]
+    unknown = sorted(set(params) - set(defaults))
+    if unknown:
+        raise PlannerParameterError(
+            f"算法 {name} 不支持参数: {', '.join(unknown)}"
+        )
+
+    normalized = dict(params)
+    integer_fields = {"num_samples", "k_neighbors", "max_iter"}
+    positive_number_fields = {"max_edge_len", "step_size", "search_radius"}
+    for field in integer_fields:
+        if field in normalized and (
+            not isinstance(normalized[field], Integral)
+            or isinstance(normalized[field], bool)
+            or normalized[field] <= 0
+        ):
+            raise PlannerParameterError(f"{field} 必须是正整数")
+    for field in positive_number_fields:
+        if field in normalized and (
+            not _is_number(normalized[field]) or normalized[field] <= 0
+        ):
+            raise PlannerParameterError(f"{field} 必须是正数")
+    if "goal_sample_rate" in normalized and (
+        not _is_number(normalized["goal_sample_rate"])
+        or not 0 <= normalized["goal_sample_rate"] <= 1
+    ):
+        raise PlannerParameterError("goal_sample_rate 必须在 0 到 1 之间")
+    return normalized
+
+
+def resolve_algorithm_parameters(name, params=None):
+    """Return effective parameters after applying registered defaults."""
+    normalized = validate_algorithm_parameters(name, params)
+    defaults = _registry[name][1]
+    effective = dict(defaults)
+    effective.update(normalized)
+    return effective
+
+
+def create_planner(name, grid, params=None, seed=None):
     """
     根据算法名创建规划器实例。
 
@@ -35,13 +97,25 @@ def create_planner(name, grid, params=None):
     :param params: 可选参数字典，会覆盖该算法的默认参数
     :return:       GlobalPlanner 实例
     """
-    if name not in _registry:
-        raise ValueError(f"未知算法: {name}，可选: {list(_registry.keys())}")
+    if params is None:
+        raw_params = {}
+    elif not isinstance(params, dict):
+        raise PlannerParameterError("算法参数必须是 JSON 对象")
+    else:
+        raw_params = dict(params)
+    if "seed" in raw_params:
+        if seed is not None:
+            raise PlannerParameterError("seed 只能通过 seed 参数或 params.seed 提供一次")
+        seed = raw_params.pop("seed")
+    if seed is not None and (
+        not isinstance(seed, Integral) or isinstance(seed, bool)
+    ):
+        raise PlannerParameterError("seed 必须是整数或 null")
+    normalized = resolve_algorithm_parameters(name, raw_params)
     planner_cls, defaults = _registry[name]
     merged = dict(defaults)
-    if params:
-        merged.update(params)
-    return planner_cls(grid, **merged)
+    merged.update(normalized)
+    return planner_cls(grid, seed=None if seed is None else int(seed), **merged)
 
 
 def list_algorithms():

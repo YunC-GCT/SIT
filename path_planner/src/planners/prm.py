@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 """
 基于概率路图（PRM）的全局路径规划器（栅格版本）
 直接在栅格地图上采样自由点、建立路图，并用 Dijkstra 搜索路径。
 """
 
 import math
-import random
 import heapq
 import numpy as np
 from typing import List, Tuple
@@ -13,14 +14,14 @@ from ..grid_utils import line_of_sight
 
 class PRMPlanner(GlobalPlanner):
     def __init__(self, grid: np.ndarray, num_samples: int = 500, k_neighbors: int = 10,
-                 max_edge_len: float = 30.0):
+                 max_edge_len: float = 30.0, seed: int | None = None):
         """
         :param grid: 栅格地图，0=空闲，1=障碍
         :param num_samples: 随机采样点数量（不含起终点）
         :param k_neighbors: 每个点最多连接的近邻数
         :param max_edge_len: 单条边的最大长度（栅格单元数），超过则不连接
         """
-        super().__init__(grid)
+        super().__init__(grid, seed=seed)
         self.num_samples = num_samples
         self.k_neighbors = k_neighbors
         self.max_edge_len = max_edge_len
@@ -31,8 +32,8 @@ class PRMPlanner(GlobalPlanner):
         points = []
         # 随机采样
         for _ in range(self.num_samples):
-            r = random.randint(0, self.rows - 1)
-            c = random.randint(0, self.cols - 1)
+            r = self.rng.randint(0, self.rows - 1)
+            c = self.rng.randint(0, self.cols - 1)
             if self.grid[r, c] == 0:
                 points.append((r, c))
         # 确保起终点在集合中（如果它们是自由的话）
@@ -114,4 +115,3 @@ class PRMPlanner(GlobalPlanner):
         road_map, points = self._build_roadmap(points)
         path = self._dijkstra_search(road_map, points, start, goal)
         return path
-    
