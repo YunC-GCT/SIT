@@ -1,6 +1,6 @@
 # 项目接口清单（后端视角）
 
-> 以三条管线为索引，列出所有公开类、函数、常量。交互式 UI 函数标记为 `[UI]`。
+> 以四个能力模块为索引，列出所有公开类、函数、常量。交互式 UI 函数标记为 `[UI]`。
 
 ---
 
@@ -134,7 +134,23 @@
 
 ---
 
-## 管线三：motion_control（循迹）
+## 管线三：path_postprocess（路径后处理）
+
+| 接口 | 签名 | 说明 |
+|------|------|------|
+| **`path_postprocess.run_postprocess.main`** | `main(argv)` | CLI；读取地图和规划 JSON，写入独立后处理结果 |
+| **`path_postprocess.process_path`** | `process_path(grid, raw_path, grid_size_m, parameters, ...)` | 平滑、采样、碰撞复核、最大段长分解和统一 JSON 输出 |
+| `path_postprocess.PathSmoother` | `ABC` | 可替换平滑器适配边界 |
+| `path_postprocess.NaturalCubicSplineSmoother` | `smooth(path, sample_spacing_grid)` | 自然边界分段三次样条和累计弧长采样实现 |
+| `path_postprocess.resolve_postprocess_parameters` | `-> dict` | 校验并合并路径后处理配置 |
+
+成功结果的 `outputs` 包含 `raw_path`、`smoothed_path`、`segments`、
+`smoothing` 和 `metrics`；平滑失败时回退到已验证原始路径，并在
+`outputs.smoothing.fallback_reason` 中记录原因。
+
+---
+
+## 管线四：motion_control（循迹）
 
 ### 入口
 
@@ -173,13 +189,15 @@
 ```
 原始图片
   │
-  ├─── map_pipeline ─── grid_map.npz ────────┐
-  │    (grid + grid_size)                     │
-  │    start_goal.txt ────────────────────────┤
+  ├─── map_pipeline ─── result.json ──────────┐
+  │    (grid + grid_size + start/goal)         │
   │                                           │
   ├─── path_planner ─── result.json ──────────┤
   │    (raw_path + metrics)                   │
   │                                           │
+  ├─── path_postprocess ─── result.json ──────┤
+  │    (smoothed_path + segments)             │
+  │                                           │
   └─── motion_control ─── /cmd_vel ───▶ 小车
-       (grid_map.npz 用于校验 grid_size)
+       (validated segments)
 ```
