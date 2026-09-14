@@ -4,7 +4,7 @@ Converts a successful planner result into a validated, executable path:
 
 1. Smooths the raw grid path with a replaceable natural cubic spline.
 2. Samples and rounds the curve to grid coordinates.
-3. Rechecks every sample and connection for bounds and obstacles.
+3. Rechecks the continuous sampled curve and its grid projection for bounds and obstacles.
 4. Falls back to the validated raw path when smoothing fails.
 5. Splits long connections and emits controller-facing JSON segments.
 
@@ -24,6 +24,10 @@ result = process_path(
 The successful result stores `raw_path`, `smoothed_path`, `segments`,
 `smoothing`, and `metrics` under `outputs`. A smoothing fallback remains a
 successful post-processing result and records `outputs.smoothing.fallback_reason`.
+
+The `smoothed_path` payload stores the validated floating-point samples. The
+executable `segments` payload stores integer grid endpoints for the current
+controller contract.
 
 The smoother boundary is `PathSmoother.smooth(path, sample_spacing_grid)`.
 `NaturalCubicSplineSmoother` is the first implementation; another smoother can

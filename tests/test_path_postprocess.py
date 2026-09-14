@@ -7,7 +7,13 @@ from pathlib import Path
 
 import numpy as np
 
-from core import grid_map_payload, make_result, path_payload, read_result, write_result
+from core import (
+    grid_map_payload,
+    make_result,
+    path_payload,
+    read_result,
+    write_result,
+)
 from path_postprocess import process_path
 
 
@@ -33,8 +39,17 @@ class PathPostprocessTests(unittest.TestCase):
         outputs = result["outputs"]
         self.assertTrue(outputs["smoothing"]["applied"])
         self.assertFalse(outputs["smoothing"]["fallback"])
-        self.assertEqual(outputs["smoothed_path"]["points"]["values"][0], [0, 0])
-        self.assertEqual(outputs["smoothed_path"]["points"]["values"][-1], [0, 6])
+        sampled_points = outputs["smoothed_path"]["points"]["values"]
+        self.assertEqual(outputs["smoothed_path"]["points"]["dtype"], "float64")
+        self.assertTrue(
+            all(
+                ((second[0] - first[0]) ** 2 + (second[1] - first[1]) ** 2) ** 0.5
+                <= 0.5 + 1e-9
+                for first, second in zip(sampled_points, sampled_points[1:])
+            )
+        )
+        self.assertEqual(sampled_points[0], [0.0, 0.0])
+        self.assertEqual(sampled_points[-1], [0.0, 6.0])
         self.assertEqual(outputs["segments"][0]["start"], {"row": 0, "col": 0})
         self.assertEqual(outputs["segments"][-1]["end"], {"row": 0, "col": 6})
 

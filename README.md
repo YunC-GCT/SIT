@@ -18,7 +18,7 @@
 | **map_pipeline** | 图片 (.jpg/.png/.bmp) | 地图 JSON（含 grid_size） | [→ README](map_pipeline/README.md) |
 | **path_planner** | 地图 JSON | 原始路径 JSON | [→ README](path_planner/README.md) |
 | **path_postprocess** | 地图 JSON + 原始路径 JSON | 平滑路径和执行段 JSON | [→ README](path_postprocess/README.md) |
-| **motion_control** | 执行段 JSON | ROS2 `/cmd_vel`（Twist） | [→ README](motion_control/README.md) |
+| **motion_control** | 已复核路径段（后续接入） | ROS2 `/cmd_vel`（Twist） | [→ README](motion_control/README.md) |
 
 ---
 

@@ -176,26 +176,19 @@ def _normalize_path(path: Iterable[Iterable[int]]) -> list[tuple[int, int]]:
     return normalized
 
 
-def _line_of_sight(
-    grid: np.ndarray,
+def _bresenham_points(
     first: tuple[int, int],
     second: tuple[int, int],
-) -> bool:
+) -> list[tuple[int, int]]:
     row, col = first
     target_row, target_col = second
+    points = [first]
     delta_row = abs(target_row - row)
     delta_col = abs(target_col - col)
     step_row = 1 if row < target_row else -1
     step_col = 1 if col < target_col else -1
     error = delta_row - delta_col
-    rows, cols = grid.shape
-    while True:
-        if not (0 <= row < rows and 0 <= col < cols):
-            return False
-        if grid[row, col] != 0:
-            return False
-        if (row, col) == (target_row, target_col):
-            return True
+    while (row, col) != (target_row, target_col):
         double_error = 2 * error
         if double_error > -delta_col:
             error -= delta_col
@@ -203,6 +196,22 @@ def _line_of_sight(
         if double_error < delta_row:
             error += delta_row
             col += step_col
+        points.append((row, col))
+    return points
+
+
+def _line_of_sight(
+    grid: np.ndarray,
+    first: tuple[int, int],
+    second: tuple[int, int],
+) -> bool:
+    rows, cols = grid.shape
+    for row, col in _bresenham_points(first, second):
+        if not (0 <= row < rows and 0 <= col < cols):
+            return False
+        if grid[row, col] != 0:
+            return False
+    return True
 
 
 def _validate_path(
@@ -212,13 +221,12 @@ def _validate_path(
     expected_start: tuple[int, int] | None = None,
     expected_goal: tuple[int, int] | None = None,
 ) -> None:
-    rows, cols = grid.shape
     if expected_start is not None and path[0] != expected_start:
         raise RawPathError("raw path does not start at the map start")
     if expected_goal is not None and path[-1] != expected_goal:
         raise RawPathError("raw path does not end at the map goal")
     for point in path:
-        if not (0 <= point[0] < rows and 0 <= point[1] < cols):
+        if not (0 <= point[0] < grid.shape[0] and 0 <= point[1] < grid.shape[1]):
             raise RawPathError(f"raw path point is out of bounds: {point}")
         if grid[point] != 0:
             raise RawPathError(f"raw path point is an obstacle: {point}")
@@ -227,7 +235,7 @@ def _validate_path(
             raise RawPathError(f"raw path connection is blocked: {first} -> {second}")
 
 
-def _path_length(path: Sequence[tuple[int, int]]) -> float:
+def _path_length(path: Sequence[Sequence[Real]]) -> float:
     return sum(
         math.hypot(second[0] - first[0], second[1] - first[1])
         for first, second in zip(path, path[1:])
@@ -281,33 +289,57 @@ def _discretize_curve(
 
 def _validate_sampled_curve(
     grid: np.ndarray,
-    sampled_path: Sequence[tuple[int, int]],
+    curve: Sequence[Sequence[Real]],
+    *,
+    start: tuple[int, int],
+    goal: tuple[int, int],
+    sample_spacing_grid: float,
 ) -> None:
-    _validate_path(grid, sampled_path)
-
-
-def _bresenham_points(
-    first: tuple[int, int],
-    second: tuple[int, int],
-) -> list[tuple[int, int]]:
-    row, col = first
-    target_row, target_col = second
-    points = [first]
-    delta_row = abs(target_row - row)
-    delta_col = abs(target_col - col)
-    step_row = 1 if row < target_row else -1
-    step_col = 1 if col < target_col else -1
-    error = delta_row - delta_col
-    while (row, col) != (target_row, target_col):
-        double_error = 2 * error
-        if double_error > -delta_col:
-            error -= delta_col
-            row += step_row
-        if double_error < delta_row:
-            error += delta_row
-            col += step_col
-        points.append((row, col))
-    return points
+    rows, cols = grid.shape
+    try:
+        points = [tuple(point) for point in curve]
+    except TypeError as exc:
+        raise SmoothingError("smoother output must be a sequence") from exc
+    if not points:
+        raise SmoothingError("smoother returned no points")
+    if any(len(point) != 2 for point in points):
+        raise SmoothingError("smoother output points must contain row and col")
+    if not all(
+        math.isfinite(float(value))
+        for point in points
+        for value in point
+    ):
+        raise SmoothingError("smoother output contains a non-finite coordinate")
+    if not all(
+        math.isclose(float(actual), float(expected), abs_tol=1e-9)
+        for actual, expected in zip(points[0], start)
+    ) or not all(
+        math.isclose(float(actual), float(expected), abs_tol=1e-9)
+        for actual, expected in zip(points[-1], goal)
+    ):
+        raise SmoothingError("smoother did not preserve endpoints")
+    for point in points:
+        if len(point) != 2:
+            raise SmoothingError("smoother output points must contain row and col")
+        point_row, point_col = float(point[0]), float(point[1])
+        if not (0.0 <= point_row <= rows - 1 and 0.0 <= point_col <= cols - 1):
+            raise RawPathError("sampled spline is out of bounds")
+    for first, second in zip(points, points[1:]):
+        first_row, first_col = float(first[0]), float(first[1])
+        second_row, second_col = float(second[0]), float(second[1])
+        distance = math.hypot(second_row - first_row, second_col - first_col)
+        sample_count = max(
+            1,
+            math.ceil(distance / min(sample_spacing_grid, 0.25)),
+        )
+        for index in range(sample_count + 1):
+            fraction = index / sample_count
+            row = int(round(first_row + (second_row - first_row) * fraction))
+            col = int(round(first_col + (second_col - first_col) * fraction))
+            if not (0 <= row < rows and 0 <= col < cols):
+                raise RawPathError("sampled spline is out of bounds")
+            if grid[row, col] != 0:
+                raise RawPathError("sampled spline connection is blocked")
 
 
 def _expand_segments(
@@ -488,6 +520,7 @@ def process_path(
 
     fallback = False
     fallback_reason: str | None = None
+    smoothed_curve: Sequence[Sequence[Real]] | None = None
     if not effective_parameters["smooth"]:
         effective_path = normalized_path
         smoothing_applied = False
@@ -505,16 +538,29 @@ def process_path(
                 normalized_path,
                 effective_parameters["sample_spacing_grid"],
             )
+            _validate_sampled_curve(
+                normalized_grid,
+                curve,
+                start=normalized_path[0],
+                goal=normalized_path[-1],
+                sample_spacing_grid=effective_parameters["sample_spacing_grid"],
+            )
+            smoothed_curve = curve
             effective_path = _discretize_curve(
                 curve,
                 grid_shape=normalized_grid.shape,
                 start=normalized_path[0],
                 goal=normalized_path[-1],
             )
-            _validate_sampled_curve(normalized_grid, effective_path)
             smoothing_applied = True
             smoothing_method = type(active_smoother).__name__
-        except Exception as exc:
+        except (
+            SmoothingError,
+            RawPathError,
+            ArithmeticError,
+            TypeError,
+            ValueError,
+        ) as exc:
             effective_path = normalized_path
             smoothing_applied = False
             smoothing_method = type(active_smoother).__name__
@@ -529,6 +575,16 @@ def process_path(
                     fallback_reason = "numeric_error"
             else:
                 fallback_reason = "numeric_error"
+        except Exception as exc:
+            return _failure_result(
+                run_id=run_id,
+                input_ref=input_ref,
+                parameters=effective_parameters,
+                code="SMOOTHER_ERROR",
+                stage="smooth",
+                error=exc,
+                suggestion="检查可替换平滑器实现并在新运行批次中重试",
+            )
 
     try:
         _validate_path(normalized_grid, effective_path)
@@ -559,14 +615,18 @@ def process_path(
     }
     if fallback_reason:
         smoothing_output["fallback_reason"] = fallback_reason
+    metric_path: Sequence[Sequence[Real]] = (
+        smoothed_curve if smoothing_applied and smoothed_curve is not None
+        else effective_path
+    )
     metrics = metric_payload(
         {
             "raw_node_count": len(normalized_path),
             "raw_path_length_grid": _path_length(normalized_path),
             "raw_path_length_m": _path_length(normalized_path) * float(grid_size_m),
-            "smoothed_node_count": len(effective_path),
-            "smoothed_path_length_grid": _path_length(effective_path),
-            "smoothed_path_length_m": _path_length(effective_path) * float(grid_size_m),
+            "smoothed_node_count": len(metric_path),
+            "smoothed_path_length_grid": _path_length(metric_path),
+            "smoothed_path_length_m": _path_length(metric_path) * float(grid_size_m),
             "segment_count": len(segments),
             "estimated_time_s": sum(item["estimated_time_s"] for item in segments),
             "smoothing_fallback": fallback,
@@ -594,7 +654,11 @@ def process_path(
         },
         outputs={
             "raw_path": path_payload(normalized_path),
-            "smoothed_path": path_payload(effective_path),
+            "smoothed_path": (
+                path_payload(smoothed_curve, dtype="float64")
+                if smoothing_applied and smoothed_curve is not None
+                else path_payload(effective_path)
+            ),
             "segments": segments,
             "smoothing": smoothing_output,
             "metrics": metrics,

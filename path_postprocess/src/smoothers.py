@@ -62,15 +62,28 @@ class NaturalCubicSplineSmoother(PathSmoother):
         row_coefficients = self._coefficients(distances, [point[0] for point in points])
         col_coefficients = self._coefficients(distances, [point[1] for point in points])
         sample_count = max(1, math.ceil(total_length / float(sample_spacing_grid)))
-        samples = []
-        for index in range(sample_count + 1):
-            arc_length = total_length * index / sample_count
-            samples.append(
-                (
-                    self._evaluate(distances, row_coefficients, arc_length),
-                    self._evaluate(distances, col_coefficients, arc_length),
+        for _ in range(20):
+            samples = [
+                self._sample(
+                    distances,
+                    row_coefficients,
+                    col_coefficients,
+                    index / sample_count,
+                    total_length,
                 )
-            )
+                for index in range(sample_count + 1)
+            ]
+            if all(
+                math.hypot(
+                    second[0] - first[0],
+                    second[1] - first[1],
+                ) <= float(sample_spacing_grid) + 1e-9
+                for first, second in zip(samples, samples[1:])
+            ):
+                break
+            sample_count *= 2
+        else:
+            raise SmoothingError("failed to satisfy spline sample spacing")
 
         samples[0] = points[0]
         samples[-1] = points[-1]
@@ -81,6 +94,21 @@ class NaturalCubicSplineSmoother(PathSmoother):
         ):
             raise SmoothingError("spline evaluation produced a non-finite value")
         return samples
+
+    @classmethod
+    def _sample(
+        cls,
+        knots: Sequence[float],
+        row_coefficients: tuple[list[float], list[float], list[float], list[float]],
+        col_coefficients: tuple[list[float], list[float], list[float], list[float]],
+        fraction: float,
+        total_length: float,
+    ) -> Point:
+        arc_length = total_length * fraction
+        return (
+            cls._evaluate(knots, row_coefficients, arc_length),
+            cls._evaluate(knots, col_coefficients, arc_length),
+        )
 
     @staticmethod
     def _coefficients(

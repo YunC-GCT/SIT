@@ -159,14 +159,17 @@ def grid_map_payload(
 
 
 def path_payload(
-    points: list[tuple[int, int]] | list[list[int]],
+    points: list[tuple[int, int]] | list[list[int]] | list[tuple[float, float]] | list[list[float]],
     *,
     coordinate_system: dict[str, Any] | None = None,
     units: dict[str, str] | None = None,
     dtype: str = "int",
 ) -> dict:
     """Build a canonical row/col path payload."""
-    normalized = [[int(row), int(col)] for row, col in points]
+    if dtype.startswith("float"):
+        normalized = [[float(row), float(col)] for row, col in points]
+    else:
+        normalized = [[int(row), int(col)] for row, col in points]
     points_payload = array_payload(
         normalized,
         dtype=dtype,

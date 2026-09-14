@@ -144,7 +144,7 @@
 | `path_postprocess.NaturalCubicSplineSmoother` | `smooth(path, sample_spacing_grid)` | 自然边界分段三次样条和累计弧长采样实现 |
 | `path_postprocess.resolve_postprocess_parameters` | `-> dict` | 校验并合并路径后处理配置 |
 
-成功结果的 `outputs` 包含 `raw_path`、`smoothed_path`、`segments`、
+成功结果的 `outputs` 包含 `raw_path`、浮点采样 `smoothed_path`、`segments`、
 `smoothing` 和 `metrics`；平滑失败时回退到已验证原始路径，并在
 `outputs.smoothing.fallback_reason` 中记录原因。
 
@@ -199,5 +199,5 @@
   │    (smoothed_path + segments)             │
   │                                           │
   └─── motion_control ─── /cmd_vel ───▶ 小车
-       (validated segments)
+       (validated segments; consumer integration pending)
 ```
