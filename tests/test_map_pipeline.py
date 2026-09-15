@@ -17,7 +17,13 @@ from map_pipeline.src.coordinate_mapper import (
     validate_grid_points,
 )
 from map_pipeline.src.grid_map import GridMap
-from map_pipeline.src.interactive_picker import PointSelectionCancelled, pick_points
+from map_pipeline.src.interactive_picker import (
+    PointSelectionCancelled,
+    _display_geometry,
+    _is_confirm_key,
+    _normalize_key,
+    pick_points,
+)
 from map_pipeline.src.map_loader import create_grid_map
 
 
@@ -196,9 +202,42 @@ class MapPipelineTests(unittest.TestCase):
 
 
 class InteractivePickerTests(unittest.TestCase):
+    def test_small_map_display_is_upscaled_to_fill_the_picker(self):
+        scale, display_width, display_height = _display_geometry(80, 80)
+
+        self.assertEqual(scale, 8.75)
+        self.assertEqual((display_width, display_height), (700, 700))
+
+    def test_extended_enter_key_is_normalized_to_confirmation(self):
+        self.assertEqual(_normalize_key(0x1000000D), 13)
+        self.assertEqual(_normalize_key(0x1000000A), 10)
+        self.assertTrue(_is_confirm_key(0x01000004))
+        self.assertTrue(_is_confirm_key(0x01000005))
+        self.assertFalse(_is_confirm_key(ord("d")))
+
+    @patch("map_pipeline.src.interactive_picker.cv2")
+    def test_extended_enter_confirms_two_selected_points(self, cv2_mock):
+        cv2_mock.EVENT_LBUTTONDOWN = 1
+        cv2_mock.waitKeyEx.return_value = 0x1000000D
+        cv2_mock.getWindowProperty.return_value = 1
+        cv2_mock.resize.side_effect = (
+            lambda image, _size, interpolation=None: image
+        )
+
+        def select_two_points(_window, callback):
+            callback(1, 100, 100, 0, None)
+            callback(1, 500, 500, 0, None)
+
+        cv2_mock.setMouseCallback.side_effect = select_two_points
+
+        points = pick_points(np.zeros((20, 20, 3), dtype=np.uint8))
+
+        self.assertEqual(points, ((2, 2), (14, 14)))
+        cv2_mock.destroyWindow.assert_called_once()
+
     @patch("map_pipeline.src.interactive_picker.cv2")
     def test_escape_cancels_selection(self, cv2_mock):
-        cv2_mock.waitKey.return_value = 27
+        cv2_mock.waitKeyEx.return_value = 27
         cv2_mock.getWindowProperty.return_value = 1
 
         with self.assertRaises(PointSelectionCancelled):

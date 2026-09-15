@@ -20,6 +20,47 @@ class PointSelectionCancelled(RuntimeError):
     """用户取消了起终点选择，或提前关闭了选点窗口。"""
 
 
+def _display_geometry(
+    width: int,
+    height: int,
+    max_width: int = 1000,
+    max_height: int = 700,
+) -> tuple[float, int, int]:
+    """Return a display scale and dimensions that use the available canvas."""
+    if width < 1 or height < 1:
+        raise ValueError("显示图像尺寸必须为正数")
+    if max_width < 1 or max_height < 1:
+        raise ValueError("显示窗口尺寸必须为正数")
+
+    scale = min(max_width / width, max_height / height)
+    return scale, max(1, int(round(width * scale))), max(
+        1, int(round(height * scale))
+    )
+
+
+def _normalize_key(key: object) -> int:
+    """Normalize OpenCV backend key codes to the low-byte key value."""
+    try:
+        value = int(key)
+    except (TypeError, ValueError):
+        return -1
+    return value if value < 0 else value & 0xFF
+
+
+def _is_confirm_key(key: object) -> bool:
+    """Recognize Enter/Return codes emitted by common OpenCV backends."""
+    try:
+        value = int(key)
+    except (TypeError, ValueError):
+        return False
+    if _normalize_key(value) in (10, 13):
+        return True
+    return value in {
+        0x01000004,  # Qt::Key_Return
+        0x01000005,  # Qt::Key_Enter
+    }
+
+
 def pick_points(
     image: np.ndarray,
     window_name: str = "Select Start & Goal",
@@ -39,13 +80,15 @@ def pick_points(
     if height < 1 or width < 1:
         raise ValueError("选点图像不能为空")
 
-    max_width, max_height = 1000, 700
-    scale = min(max_width / width, max_height / height, 1.0)
-    display_width = max(1, int(width * scale))
-    display_height = max(1, int(height * scale))
-    base_display = cv2.resize(img, (display_width, display_height))
+    scale, display_width, display_height = _display_geometry(width, height)
+    interpolation = cv2.INTER_AREA if scale < 1.0 else cv2.INTER_NEAREST
+    base_display = cv2.resize(
+        img,
+        (display_width, display_height),
+        interpolation=interpolation,
+    )
     points: List[Tuple[int, int]] = []
-    message = "Select start, then goal"
+    message = "Select start, then goal (Enter=confirm, R=reset, Esc=cancel)"
 
     def point_info(point: Tuple[int, int]) -> Tuple[Tuple[int, int] | None, str]:
         if grid_map is None:
@@ -72,7 +115,8 @@ def pick_points(
             )
             color = (0, 255, 0) if index == 0 else (0, 0, 255)
             label = "S" if index == 0 else "G"
-            cv2.circle(output, display_point, max(5, int(9 * scale)), color, 2)
+            marker_radius = max(5, min(18, int(round(9 * scale))))
+            cv2.circle(output, display_point, marker_radius, color, 2)
             cv2.putText(
                 output,
                 label,
@@ -126,7 +170,9 @@ def pick_points(
                 message = (
                     "Selected obstacle; choose another point"
                     if state == "OBSTACLE"
-                    else "Select the goal" if len(points) == 1 else "Press Enter to confirm"
+                    else "Select the goal (right-click=undo)"
+                    if len(points) == 1
+                    else "Press Enter to confirm (R=reset, right-click=undo)"
                 )
             draw()
         elif event == cv2.EVENT_RBUTTONDOWN:
@@ -137,8 +183,7 @@ def pick_points(
                 message = "No point to remove"
             draw()
 
-    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(window_name, display_width, display_height)
+    cv2.namedWindow(window_name, cv2.WINDOW_AUTOSIZE)
     cv2.setMouseCallback(window_name, on_mouse)
     draw()
 
@@ -146,7 +191,13 @@ def pick_points(
     cancel_reason = "已取消起终点选择"
     try:
         while True:
-            key = cv2.waitKey(50) & 0xFF
+            wait_key_ex = getattr(cv2, "waitKeyEx", None)
+            raw_key = (
+                wait_key_ex(50)
+                if callable(wait_key_ex)
+                else cv2.waitKey(50)
+            )
+            key = _normalize_key(raw_key)
             try:
                 visible = cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE)
             except cv2.error:
@@ -160,7 +211,7 @@ def pick_points(
                 points.clear()
                 message = "Selection reset"
                 draw()
-            elif key in (13, 10):
+            elif _is_confirm_key(raw_key):
                 if len(points) != 2:
                     message = "Enter requires start and goal"
                     draw()
