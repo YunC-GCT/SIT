@@ -310,6 +310,16 @@ class TopLevelPipelineTests(unittest.TestCase):
             )
             self.assertEqual(manifest["stages"]["motion_control"]["status"], "pending")
             self.assertTrue(os.path.exists(report.preview_path))
+            for module in ("map_pipeline", "path_planner", "path_postprocess"):
+                stage_result = json.loads(
+                    Path(manifest["stages"][module]["result"]).read_text(
+                        encoding="utf-8"
+                    )
+                )
+                self.assertTrue(stage_result["logs"])
+                self.assertTrue(
+                    all(os.path.exists(path) for path in stage_result["logs"])
+                )
 
     def test_normal_headless_pipeline_saves_preview_and_skips_motion_by_default(self):
         with tempfile.TemporaryDirectory() as tmp:

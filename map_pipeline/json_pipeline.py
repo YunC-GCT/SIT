@@ -217,6 +217,13 @@ def _record_failed_batch(
             )
         ],
     )
+    log_path = batch.log_path("map_pipeline")
+    with open(log_path, "a", encoding="utf-8") as log:
+        log.write(
+            f"run_id={batch.run_id} input={image_ref} status={result['status']} "
+            f"stage={stage}\n"
+        )
+    result["logs"] = [log_path]
     write_result(output_path, result)
     batch.update_stage(
         "map_pipeline",
@@ -317,6 +324,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         preview_path=preview_path,
         run_id=batch.run_id,
     )
+    log_path = batch.log_path("map_pipeline")
+    with open(log_path, "a", encoding="utf-8") as log:
+        log.write(
+            f"run_id={batch.run_id} input={os.path.abspath(args.image)} "
+            f"status={result['status']}\n"
+        )
+    result["logs"] = [log_path]
+    write_result(output_path, result)
     batch.update_stage(
         "map_pipeline",
         result["status"],
