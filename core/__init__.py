@@ -21,6 +21,12 @@ from .contracts import (
     require_success,
 )
 from .batch import RunBatch
+from .orchestrator import (
+    PipelineOrchestrator,
+    PipelineReport,
+    run_pipeline,
+    save_path_preview,
+)
 
 __all__ = [
     "SCHEMA_VERSION",
@@ -42,4 +48,8 @@ __all__ = [
     "write_result",
     "require_success",
     "RunBatch",
+    "PipelineOrchestrator",
+    "PipelineReport",
+    "run_pipeline",
+    "save_path_preview",
 ]

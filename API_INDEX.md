@@ -8,9 +8,11 @@
 
 | 接口 | 签名 | 说明 |
 |------|------|------|
-| **`main.py`** | `main()` | 全流程总入口 |
-| `run_script(path)` | `-> bool` | 启动子进程（新进程组），转发 SIGINT |
-| `select_and_load_map(...)` | `-> bool` | 选择或创建栅格化地图 |
+| **`main.py`** | `main(argv=None)` | 普通/研究模式 CLI 总入口 |
+| `core.run_pipeline(image_path, **kwargs)` | `-> PipelineReport` | 通过模块 CLI 契约调度完整流程 |
+| `core.PipelineOrchestrator` | `class` | 运行批次、恢复、预览确认和运动门禁 |
+| `core.save_path_preview(...)` | `-> str` | 从地图、规划和后处理 JSON 生成路径预览 |
+| `run_script(path)` | `-> bool` | 兼容入口：启动单个模块脚本 |
 
 ---
 
@@ -35,6 +37,9 @@
 | `core.module_entry(name, status, ...)` | `-> dict` | 运行批次或结果中的模块清单项 |
 | `python -m core.contracts validate <result.json>` | CLI | 校验统一 JSON 结果，可加 `--require-success` 和 `--module` |
 | `python tools/minimal_contract_module.py` | CLI | 最小示例模块，生成成功或 `--fail` 失败运行批次、日志和结果 |
+
+`RunBatch` 会在同一 `run_id` 下续写已有 manifest；重试使用
+`<module>/attempts/attempt-N/result.json`，失败尝试不会覆盖已成功阶段。
 
 ---
 

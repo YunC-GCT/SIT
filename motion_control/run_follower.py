@@ -231,6 +231,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         action="store_true",
         help="确认已检查预检信息并允许启动运动",
     )
+    parser.add_argument(
+        "--stop-only",
+        action="store_true",
+        help="仅连接底盘并重复发布零速度后退出",
+    )
     parser.add_argument("--output", help="motion_control result.json 输出路径")
     parser.add_argument("--run-root", default="runs")
     parser.add_argument("--run-id")
@@ -254,6 +259,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     try:
         config = _load_config(args.config)
+        if args.stop_only:
+            executor = _build_executor(config)
+            executor.setup_ros2()
+            executor.stop_robot()
+            return 0
         result_path = args.postprocess_result or config.get("postprocess_result")
         if not result_path:
             raise ValueError(

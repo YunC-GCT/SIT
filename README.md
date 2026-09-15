@@ -27,8 +27,17 @@
 ```bash
 pip install numpy opencv-python pyyaml
 
-# 全流程一键启动
+# 普通模式：交互选点、路径预览和一次驱动前确认
 python main.py
+
+# 无显示器：显式提供地图和起终点，只生成预览，不驱动车
+python main.py map_pipeline/data/input/01_scattered.png \
+  --headless --start 0,0 --goal 7,7 --no-drive
+
+# 研究模式：多算法比较，默认不驱动车
+python main.py map_pipeline/data/input/01_scattered.png \
+  --mode research --headless --start 0,0 --goal 7,7 \
+  --algorithms astar,dijkstra --seed 42
 
 # 或单独跑某条管线
 python map_pipeline/run_pipeline.py
@@ -38,10 +47,11 @@ python motion_control/run_follower.py   # 需 ROS2 环境
 
 ### 交互流程
 
-1. **建图**：使用配置中的默认栅格宽度，在窗口中选择起点(绿)→终点(红) → 自动 OTSU 二值化；主动指定 `--adjust-grid` 时才进入栅格宽度设置，障碍点要求重新选择
-2. **规划**：选算法（序号 / 逗号分隔多选 / `all`）→ 预览路径 → 确认保存
-3. **循迹**：读取统一路径段 → 预检 `/cmd_vel` → 小车按“转向→零速→前进→停止”执行
-4. **循环**：完成后 `m` 切换地图 / `q` 退出 / 回车重跑；任何时候 Ctrl+C 先停车再退出
+1. **建图**：使用配置中的默认栅格宽度，在窗口中选择起点和终点；无显示器时必须显式提供 `--start` 与 `--goal`
+2. **规划**：普通模式使用默认算法；研究模式可指定多算法、参数和随机种子
+3. **预览**：保存原始路径、平滑路径、执行段和预计时间；普通模式确认后才进入运动控制
+4. **循迹**：预检 `/cmd_vel`，小车按“转向→零速→前进→停止”执行
+5. **循环**：完成后可重跑、换算法、重新后处理、重新选点、换地图或退出；任何时候 Ctrl+C 先停车再退出
 
 ---
 
@@ -49,7 +59,11 @@ python motion_control/run_follower.py   # 需 ROS2 环境
 
 ```
 SIT_LJGH_PROJECT/
-├── main.py               # 顶层调度（串联管线 + SIGINT 转发）
+├── main.py               # 普通/研究模式 CLI
+├── core/
+│   ├── orchestrator.py   # 顶层调度、恢复和预览确认
+│   ├── batch.py          # 运行批次和重试尝试
+│   └── contracts.py      # 统一 JSON 契约
 ├── pipeline_config.py    # 共享常量 + validate_start_goal()
 │
 ├── map_pipeline/         # 建图：图片→栅格→起终点

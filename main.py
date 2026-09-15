@@ -1,190 +1,171 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-全流程入口：栅格化 → 路径规划 → ROS2 循迹
-Ctrl+C 处理：主进程收到 SIGINT 时,不是直接 terminate 子进程(Win32 TerminateProcess
-不会触发子进程的 KeyboardInterrupt),而是向子进程转发 Ctrl+C 事件,让子进程走自己的
-信号处理 + finally 块执行 _stop_robot,确保小车先停再退出。
-"""
+"""Top-level normal/research workflow entry point."""
+
+from __future__ import annotations
+
+import argparse
+import json
 import os
 import sys
-import subprocess
-import shutil
-import signal
+from typing import Sequence
 
-IS_WINDOWS = sys.platform == 'win32'
-current_process = None
+from core.orchestrator import PipelineReport, run_pipeline
 
 
-def send_ctrl_c(proc):
-    """把 Ctrl+C 转发给子进程,让子进程走自己的信号处理 + finally(包含 _stop_robot)。
-    Windows 用 CTRL_C_EVENT 事件,POSIX 用 SIGINT。
-    子进程必须用 CREATE_NEW_PROCESS_GROUP (Windows) 或 start_new_session=True (POSIX) 启动,
-    否则信号会被主进程吸收,转不过去。
-    """
-    if proc is None:
-        return
+def _pair(value: str) -> tuple[int, int]:
     try:
-        if IS_WINDOWS:
-            proc.send_signal(signal.CTRL_C_EVENT)
-        else:
-            proc.send_signal(signal.SIGINT)
-    except (ValueError, OSError):
-        # 子进程已经退出
-        pass
+        row, col = value.split(",", 1)
+        return int(row), int(col)
+    except (AttributeError, TypeError, ValueError) as exc:
+        raise argparse.ArgumentTypeError("coordinate must use row,col") from exc
 
 
-def global_signal_handler(sig, frame):
-    """主进程 SIGINT 处理:转发 Ctrl+C 给子进程,等其优雅退出(小车先停),再走主进程退出。
-    超时兜底用 terminate/kill,保证不会留孤儿进程持续 publish cmd_vel。
-    """
-    global current_process
-    print("\n[Main] 收到中断信号,转发 Ctrl+C 到子进程(让其先停车再退出)...")
-    if current_process is not None and current_process.poll() is None:
-        send_ctrl_c(current_process)
-        try:
-            current_process.wait(timeout=8)
-            print("[Main] 子进程已优雅退出。")
-        except subprocess.TimeoutExpired:
-            print("[Main] 子进程未在 8s 内退出,强制 terminate...")
-            current_process.terminate()
+def _json_object(value: str | None, option: str) -> dict | None:
+    if value is None:
+        return None
+    try:
+        parsed = json.loads(value)
+    except json.JSONDecodeError as exc:
+        raise argparse.ArgumentTypeError(f"{option} must be a JSON object") from exc
+    if not isinstance(parsed, dict):
+        raise argparse.ArgumentTypeError(f"{option} must be a JSON object")
+    return parsed
+
+
+def _choose_image(requested: str | None, *, interactive: bool) -> str | None:
+    if requested:
+        return requested
+    if not interactive:
+        return None
+    input_dir = os.path.join(os.path.dirname(__file__), "map_pipeline", "data", "input")
+    if not os.path.isdir(input_dir):
+        return None
+    extensions = (".jpg", ".jpeg", ".png", ".bmp")
+    files = [
+        name
+        for name in sorted(os.listdir(input_dir))
+        if name.lower().endswith(extensions)
+    ]
+    if not files:
+        return None
+    if interactive and len(files) > 1:
+        print("Available maps:")
+        for index, name in enumerate(files, 1):
+            print(f"  [{index}] {name}")
+        choice = input("Map number (blank uses first): ").strip()
+        if choice:
             try:
-                current_process.wait(timeout=3)
-            except subprocess.TimeoutExpired:
-                print("[Main] terminate 不响应,kill。")
-                current_process.kill()
-                current_process.wait(timeout=2)
-    sys.exit(0)
+                return os.path.join(input_dir, files[int(choice) - 1])
+            except (ValueError, IndexError) as exc:
+                raise ValueError("invalid map number") from exc
+    return os.path.join(input_dir, files[0])
 
 
-def run_script(script_path):
-    """以新进程组方式启动子进程,这样 Ctrl+C 能被转发过去(触发其 KeyboardInterrupt + finally)。
-    用 Popen.stdout 同步读子进程输出,让 SIGINT handler 能在主线程跑。
-    """
-    global current_process
+def run_script(script_path: str) -> bool:
+    """Compatibility wrapper for callers that still launch one module script."""
+    from core.orchestrator import _subprocess_runner
+
+    return _subprocess_runner([sys.executable, script_path]) == 0
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Run the modular path-planning and TurboPi workflow"
+    )
+    parser.add_argument("image", nargs="?", help="map image path")
+    parser.add_argument("--image", dest="image_option", help="map image path")
+    parser.add_argument("--mode", choices=("normal", "research"), default="normal")
+    parser.add_argument("--research", action="store_true", help="alias for --mode research")
+    parser.add_argument("--start", type=_pair, help="grid start row,col")
+    parser.add_argument("--goal", type=_pair, help="grid goal row,col")
+    parser.add_argument("--algorithm")
+    parser.add_argument("--algorithms", help="comma-separated algorithm names")
+    parser.add_argument("--params", type=lambda value: _json_object(value, "--params"))
+    parser.add_argument(
+        "--postprocess-params",
+        type=lambda value: _json_object(value, "--postprocess-params"),
+    )
+    parser.add_argument("--seed", type=int)
+    parser.add_argument("--headless", action="store_true")
+    parser.add_argument("--drive", dest="drive", action="store_true")
+    parser.add_argument("--no-drive", dest="drive", action="store_false")
+    parser.set_defaults(drive=None)
+    parser.add_argument(
+        "--accept-path",
+        action="store_true",
+        help="accept the saved path preview in headless mode",
+    )
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="confirm the final /cmd_vel motion start",
+    )
+    parser.add_argument("--run-root", default="runs")
+    parser.add_argument("--run-id")
+    parser.add_argument("--map-config")
+    parser.add_argument("--planner-config")
+    parser.add_argument("--postprocess-config")
+    parser.add_argument("--motion-config")
+    args = parser.parse_args(argv)
+
+    headless = bool(args.headless or not sys.stdin.isatty())
+    mode = "research" if args.research else args.mode
+    if (args.start is None) != (args.goal is None):
+        parser.error("--start and --goal must be provided together")
+
     try:
-        popen_kwargs = {
-            'stdout': subprocess.PIPE,
-            'stderr': subprocess.STDOUT,
-            'text': True,
-            'bufsize': 1,
-            'encoding': 'utf-8',
-            'errors': 'replace',
-        }
-        if IS_WINDOWS:
-            popen_kwargs['creationflags'] = subprocess.CREATE_NEW_PROCESS_GROUP
-        else:
-            popen_kwargs['start_new_session'] = True
-
-        current_process = subprocess.Popen(
-            [sys.executable, script_path],
-            **popen_kwargs,
+        image = _choose_image(
+            args.image_option or args.image,
+            interactive=not headless,
         )
-        for line in current_process.stdout:
-            print(line, end='')
-        current_process.wait()
-        if current_process.returncode != 0:
-            print(f"[Main] 脚本 {script_path} 退出码: {current_process.returncode}")
-            return False
-        return True
-    except Exception as e:
-        print(f"[Main] 运行脚本异常: {e}")
-        return False
-    finally:
-        current_process = None
+        algorithms = (
+            [name.strip() for name in args.algorithms.split(",") if name.strip()]
+            if args.algorithms
+            else None
+        )
+        report = run_pipeline(
+            image,
+            start=args.start,
+            goal=args.goal,
+            mode=mode,
+            algorithm=args.algorithm,
+            algorithms=algorithms,
+            parameters=args.params,
+            postprocess_parameters=args.postprocess_params,
+            seed=args.seed,
+            headless=headless,
+            drive=args.drive,
+            accept_path=args.accept_path,
+            confirm_drive=args.yes,
+            run_root=args.run_root,
+            run_id=args.run_id,
+            map_config=args.map_config,
+            planner_config=args.planner_config,
+            postprocess_config=args.postprocess_config,
+            motion_config=args.motion_config,
+            interactive_menu=not headless,
+        )
+    except (argparse.ArgumentTypeError, ValueError, OSError, TypeError) as exc:
+        parser.error(str(exc))
+
+    _print_report(report)
+    return report.exit_code
 
 
-def select_and_load_map(base_dir, map_pipe, maps_dir):
-    """选择已有地图或创建新地图，将 grid_map.npz + start_goal.txt 复制到 path_planner/data/input/。
-    返回 True 表示成功，False 表示需退出。
-    """
-    planner_input = os.path.join(base_dir, 'path_planner', 'data', 'input')
-    os.makedirs(planner_input, exist_ok=True)
-
-    if not os.path.exists(maps_dir) or not os.listdir(maps_dir):
-        print("\n[Main] 没有已栅格化的地图,现在开始处理新地图...")
-        return run_script(map_pipe)
-    
-    maps = [d for d in os.listdir(maps_dir) if os.path.isdir(os.path.join(maps_dir, d))]
-    print("\n当前已栅格化的地图:")
-    for i, m in enumerate(maps, 1):
-        print(f"  [{i}] {m}")
-    print("输入地图编号选择地图,或直接按回车开始处理新地图。")
-    choice = input("请输入编号(或回车): ").strip()
-    if choice:
-        try:
-            idx = int(choice) - 1
-            current_map = maps[idx]
-            src_dir = os.path.join(maps_dir, current_map)
-            shutil.copy(os.path.join(src_dir, 'grid_map.npz'), planner_input)
-            shutil.copy(os.path.join(src_dir, 'start_goal.txt'), planner_input)
-            print(f"[Main] 已加载地图: {current_map}")
-            return True
-        except (ValueError, IndexError):
-            print("[Main] 无效选择,退出。")
-            return False
-    else:
-        return run_script(map_pipe)
-
-
-def main():
-    signal.signal(signal.SIGINT, global_signal_handler)
-
-    print("\n" + "=" * 60)
-    print("      机器人路径规划与循迹系统")
-    print("      支持多地图、五大算法、ROS2小车控制")
-    print("=" * 60)
-
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    map_pipe = os.path.join(base_dir, 'map_pipeline', 'run_pipeline.py')
-    planner = os.path.join(base_dir, 'path_planner', 'run_planner.py')
-    follower = os.path.join(base_dir, 'motion_control', 'run_follower.py')
-    maps_dir = os.path.join(base_dir, 'map_pipeline', 'data', 'output', 'maps')
-
-    # 首次选图
-    if not select_and_load_map(base_dir, map_pipe, maps_dir):
-        return
-
-    while True:
-        print("\n" + "=" * 40)
-        print("【阶段1】路径规划")
-        print("=" * 40)
-        if not run_script(planner):
-            print("[Main] 路径规划失败或中断。")
-            break
-
-        path_src = os.path.join(base_dir, 'path_planner', 'data', 'output', 'path_data.npy')
-        grid_src = os.path.join(base_dir, 'path_planner', 'data', 'input', 'grid_map.npz')
-        if os.path.exists(path_src):
-            control_input = os.path.join(base_dir, 'motion_control', 'data', 'input')
-            os.makedirs(control_input, exist_ok=True)
-            shutil.copy(path_src, control_input)
-            # 同时拷贝 grid_map.npz（含 grid_size），供 motion_control 校验尺度
-            if os.path.exists(grid_src):
-                shutil.copy(grid_src, control_input)
-        else:
-            print("[Main] 未找到路径文件,无法进行运动控制。")
-            break
-
-        print("\n" + "=" * 40)
-        print("【阶段2】小车运动控制")
-        print("=" * 40)
-        if not run_script(follower):
-            print("[Main] 运动控制结束或中断。")
-            break
-
-        print("\n任务完成。")
-        cmd = input("输入 'm' 切换地图, 'q' 退出, 回车原地重跑: ").strip().lower()
-        if cmd == 'q':
-            break
-        elif cmd == 'm':
-            print("[Main] 切换地图，重新选择...")
-            if not select_and_load_map(base_dir, map_pipe, maps_dir):
-                break
-        # 其他输入（含回车）= 原地重跑（同一张地图再规划+循迹一次）
-
-    print("[Main] 程序退出。")
+def _print_report(report: PipelineReport) -> None:
+    print(f"Workflow {report.status}: {report.manifest_path}")
+    if report.preview_path:
+        print(f"Path preview: {report.preview_path}")
+    for error in report.errors:
+        print(
+            f"[{error.get('module', 'top_level')}] "
+            f"{error.get('stage', 'unknown')}: "
+            f"input={error.get('input', '<unknown>')} "
+            f"{error.get('reason', 'unknown error')}; "
+            f"suggestion={error.get('suggestion', 'retry')}",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
