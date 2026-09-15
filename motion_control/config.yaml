@@ -1,14 +1,15 @@
 motion_control:
   mode: "ros2"                  # 当前仅支持 "ros2" 模式
-  path_file: "data/input/path_data.npy"
+  postprocess_result: ""        # path_postprocess 的 result.json；也可用 CLI --postprocess-result 指定
+  cmd_vel_topic: "/cmd_vel"     # TurboPi 底盘订阅的绝对速度话题
   grid_size: 0.3                # 每个栅格的边长（米），实车行走时一个格子对应多少米
-  turn_speed: 2.0               # 转向角速度 (rad/s)
-  move_speed: 0.3               # 直行线速度 (m/s)
+  turn_speed: 1.0               # 原地转向角速度命令 (rad/s)，低速起步，实车复核后再调整
+  move_speed: 0.5               # 前进 linear.x 命令值；经验观测中 0.5 约对应 0.30 m/s
+  empirical_forward_speed_m_s: 0.3 # 无 /odom 时 timer 估算使用的经验前进速度
   timer_period: 0.1             # 控制周期（秒）
   odom_topic: "/odom"           # 段切换 odom 闭环依赖的话题（BEST_EFFORT QoS）
-  initial_heading: "east"       # 小车初始朝向:north/east/south/west
-                                 # 麦轮全向模式下，此值固定为小车物理朝向，
-                                 # 所有速度指令均以此为基准坐标系（全程不旋转）
-  # chunk_size: 预留字段。0 = 一次性发完（当前默认）；>0 = 每 N 段切分一次做偏差检查。
-  # 当前版本未启用多段发送（无 odom 中断 / re-plan 需求），仅在 Ros2PathExecutor 留接口。
-  chunk_size: 0
+  initial_heading: "north"      # 小车初始车头方向；地图上方为 north
+  zero_transition_s: 0.1        # 转向和前进之间的零速过渡时间
+  stop_publish_count: 10        # 退出/完成/异常时重复发布零速度次数
+  stop_publish_period_s: 0.02   # 零速度重复发布间隔
+  communication_buffer_s: 0.1   # 停车消息发送后的通信缓冲

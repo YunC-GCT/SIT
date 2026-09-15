@@ -156,31 +156,35 @@
 
 | 接口 | 签名 | 说明 |
 |------|------|------|
-| **`run_follower.py`** | `main()` | 加载路径→校验 grid_size→ROS2 执行 |
+| **`run_follower.py`** | `main(argv=None)` | 读取 `path_postprocess` 结果段→ROS2 `/cmd_vel` 预检→turn 模式执行 |
 
-### 速度指令生成
+### 转向执行与兼容工具
 
 | 接口 | 签名 | 说明 |
 |------|------|------|
 | `delta_to_dir(dr, dc)` | `-> int` | (Δrow,Δcol) → 方向代号 0/1/2/3 |
-| `compute_vel_commands(dirs, heading, speed)` | `-> [(vx,vy),...]` | **麦轮全向**：方向→(vx,vy)，无旋转 |
-| `compute_turn_angles(dirs, heading)` | `-> [deg,...]` | 旧版：方向→转向角序列（保留兼容） |
+| `compute_turn_angles(dirs, heading)` | `-> [deg,...]` | 按初始车头计算离散方向的最短转角 |
+| `compute_segment_turns(segments, initial_heading)` | `-> [deg,...]` | 从统一路径段的 `direction_deg` 计算 turn 模式转角 |
+| `split_turn_angle_deg(angle)` | `-> [deg,...]` | 180 度掉头拆为两个 90 度转向 |
 
 ### Ros2PathExecutor 类
 
 | 方法 | 签名 | 说明 |
 |------|------|------|
-| `__init__(turn_speed, move_speed, grid_size, timer_period, odom_topic, initial_heading)` | — | 参数化构造 |
+| `__init__(turn_speed, move_speed, grid_size, timer_period, odom_topic, initial_heading, ...)` | — | 参数化构造，含绝对 `/cmd_vel`、经验前进速度和停车策略 |
 | `setup_ros2()` | `-> (Node, Publisher)` | 创建 ROS2 基础设施 |
-| `execute_path(deltas, vel_commands, node=None, pub=None)` | — | **主执行循环**：odom 闭环段切换+timer 兜底；finally 安全停车 |
+| `preflight_check(...)` | `-> CmdVelPreflight` | 检查 `/cmd_vel` 底盘订阅者和其他发布者 |
+| `execute_segments(segments, node=None, pub=None, ...)` | `-> ExecutionReport` | 主执行循环：转向→零速→前进→停止，timer 开环估算，finally 安全停车 |
+| `stop_robot()` | `-> None` | 重复发布零速度 Twist 并留出通信缓冲 |
+| `shutdown_once()` | `-> None` | 幂等关闭 ROS2 context |
 
 ### 常量
 
 | 接口 | 值 | 说明 |
 |------|-----|------|
+| `CMD_VEL_TOPIC` | `"/cmd_vel"` | TurboPi 底盘速度话题 |
+| `CHASSIS_NODE_NAME` | `"mecanum_chassis_node"` | 预检期望看到的底盘订阅者 |
 | `DIR_NORTH / EAST / SOUTH / WEST` | 0/1/2/3 | 方向代号 |
-| `SEGMENT_TIMEOUT_RATIO` | 1.5 | 段切换超时倍数 |
-| `ODOM_MISSING_WARN_AFTER` | 30 | 无 odom 报警阈值 |
 
 ---
 
@@ -199,5 +203,5 @@
   │    (smoothed_path + segments)             │
   │                                           │
   └─── motion_control ─── /cmd_vel ───▶ 小车
-       (validated segments; consumer integration pending)
+       (validated segments; turn mode)
 ```

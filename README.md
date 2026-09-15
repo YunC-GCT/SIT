@@ -2,7 +2,7 @@
 
 > **当前状态：设计规格已确定，业务代码正在按新架构重构。** 新实现完成前，旧代码和旧文件契约不代表当前目标流程；请以 [整体程序介绍与使用手册](docs/程序介绍与使用手册.md)、[正式规格](.scratch/path-planning-control-redesign/spec.md) 和已接受 ADR 为准。
 
-> 大创项目：地图图片 → 栅格化 → 路径规划 → 路径后处理 → ROS2 麦轮小车全向循迹。各模块通过文件解耦，可独立运行。
+> 大创项目：地图图片 → 栅格化 → 路径规划 → 路径后处理 → ROS2 TurboPi turn 模式循迹。各模块通过文件解耦，可独立运行。
 
 ---
 
@@ -10,7 +10,7 @@
 
 ```
 地图图片 ──▶ map_pipeline ──▶ path_planner ──▶ path_postprocess ──▶ motion_control ──▶ /cmd_vel
-             建图+选点       五种算法选择      平滑/复核/分段        麦轮全向平移
+             建图+选点       五种算法选择      平滑/复核/分段        turn 模式循迹
 ```
 
 | 管线 | 输入 | 输出 | 详读 |
@@ -18,7 +18,7 @@
 | **map_pipeline** | 图片 (.jpg/.png/.bmp) | 地图 JSON（含 grid_size） | [→ README](map_pipeline/README.md) |
 | **path_planner** | 地图 JSON | 原始路径 JSON | [→ README](path_planner/README.md) |
 | **path_postprocess** | 地图 JSON + 原始路径 JSON | 平滑路径和执行段 JSON | [→ README](path_postprocess/README.md) |
-| **motion_control** | 已复核路径段（后续接入） | ROS2 `/cmd_vel`（Twist） | [→ README](motion_control/README.md) |
+| **motion_control** | 已复核路径段 JSON | ROS2 `/cmd_vel`（Twist） | [→ README](motion_control/README.md) |
 
 ---
 
@@ -40,7 +40,7 @@ python motion_control/run_follower.py   # 需 ROS2 环境
 
 1. **建图**：使用配置中的默认栅格宽度，在窗口中选择起点(绿)→终点(红) → 自动 OTSU 二值化；主动指定 `--adjust-grid` 时才进入栅格宽度设置，障碍点要求重新选择
 2. **规划**：选算法（序号 / 逗号分隔多选 / `all`）→ 预览路径 → 确认保存
-3. **循迹**：启动校验 grid_size → 小车按 odom 位移逐段平移（全程 `angular.z=0`，无转向）
+3. **循迹**：读取统一路径段 → 预检 `/cmd_vel` → 小车按“转向→零速→前进→停止”执行
 4. **循环**：完成后 `m` 切换地图 / `q` 退出 / 回车重跑；任何时候 Ctrl+C 先停车再退出
 
 ---
@@ -73,10 +73,10 @@ SIT_LJGH_PROJECT/
 │       ├── smoothers.py
 │       └── path_postprocessor.py
 │
-└── motion_control/        # 循迹：路径→麦轮全向平移
-    ├── config.yaml          # initial_heading=east（小车物理朝向）
-    ├── run_follower.py      # 加载路径 + interpolate_path 展开大步长
-    └── src/ros2_interface.py  # 麦轮全向 + odom 闭环 + 安全停车
+└── motion_control/        # 循迹：统一路径段→TurboPi /cmd_vel
+    ├── config.yaml          # turn 模式、正北初始车头和安全停车参数
+    ├── run_follower.py      # 读取 path_postprocess result.json
+    └── src/ros2_interface.py  # turn 模式 + 开环估算 + 安全停车
 
 docs/
 └── robot_direction_reference.png  # 小车坐标系参考图
@@ -88,13 +88,13 @@ docs/
 
 | 特性 | 说明 |
 |------|------|
-| **麦轮全向平移** | 不转向，直接用 `(vx,vy)` 走四个方向，`angular.z=0` |
-| **odom 闭环** | 段切换由里程计位移驱动，odom 不可用时 timer 兜底 |
-| **grid_size 校验** | 地图创建时写入物理尺度，循迹启动时自动校验一致性 |
+| **Turn 运动控制** | 每段先原地转向，再零速过渡，沿车头方向前进并停止 |
+| **Timer 开环估算** | 当前实车没有 `/odom`，使用可配置的约 `0.30 m/s` 经验速度 |
+| **驱动前预检** | 检查 `/cmd_vel` 底盘订阅者和其他发布者，未确认时不驱动 |
 | **安全停车** | Ctrl+C → 连发 10 次零速度 Twist + DDS 缓冲 → 再退出 |
 | **算法可插拔** | 新算法 = 实现 `plan()` + 注册一行 → 自动接入全流程 |
-| **路径插值** | `interpolate_path()` 自动将 PRM/RRT/RRT* 大步长展开为逐格步长，方向/距离均正确 |
-| **坐标系** | 小车默认朝 **EAST**，速度指令以此为基准（全程 `angular.z=0` 不旋转），见 `docs/` |
+| **统一路径段** | motion_control 只读取 path_postprocess 的 `outputs.segments` |
+| **坐标系** | 地图上方为北，默认初始车头为 `north`；ROS `angular.z` 按底盘坐标系发布 |
 | **cv2 统一预览** | 选点/栅格/路径/对比全部 cv2.imshow 弹窗，零 matplotlib 依赖 |
 
 ---
@@ -106,8 +106,8 @@ docs/
 | **新增规划算法** | `planners/` 下实现 `GlobalPlanner` → `planner_factory.py` `_registry` 加一行 → `config.yaml` 加名字 |
 | **新算法复用碰撞** | `from src.grid_utils import line_of_sight` |
 | **调速度/尺度** | 改对应 `config.yaml` |
-| **初始朝向不对** | 改 `motion_control/config.yaml` 的 `initial_heading`，默认 `east` |
-| **仿真模式** | 注入 FakePublisher 到 `execute_path(node, pub)` |
+| **初始朝向不对** | 改 `motion_control/config.yaml` 的 `initial_heading` |
+| **测试运动控制** | 运行 `python -m unittest tests.test_motion_control_turn -v` |
 
 ---
 
