@@ -1,0 +1,88 @@
+{
+  "map": "random512-10-0",
+  "scenario": 206,
+  "start": [
+    237,
+    225
+  ],
+  "goal": [
+    309,
+    245
+  ],
+  "algorithm": "rrt_star",
+  "params": {
+    "step_size": 1
+  },
+  "seed": 42,
+  "found": true,
+  "valid": true,
+  "nodes": 13,
+  "elapsed_s": 1.1642,
+  "tree_nodes": 1663,
+  "unique_nodes": 1498,
+  "nearest_goal": 0.0,
+  "postprocess": {
+    "default": {
+      "status": "success",
+      "errors": []
+    },
+    "unsmoothed": {
+      "status": "success",
+      "errors": []
+    }
+  },
+  "path": [
+    [
+      237,
+      225
+    ],
+    [
+      246,
+      226
+    ],
+    [
+      251,
+      227
+    ],
+    [
+      255,
+      228
+    ],
+    [
+      262,
+      230
+    ],
+    [
+      271,
+      234
+    ],
+    [
+      276,
+      237
+    ],
+    [
+      283,
+      240
+    ],
+    [
+      285,
+      241
+    ],
+    [
+      292,
+      243
+    ],
+    [
+      301,
+      245
+    ],
+    [
+      309,
+      245
+    ],
+    [
+      309,
+      245
+    ]
+  ]
+}

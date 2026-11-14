@@ -1,0 +1,955 @@
+{
+  "algorithm": "rrt_adaptive",
+  "parameters": {
+    "adaptive_step": true,
+    "max_iter": 200000,
+    "step_size": 5,
+    "goal_sample_rate": 0.05
+  },
+  "timeout_s": 30,
+  "baseline": "all-maps-latest-config.json",
+  "expected": 36,
+  "results": [
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 1,
+      "scenario_index": 262,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        393,
+        165
+      ],
+      "goal": [
+        442,
+        97
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "success",
+      "outcome": "success",
+      "planning_s": 3.882850199996028,
+      "nodes": 137,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 2,
+      "scenario_index": 986,
+      "reference_length_octile": 394.76450195,
+      "start": [
+        285,
+        138
+      ],
+      "goal": [
+        15,
+        297
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 3,
+      "scenario_index": 1983,
+      "reference_length_octile": 795.95541076,
+      "start": [
+        460,
+        506
+      ],
+      "goal": [
+        6,
+        52
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 1,
+      "scenario_index": 1035,
+      "reference_length_octile": 414.60512237,
+      "start": [
+        254,
+        6
+      ],
+      "goal": [
+        21,
+        234
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 3,
+      "scenario_index": 264,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        184,
+        411
+      ],
+      "goal": [
+        129,
+        473
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "success",
+      "outcome": "success",
+      "planning_s": 6.2125091000052635,
+      "nodes": 152,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 2,
+      "scenario_index": 1565,
+      "reference_length_octile": 625.11479034,
+      "start": [
+        476,
+        495
+      ],
+      "goal": [
+        1,
+        261
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 2,
+      "scenario_index": 100,
+      "reference_length_octile": 43.14213562,
+      "start": [
+        11,
+        276
+      ],
+      "goal": [
+        5,
+        315
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "success",
+      "outcome": "timeout"
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 1,
+      "scenario_index": 2036,
+      "reference_length_octile": 814.33513641,
+      "start": [
+        63,
+        482
+      ],
+      "goal": [
+        505,
+        29
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 3,
+      "scenario_index": 1792,
+      "reference_length_octile": 718.62445831,
+      "start": [
+        449,
+        59
+      ],
+      "goal": [
+        158,
+        454
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 1,
+      "scenario_index": 968,
+      "reference_length_octile": 384.58073578,
+      "start": [
+        179,
+        383
+      ],
+      "goal": [
+        507,
+        374
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 3,
+      "scenario_index": 629,
+      "reference_length_octile": 250.52186127,
+      "start": [
+        52,
+        311
+      ],
+      "goal": [
+        149,
+        103
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "success",
+      "outcome": "timeout"
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 2,
+      "scenario_index": 1760,
+      "reference_length_octile": 704.64170227,
+      "start": [
+        445,
+        111
+      ],
+      "goal": [
+        36,
+        504
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 2,
+      "scenario_index": 6892,
+      "reference_length_octile": 2756.32207641,
+      "start": [
+        171,
+        130
+      ],
+      "goal": [
+        13,
+        165
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "NO_PATH",
+      "outcome": "NO_PATH",
+      "planning_s": 24.005114100000355,
+      "nodes": 0,
+      "search_diagnostics": {}
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 1,
+      "scenario_index": 434,
+      "reference_length_octile": 172.66904755,
+      "start": [
+        294,
+        490
+      ],
+      "goal": [
+        323,
+        487
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "NO_PATH",
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 3,
+      "scenario_index": 10055,
+      "reference_length_octile": 4020.10086364,
+      "start": [
+        197,
+        384
+      ],
+      "goal": [
+        478,
+        206
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "NO_PATH",
+      "outcome": "NO_PATH",
+      "planning_s": 27.278444800002035,
+      "nodes": 0,
+      "search_diagnostics": {}
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 1,
+      "scenario_index": 5353,
+      "reference_length_octile": 2141.01846923,
+      "start": [
+        469,
+        7
+      ],
+      "goal": [
+        450,
+        431
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 2,
+      "scenario_index": 6311,
+      "reference_length_octile": 2526.69465942,
+      "start": [
+        405,
+        112
+      ],
+      "goal": [
+        486,
+        149
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 3,
+      "scenario_index": 4424,
+      "reference_length_octile": 1768.91587219,
+      "start": [
+        490,
+        218
+      ],
+      "goal": [
+        94,
+        26
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "NO_PATH",
+      "outcome": "NO_PATH",
+      "planning_s": 19.484563699996215,
+      "nodes": 0,
+      "search_diagnostics": {}
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 1,
+      "scenario_index": 6208,
+      "reference_length_octile": 2483.02351989,
+      "start": [
+        35,
+        195
+      ],
+      "goal": [
+        263,
+        329
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 2,
+      "scenario_index": 6505,
+      "reference_length_octile": 2601.98398132,
+      "start": [
+        452,
+        487
+      ],
+      "goal": [
+        108,
+        449
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 3,
+      "scenario_index": 4442,
+      "reference_length_octile": 1777.19509277,
+      "start": [
+        471,
+        262
+      ],
+      "goal": [
+        73,
+        411
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 1,
+      "scenario_index": 306,
+      "reference_length_octile": 123.33809509,
+      "start": [
+        100,
+        14
+      ],
+      "goal": [
+        180,
+        96
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "success",
+      "outcome": "success",
+      "planning_s": 0.007340099997236393,
+      "nodes": 112,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 2,
+      "scenario_index": 1340,
+      "reference_length_octile": 537.38181762,
+      "start": [
+        251,
+        460
+      ],
+      "goal": [
+        507,
+        31
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "success",
+      "outcome": "success",
+      "planning_s": 1.6656137999962084,
+      "nodes": 479,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 3,
+      "scenario_index": 1070,
+      "reference_length_octile": 428.76955261,
+      "start": [
+        265,
+        459
+      ],
+      "goal": [
+        269,
+        41
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "success",
+      "outcome": "success",
+      "planning_s": 0.8758745999948587,
+      "nodes": 467,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 1,
+      "scenario_index": 1804,
+      "reference_length_octile": 722.85995636,
+      "start": [
+        29,
+        323
+      ],
+      "goal": [
+        8,
+        74
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "success",
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 2,
+      "scenario_index": 1956,
+      "reference_length_octile": 781.64170227,
+      "start": [
+        220,
+        304
+      ],
+      "goal": [
+        230,
+        393
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 2,
+      "scenario_index": 432,
+      "reference_length_octile": 172.09545441,
+      "start": [
+        411,
+        3
+      ],
+      "goal": [
+        485,
+        138
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "success",
+      "outcome": "success",
+      "planning_s": 0.7455008999968413,
+      "nodes": 285,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 3,
+      "scenario_index": 3728,
+      "reference_length_octile": 1491.26616058,
+      "start": [
+        160,
+        213
+      ],
+      "goal": [
+        361,
+        260
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 1,
+      "scenario_index": 1157,
+      "reference_length_octile": 462.01428528,
+      "start": [
+        368,
+        464
+      ],
+      "goal": [
+        83,
+        177
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "success",
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 3,
+      "scenario_index": 1812,
+      "reference_length_octile": 727.30569915,
+      "start": [
+        465,
+        471
+      ],
+      "goal": [
+        23,
+        0
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 1,
+      "scenario_index": 1504,
+      "reference_length_octile": 603.97770538,
+      "start": [
+        265,
+        511
+      ],
+      "goal": [
+        214,
+        1
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 2,
+      "scenario_index": 791,
+      "reference_length_octile": 318.16652222,
+      "start": [
+        250,
+        67
+      ],
+      "goal": [
+        4,
+        141
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 3,
+      "scenario_index": 1616,
+      "reference_length_octile": 645.37467499,
+      "start": [
+        314,
+        487
+      ],
+      "goal": [
+        92,
+        4
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 1,
+      "scenario_index": 1969,
+      "reference_length_octile": 784.119841,
+      "start": [
+        123,
+        359
+      ],
+      "goal": [
+        402,
+        347
+      ],
+      "seed": 43,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 2,
+      "scenario_index": 1192,
+      "reference_length_octile": 476.99494934,
+      "start": [
+        187,
+        239
+      ],
+      "goal": [
+        375,
+        369
+      ],
+      "seed": 44,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 3,
+      "scenario_index": 3005,
+      "reference_length_octile": 1200.73001404,
+      "start": [
+        494,
+        320
+      ],
+      "goal": [
+        9,
+        454
+      ],
+      "seed": 45,
+      "algorithm": "rrt_adaptive",
+      "parameters": {
+        "adaptive_step": true,
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05
+      },
+      "baseline_outcome": "timeout",
+      "outcome": "timeout"
+    }
+  ],
+  "complete": true,
+  "all_passed": false
+}

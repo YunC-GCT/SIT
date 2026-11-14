@@ -1,0 +1,992 @@
+{
+  "created_at": "2026-11-14T09:47:17.130020+00:00",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "versions": {
+    "numpy": "2.5.4",
+    "opencv": "5.0.0",
+    "yaml": "6.0.3"
+  },
+  "status": "success",
+  "public_maps": [
+    {
+      "map": "8room_000",
+      "family": "room",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 199,
+      "start": "197,315",
+      "goal": "171,260",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "16room_000",
+      "family": "room",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 191,
+      "start": "328,196",
+      "goal": "345,177",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "32room_000",
+      "family": "room",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 207,
+      "start": "215,300",
+      "goal": "231,295",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "64room_000",
+      "family": "room",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 202,
+      "start": "31,45",
+      "goal": "77,33",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "maze512-4-0",
+      "family": "maze",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 207,
+      "start": "367,381",
+      "goal": "350,406",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "maze512-8-0",
+      "family": "maze",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 199,
+      "start": "387,453",
+      "goal": "378,505",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "maze512-16-0",
+      "family": "maze",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 202,
+      "start": "210,64",
+      "goal": "177,14",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "maze512-32-0",
+      "family": "maze",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 190,
+      "start": "243,396",
+      "goal": "179,432",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "random512-10-0",
+      "family": "random",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 206,
+      "start": "237,225",
+      "goal": "309,245",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "random512-20-0",
+      "family": "random",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 196,
+      "start": "208,173",
+      "goal": "136,179",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "random512-30-0",
+      "family": "random",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 202,
+      "start": "492,172",
+      "goal": "436,137",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    },
+    {
+      "map": "random512-40-0",
+      "family": "random",
+      "shape": [
+        512,
+        512
+      ],
+      "exact_grid": true,
+      "hashes_match": true,
+      "scenario_index": 191,
+      "start": "373,472",
+      "goal": "421,473",
+      "pipeline": {
+        "outcome": "success",
+        "exit_code": 0,
+        "errors": []
+      },
+      "batch_status": "success",
+      "motion_status": "pending"
+    }
+  ],
+  "sampling_observations": [
+    {
+      "map": "8room_000",
+      "algorithm": "prm",
+      "seed": 42,
+      "planner": {
+        "outcome": "failed",
+        "exit_code": 2,
+        "errors": [
+          {
+            "code": "NO_PATH",
+            "module": "path_planner",
+            "stage": "plan",
+            "error_type": "unreachable",
+            "reason": "prm 未找到从 (197, 315) 到 (171, 260) 的可行路径",
+            "input": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\8room_000-prm\\map_pipeline\\result.json",
+            "suggestion": "检查障碍栅格、起终点连通性或增加采样/迭代参数"
+          }
+        ]
+      },
+      "parameters": {
+        "algorithm": "prm",
+        "algorithm_parameters": {
+          "num_samples": 500,
+          "k_neighbors": 10,
+          "max_edge_len": 30
+        },
+        "seed": 42,
+        "grid_size_m": 1.0
+      },
+      "metrics": {
+        "found_path": false,
+        "planning_time_s": 0.048046900003100745,
+        "raw_node_count": 0,
+        "raw_path_length_grid": 0,
+        "raw_path_length_m": 0.0,
+        "random_seed": 42
+      },
+      "postprocess_status": null
+    },
+    {
+      "map": "8room_000",
+      "algorithm": "rrt",
+      "seed": 42,
+      "planner": {
+        "outcome": "failed",
+        "exit_code": 2,
+        "errors": [
+          {
+            "code": "NO_PATH",
+            "module": "path_planner",
+            "stage": "plan",
+            "error_type": "unreachable",
+            "reason": "rrt 未找到从 (197, 315) 到 (171, 260) 的可行路径",
+            "input": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\8room_000-rrt\\map_pipeline\\result.json",
+            "suggestion": "检查障碍栅格、起终点连通性或增加采样/迭代参数"
+          }
+        ]
+      },
+      "parameters": {
+        "algorithm": "rrt",
+        "algorithm_parameters": {
+          "max_iter": 2000,
+          "step_size": 5,
+          "goal_sample_rate": 0.1
+        },
+        "seed": 42,
+        "grid_size_m": 1.0
+      },
+      "metrics": {
+        "found_path": false,
+        "planning_time_s": 0.014536200003931299,
+        "raw_node_count": 0,
+        "raw_path_length_grid": 0,
+        "raw_path_length_m": 0.0,
+        "random_seed": 42
+      },
+      "postprocess_status": null
+    },
+    {
+      "map": "8room_000",
+      "algorithm": "rrt_star",
+      "seed": 42,
+      "planner": {
+        "outcome": "failed",
+        "exit_code": 2,
+        "errors": [
+          {
+            "code": "NO_PATH",
+            "module": "path_planner",
+            "stage": "plan",
+            "error_type": "unreachable",
+            "reason": "rrt_star 未找到从 (197, 315) 到 (171, 260) 的可行路径",
+            "input": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\8room_000-rrt_star\\map_pipeline\\result.json",
+            "suggestion": "检查障碍栅格、起终点连通性或增加采样/迭代参数"
+          }
+        ]
+      },
+      "parameters": {
+        "algorithm": "rrt_star",
+        "algorithm_parameters": {
+          "max_iter": 2000,
+          "step_size": 5,
+          "goal_sample_rate": 0.1,
+          "search_radius": 10.0
+        },
+        "seed": 42,
+        "grid_size_m": 1.0
+      },
+      "metrics": {
+        "found_path": false,
+        "planning_time_s": 0.012608100005309097,
+        "raw_node_count": 0,
+        "raw_path_length_grid": 0,
+        "raw_path_length_m": 0.0,
+        "random_seed": 42
+      },
+      "postprocess_status": null
+    },
+    {
+      "map": "maze512-4-0",
+      "algorithm": "prm",
+      "seed": 42,
+      "planner": {
+        "outcome": "failed",
+        "exit_code": 2,
+        "errors": [
+          {
+            "code": "NO_PATH",
+            "module": "path_planner",
+            "stage": "plan",
+            "error_type": "unreachable",
+            "reason": "prm 未找到从 (367, 381) 到 (350, 406) 的可行路径",
+            "input": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\maze512-4-0-prm\\map_pipeline\\result.json",
+            "suggestion": "检查障碍栅格、起终点连通性或增加采样/迭代参数"
+          }
+        ]
+      },
+      "parameters": {
+        "algorithm": "prm",
+        "algorithm_parameters": {
+          "num_samples": 500,
+          "k_neighbors": 10,
+          "max_edge_len": 30
+        },
+        "seed": 42,
+        "grid_size_m": 1.0
+      },
+      "metrics": {
+        "found_path": false,
+        "planning_time_s": 0.05421250000654254,
+        "raw_node_count": 0,
+        "raw_path_length_grid": 0,
+        "raw_path_length_m": 0.0,
+        "random_seed": 42
+      },
+      "postprocess_status": null
+    },
+    {
+      "map": "maze512-4-0",
+      "algorithm": "rrt",
+      "seed": 42,
+      "planner": {
+        "outcome": "failed",
+        "exit_code": 2,
+        "errors": [
+          {
+            "code": "NO_PATH",
+            "module": "path_planner",
+            "stage": "plan",
+            "error_type": "unreachable",
+            "reason": "rrt 未找到从 (367, 381) 到 (350, 406) 的可行路径",
+            "input": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\maze512-4-0-rrt\\map_pipeline\\result.json",
+            "suggestion": "检查障碍栅格、起终点连通性或增加采样/迭代参数"
+          }
+        ]
+      },
+      "parameters": {
+        "algorithm": "rrt",
+        "algorithm_parameters": {
+          "max_iter": 2000,
+          "step_size": 5,
+          "goal_sample_rate": 0.1
+        },
+        "seed": 42,
+        "grid_size_m": 1.0
+      },
+      "metrics": {
+        "found_path": false,
+        "planning_time_s": 0.014415900004678406,
+        "raw_node_count": 0,
+        "raw_path_length_grid": 0,
+        "raw_path_length_m": 0.0,
+        "random_seed": 42
+      },
+      "postprocess_status": null
+    },
+    {
+      "map": "maze512-4-0",
+      "algorithm": "rrt_star",
+      "seed": 42,
+      "planner": {
+        "outcome": "failed",
+        "exit_code": 2,
+        "errors": [
+          {
+            "code": "NO_PATH",
+            "module": "path_planner",
+            "stage": "plan",
+            "error_type": "unreachable",
+            "reason": "rrt_star 未找到从 (367, 381) 到 (350, 406) 的可行路径",
+            "input": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\maze512-4-0-rrt_star\\map_pipeline\\result.json",
+            "suggestion": "检查障碍栅格、起终点连通性或增加采样/迭代参数"
+          }
+        ]
+      },
+      "parameters": {
+        "algorithm": "rrt_star",
+        "algorithm_parameters": {
+          "max_iter": 2000,
+          "step_size": 5,
+          "goal_sample_rate": 0.1,
+          "search_radius": 10.0
+        },
+        "seed": 42,
+        "grid_size_m": 1.0
+      },
+      "metrics": {
+        "found_path": false,
+        "planning_time_s": 0.01495910000812728,
+        "raw_node_count": 0,
+        "raw_path_length_grid": 0,
+        "raw_path_length_m": 0.0,
+        "random_seed": 42
+      },
+      "postprocess_status": null
+    },
+    {
+      "map": "random512-10-0",
+      "algorithm": "prm",
+      "seed": 42,
+      "planner": {
+        "outcome": "failed",
+        "exit_code": 2,
+        "errors": [
+          {
+            "code": "NO_PATH",
+            "module": "path_planner",
+            "stage": "plan",
+            "error_type": "unreachable",
+            "reason": "prm 未找到从 (237, 225) 到 (309, 245) 的可行路径",
+            "input": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\random512-10-0-prm\\map_pipeline\\result.json",
+            "suggestion": "检查障碍栅格、起终点连通性或增加采样/迭代参数"
+          }
+        ]
+      },
+      "parameters": {
+        "algorithm": "prm",
+        "algorithm_parameters": {
+          "num_samples": 500,
+          "k_neighbors": 10,
+          "max_edge_len": 30
+        },
+        "seed": 42,
+        "grid_size_m": 1.0
+      },
+      "metrics": {
+        "found_path": false,
+        "planning_time_s": 0.06442680000327528,
+        "raw_node_count": 0,
+        "raw_path_length_grid": 0,
+        "raw_path_length_m": 0.0,
+        "random_seed": 42
+      },
+      "postprocess_status": null
+    },
+    {
+      "map": "random512-10-0",
+      "algorithm": "rrt",
+      "seed": 42,
+      "planner": {
+        "outcome": "failed",
+        "exit_code": 2,
+        "errors": [
+          {
+            "code": "NO_PATH",
+            "module": "path_planner",
+            "stage": "plan",
+            "error_type": "unreachable",
+            "reason": "rrt 未找到从 (237, 225) 到 (309, 245) 的可行路径",
+            "input": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\random512-10-0-rrt\\map_pipeline\\result.json",
+            "suggestion": "检查障碍栅格、起终点连通性或增加采样/迭代参数"
+          }
+        ]
+      },
+      "parameters": {
+        "algorithm": "rrt",
+        "algorithm_parameters": {
+          "max_iter": 2000,
+          "step_size": 5,
+          "goal_sample_rate": 0.1
+        },
+        "seed": 42,
+        "grid_size_m": 1.0
+      },
+      "metrics": {
+        "found_path": false,
+        "planning_time_s": 0.2013238000072306,
+        "raw_node_count": 0,
+        "raw_path_length_grid": 0,
+        "raw_path_length_m": 0.0,
+        "random_seed": 42
+      },
+      "postprocess_status": null
+    },
+    {
+      "map": "random512-10-0",
+      "algorithm": "rrt_star",
+      "seed": 42,
+      "planner": {
+        "outcome": "failed",
+        "exit_code": 2,
+        "errors": [
+          {
+            "code": "NO_PATH",
+            "module": "path_planner",
+            "stage": "plan",
+            "error_type": "unreachable",
+            "reason": "rrt_star 未找到从 (237, 225) 到 (309, 245) 的可行路径",
+            "input": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\random512-10-0-rrt_star\\map_pipeline\\result.json",
+            "suggestion": "检查障碍栅格、起终点连通性或增加采样/迭代参数"
+          }
+        ]
+      },
+      "parameters": {
+        "algorithm": "rrt_star",
+        "algorithm_parameters": {
+          "max_iter": 2000,
+          "step_size": 5,
+          "goal_sample_rate": 0.1,
+          "search_radius": 10.0
+        },
+        "seed": 42,
+        "grid_size_m": 1.0
+      },
+      "metrics": {
+        "found_path": false,
+        "planning_time_s": 0.3082789000036428,
+        "raw_node_count": 0,
+        "raw_path_length_grid": 0,
+        "raw_path_length_m": 0.0,
+        "random_seed": 42
+      },
+      "postprocess_status": null
+    }
+  ],
+  "fake_ros2_acceptance": [
+    {
+      "mode": "normal",
+      "outcome": "success",
+      "exit_code": 0,
+      "errors": [],
+      "checks": [
+        {
+          "name": "map_pipeline_contract_and_trace",
+          "status": "success",
+          "module": "map_pipeline",
+          "details": {
+            "status": "success",
+            "result": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-normal\\map_pipeline\\result.json",
+            "result_status": "success",
+            "logs": [
+              "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-normal\\map_pipeline\\module.log"
+            ],
+            "logs_exist": true
+          }
+        },
+        {
+          "name": "path_planner_contract_and_trace",
+          "status": "success",
+          "module": "path_planner",
+          "details": {
+            "status": "success",
+            "result": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-normal\\path_planner\\result.json",
+            "result_status": "success",
+            "logs": [
+              "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-normal\\path_planner\\module.log"
+            ],
+            "logs_exist": true
+          }
+        },
+        {
+          "name": "path_postprocess_contract_and_trace",
+          "status": "success",
+          "module": "path_postprocess",
+          "details": {
+            "status": "success",
+            "result": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-normal\\path_postprocess\\result.json",
+            "result_status": "success",
+            "logs": [
+              "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-normal\\path_postprocess\\module.log"
+            ],
+            "logs_exist": true
+          }
+        },
+        {
+          "name": "fake_cmd_vel_preflight_fixture",
+          "status": "success",
+          "details": {
+            "topic": "/cmd_vel",
+            "subscribers": [
+              "/mecanum_chassis_node"
+            ],
+            "publishers": [
+              "/path_follower"
+            ],
+            "other_publishers": []
+          }
+        },
+        {
+          "name": "turn_and_forward_sequence",
+          "status": "success",
+          "details": {
+            "segment_count": 36,
+            "command_count": 860,
+            "open_loop": true,
+            "completed": true,
+            "stopped": true
+          }
+        },
+        {
+          "name": "safe_stop_and_shutdown",
+          "status": "success",
+          "details": {
+            "last_command": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "ctrl_c_safe_stop",
+          "status": "success",
+          "details": {
+            "exception_type": "KeyboardInterrupt",
+            "stopped": true,
+            "zero_before_destroy": true,
+            "elapsed_s": 0.1,
+            "node_destroyed": true,
+            "events": [
+              "publish_motion",
+              "publish_zero",
+              "publish_zero",
+              "publish_zero",
+              "publish_zero",
+              "destroy_node"
+            ],
+            "commands": [
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": -1.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              }
+            ]
+          }
+        },
+        {
+          "name": "exception_safe_stop",
+          "status": "success",
+          "details": {
+            "exception_type": "RuntimeError",
+            "stopped": true,
+            "zero_before_destroy": true,
+            "elapsed_s": 0.0,
+            "node_destroyed": true,
+            "events": [
+              "publish_motion",
+              "publish_zero",
+              "publish_zero",
+              "publish_zero",
+              "publish_zero",
+              "destroy_node"
+            ],
+            "commands": [
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": -1.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              }
+            ]
+          }
+        }
+      ],
+      "manual_hardware_status": "pending_manual"
+    },
+    {
+      "mode": "research",
+      "outcome": "success",
+      "exit_code": 0,
+      "errors": [],
+      "checks": [
+        {
+          "name": "map_pipeline_contract_and_trace",
+          "status": "success",
+          "module": "map_pipeline",
+          "details": {
+            "status": "success",
+            "result": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-research\\map_pipeline\\result.json",
+            "result_status": "success",
+            "logs": [
+              "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-research\\map_pipeline\\module.log"
+            ],
+            "logs_exist": true
+          }
+        },
+        {
+          "name": "path_planner_contract_and_trace",
+          "status": "success",
+          "module": "path_planner",
+          "details": {
+            "status": "success",
+            "result": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-research\\path_planner\\result.json",
+            "result_status": "success",
+            "logs": [
+              "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-research\\path_planner\\module.log"
+            ],
+            "logs_exist": true
+          }
+        },
+        {
+          "name": "path_postprocess_contract_and_trace",
+          "status": "success",
+          "module": "path_postprocess",
+          "details": {
+            "status": "success",
+            "result": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-research\\path_postprocess\\result.json",
+            "result_status": "success",
+            "logs": [
+              "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\sit-offline-s_qdllda\\acceptance-research\\path_postprocess\\module.log"
+            ],
+            "logs_exist": true
+          }
+        },
+        {
+          "name": "fake_cmd_vel_preflight_fixture",
+          "status": "success",
+          "details": {
+            "topic": "/cmd_vel",
+            "subscribers": [
+              "/mecanum_chassis_node"
+            ],
+            "publishers": [
+              "/path_follower"
+            ],
+            "other_publishers": []
+          }
+        },
+        {
+          "name": "turn_and_forward_sequence",
+          "status": "success",
+          "details": {
+            "segment_count": 36,
+            "command_count": 860,
+            "open_loop": true,
+            "completed": true,
+            "stopped": true
+          }
+        },
+        {
+          "name": "safe_stop_and_shutdown",
+          "status": "success",
+          "details": {
+            "last_command": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "ctrl_c_safe_stop",
+          "status": "success",
+          "details": {
+            "exception_type": "KeyboardInterrupt",
+            "stopped": true,
+            "zero_before_destroy": true,
+            "elapsed_s": 0.1,
+            "node_destroyed": true,
+            "events": [
+              "publish_motion",
+              "publish_zero",
+              "publish_zero",
+              "publish_zero",
+              "publish_zero",
+              "destroy_node"
+            ],
+            "commands": [
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": -1.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              }
+            ]
+          }
+        },
+        {
+          "name": "exception_safe_stop",
+          "status": "success",
+          "details": {
+            "exception_type": "RuntimeError",
+            "stopped": true,
+            "zero_before_destroy": true,
+            "elapsed_s": 0.0,
+            "node_destroyed": true,
+            "events": [
+              "publish_motion",
+              "publish_zero",
+              "publish_zero",
+              "publish_zero",
+              "publish_zero",
+              "destroy_node"
+            ],
+            "commands": [
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": -1.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              },
+              {
+                "linear_x": 0.0,
+                "linear_y": 0.0,
+                "angular_z": 0.0
+              }
+            ]
+          }
+        }
+      ],
+      "manual_hardware_status": "pending_manual"
+    }
+  ],
+  "sampling_failure_contracts_ok": true,
+  "negative_cli_checks": [
+    {
+      "case": "missing",
+      "exit_code": 2,
+      "batch_status": "failed",
+      "stages": [
+        "map_pipeline"
+      ],
+      "passed": true
+    },
+    {
+      "case": "missing-points",
+      "exit_code": 2,
+      "batch_status": "failed",
+      "stages": [
+        "workflow"
+      ],
+      "passed": true
+    }
+  ],
+  "scope": "offline software only; sampling NO_PATH is an observation, not a pass guarantee",
+  "transient_artifacts": "TemporaryDirectory removed; no raw runs retained"
+}

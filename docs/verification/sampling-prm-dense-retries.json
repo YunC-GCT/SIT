@@ -1,0 +1,292 @@
+[
+  {
+    "map": "64room_000",
+    "map_file": "datasets/movingai/room/64room_000.map",
+    "group": 1,
+    "scenario_index": 968,
+    "reference_length_octile": 384.58073578,
+    "start": [
+      179,
+      383
+    ],
+    "goal": [
+      507,
+      374
+    ],
+    "algorithm": "prm",
+    "seed": 43,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "success",
+    "planning_s": 11.453036300008534,
+    "nodes": 54,
+    "postprocess": "success",
+    "errors": []
+  },
+  {
+    "map": "64room_000",
+    "map_file": "datasets/movingai/room/64room_000.map",
+    "group": 2,
+    "scenario_index": 1760,
+    "reference_length_octile": 704.64170227,
+    "start": [
+      445,
+      111
+    ],
+    "goal": [
+      36,
+      504
+    ],
+    "algorithm": "prm",
+    "seed": 44,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "success",
+    "planning_s": 11.514262900003814,
+    "nodes": 103,
+    "postprocess": "success",
+    "errors": []
+  },
+  {
+    "map": "32room_000",
+    "map_file": "datasets/movingai/room/32room_000.map",
+    "group": 1,
+    "scenario_index": 2036,
+    "reference_length_octile": 814.33513641,
+    "start": [
+      63,
+      482
+    ],
+    "goal": [
+      505,
+      29
+    ],
+    "algorithm": "prm",
+    "seed": 43,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "success",
+    "planning_s": 12.461255899994285,
+    "nodes": 115,
+    "postprocess": "success",
+    "errors": []
+  },
+  {
+    "map": "maze512-4-0",
+    "map_file": "datasets/movingai/maze/maze512-4-0.map",
+    "group": 2,
+    "scenario_index": 6892,
+    "reference_length_octile": 2756.32207641,
+    "start": [
+      171,
+      130
+    ],
+    "goal": [
+      13,
+      165
+    ],
+    "algorithm": "prm",
+    "seed": 44,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "timeout"
+  },
+  {
+    "map": "maze512-4-0",
+    "map_file": "datasets/movingai/maze/maze512-4-0.map",
+    "group": 1,
+    "scenario_index": 434,
+    "reference_length_octile": 172.66904755,
+    "start": [
+      294,
+      490
+    ],
+    "goal": [
+      323,
+      487
+    ],
+    "algorithm": "prm",
+    "seed": 43,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "timeout"
+  },
+  {
+    "map": "maze512-4-0",
+    "map_file": "datasets/movingai/maze/maze512-4-0.map",
+    "group": 3,
+    "scenario_index": 10055,
+    "reference_length_octile": 4020.10086364,
+    "start": [
+      197,
+      384
+    ],
+    "goal": [
+      478,
+      206
+    ],
+    "algorithm": "prm",
+    "seed": 45,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "timeout"
+  },
+  {
+    "map": "maze512-16-0",
+    "map_file": "datasets/movingai/maze/maze512-16-0.map",
+    "group": 2,
+    "scenario_index": 6505,
+    "reference_length_octile": 2601.98398132,
+    "start": [
+      452,
+      487
+    ],
+    "goal": [
+      108,
+      449
+    ],
+    "algorithm": "prm",
+    "seed": 44,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "NO_PATH",
+    "planning_s": 12.734620500006713,
+    "nodes": 0
+  },
+  {
+    "map": "random512-30-0",
+    "map_file": "datasets/movingai/random/random512-30-0.map",
+    "group": 1,
+    "scenario_index": 1504,
+    "reference_length_octile": 603.97770538,
+    "start": [
+      265,
+      511
+    ],
+    "goal": [
+      214,
+      1
+    ],
+    "algorithm": "prm",
+    "seed": 43,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "timeout"
+  },
+  {
+    "map": "random512-30-0",
+    "map_file": "datasets/movingai/random/random512-30-0.map",
+    "group": 2,
+    "scenario_index": 791,
+    "reference_length_octile": 318.16652222,
+    "start": [
+      250,
+      67
+    ],
+    "goal": [
+      4,
+      141
+    ],
+    "algorithm": "prm",
+    "seed": 44,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "timeout"
+  },
+  {
+    "map": "random512-30-0",
+    "map_file": "datasets/movingai/random/random512-30-0.map",
+    "group": 3,
+    "scenario_index": 1616,
+    "reference_length_octile": 645.37467499,
+    "start": [
+      314,
+      487
+    ],
+    "goal": [
+      92,
+      4
+    ],
+    "algorithm": "prm",
+    "seed": 45,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "timeout"
+  },
+  {
+    "map": "random512-40-0",
+    "map_file": "datasets/movingai/random/random512-40-0.map",
+    "group": 1,
+    "scenario_index": 1969,
+    "reference_length_octile": 784.119841,
+    "start": [
+      123,
+      359
+    ],
+    "goal": [
+      402,
+      347
+    ],
+    "algorithm": "prm",
+    "seed": 43,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "timeout"
+  },
+  {
+    "map": "random512-40-0",
+    "map_file": "datasets/movingai/random/random512-40-0.map",
+    "group": 2,
+    "scenario_index": 1192,
+    "reference_length_octile": 476.99494934,
+    "start": [
+      187,
+      239
+    ],
+    "goal": [
+      375,
+      369
+    ],
+    "algorithm": "prm",
+    "seed": 44,
+    "parameters": {
+      "num_samples": 30000,
+      "k_neighbors": 25,
+      "max_edge_len": 20
+    },
+    "outcome": "timeout"
+  }
+]

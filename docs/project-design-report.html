@@ -176,6 +176,11 @@
 </style>
 </head>
 <body>
+<aside style="margin:16px;padding:16px;border:1px solid #fbbf24;border-radius:8px;color:#e7eef9;background:#142238">
+  <strong>2026-11-14 核对说明：</strong>本文为设计与历史质量报告，使用方式以
+  <a href="程序介绍与使用手册.md">当前使用手册</a>为准。当前执行器始终使用计时开环；多算法结果不能直接交给运动 CLI。
+  默认地图尺度未经现场标定，碰撞检查未建模车体轮廓。后处理与运动配置默认转向速度不同，预览时间并非实测执行时间。
+</aside>
 <div class="wrap">
 
   <header>
@@ -189,7 +194,7 @@
       <span class="badge cyan">模块化 JSON 流水线</span>
       <span class="badge">ROS2 Humble</span>
       <span class="badge">TurboPi 麦轮底盘</span>
-      <span class="badge green">136 tests · 86% coverage</span>
+      <span class="badge amber">136 个软件测试通过 · 2026-11-14</span>
       <span class="badge amber">实车验收待完成</span>
       <span class="badge">报告日期：2026-11-03</span>
     </div>
@@ -553,7 +558,7 @@
       </tr>
     </table>
     <div class="callout info">
-      模块之间不传共享内存对象，只传文件路径。下游通过 <code>require_success()</code> 检查 <code>status=success</code>、模块名和 run_id；失败结果不会覆盖已有成功结果。
+      模块 CLI 之间通过文件路径和 JSON 通信。<code>require_success()</code> 校验契约、成功状态和可选模块名；顶层调度器另外校验结果的 run_id。失败结果不会覆盖已有成功结果。
     </div>
 
     <div class="callout info">
@@ -762,7 +767,7 @@ published_distance ≈ published_ticks × timer_period × empirical_forward_spee
       </div>
       <div>
         <h4>研究模式</h4>
-        <p class="muted">一次运行多个算法，记录参数、随机种子和统一指标；默认不驱动车，只有单独安全确认后才进入运动。</p>
+        <p class="muted">一次运行多个算法，记录参数、随机种子和统一指标；默认不驱动车。当前运动 CLI 只接受单算法顶层路径段，需针对选定算法单独规划、后处理并确认后执行。</p>
       </div>
     </div>
 
@@ -800,10 +805,10 @@ published_distance ≈ published_ticks × timer_period × empirical_forward_spee
   <section id="quality">
     <h2><span class="num">09</span>当前质量</h2>
     <div class="stats">
-      <div class="stat"><b>136</b><span>自动化测试</span></div>
-      <div class="stat"><b>86%</b><span>语句覆盖率</span></div>
-      <div class="stat"><b>0</b><span>pyflakes 警告</span></div>
-      <div class="stat"><b>success</b><span>软件验收状态</span></div>
+      <div class="stat"><b>136 通过</b><span>2026-11-14 软件测试</span></div>
+      <div class="stat"><b>85.98%</b><span>语句覆盖率</span></div>
+      <div class="stat"><b>0 警告</b><span>pyflakes 静态检查</span></div>
+      <div class="stat"><b>历史 success</b><span>Fake ROS2 软件验收记录</span></div>
     </div>
     <table>
       <tr><th>范围</th><th>状态</th><th>说明</th></tr>
@@ -813,7 +818,7 @@ published_distance ≈ published_ticks × timer_period × empirical_forward_spee
       <tr><td>交互</td><td>已覆盖</td><td>终端选点/四角、菜单、Tk/OpenCV 选点的模拟行为</td></tr>
       <tr><td>实车</td><td>待完成</td><td>方向、90° 转向、路径跟随、经验速度、Ctrl+C 停车记录</td></tr>
     </table>
-    <p class="muted">低于 80% 的剩余项主要是少见错误分支和遗留入口，例如 contracts_io 的校验失败分支、orchestrator 的异常恢复分支、picker 的窗口边角状态。继续追到 100% 的收益较低。</p>
+    <p class="muted">2026-11-14 更换公开地图后，项目独立 .venv 中的 136 个软件测试通过；12 张地图的实际建图结果与官方栅格逐格一致，三类地图各一条官方任务通过 A*/Dijkstra 无驱动流水线。本轮完整复验：12 张图各一个任务的 A*/Dijkstra 流程通过，语句覆盖率 85.98%，pyflakes 无警告；3 张图的 9 次采样算法默认参数运行返回 NO_PATH。实车记录仍待完成，详见 <a href="verification/2026-11-14-offline.md">验收记录</a>。</p>
   </section>
 
   <section id="roadmap">
@@ -909,7 +914,7 @@ published_distance ≈ published_ticks × timer_period × empirical_forward_spee
         <h3>常用命令</h3>
         <pre><span class="c"># 普通模式：显式坐标，无显示器</span>
 python main.py map.png --headless \
-  --start 2,2 --goal 37,37 --no-drive
+  --start 313,424 --goal 311,427 --no-drive
 
 <span class="c"># 终端交互选点</span>
 python main.py map.png --headless --select-terminal
@@ -922,7 +927,7 @@ python main.py photo.jpg --headless --no-drive \
 
 <span class="c"># 研究模式</span>
 python main.py map.png --mode research --headless \
-  --start 0,0 --goal 7,7 --algorithms astar,rrt --seed 42
+  --start 313,424 --goal 311,427 --algorithms astar,rrt --seed 42
 
 <span class="c"># 软件验收</span>
 python tools/acceptance.py</pre>

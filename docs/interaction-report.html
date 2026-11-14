@@ -148,6 +148,11 @@
 </style>
 </head>
 <body>
+<aside style="margin:16px;padding:16px;border:1px solid #fbbf24;border-radius:8px;color:#e6edf7;background:#16233a">
+  <strong>2026-11-14 核对说明：</strong>显式 <code>--headless</code> 不逐步询问路径和驱动确认，驱动需同时传入
+  <code>--drive --accept-path --yes</code>。交互终端不加 <code>--headless</code> 且无图形显示时才使用终端路径确认。
+  当前多算法结果需针对选定算法单独规划、后处理后再驱动。详见 <a href="程序介绍与使用手册.md">当前使用手册</a>。
+</aside>
 <div class="wrap">
 
   <header>
@@ -200,15 +205,14 @@
     <p class="lead"><span class="pill term">终端</span>如果命令行没有给图片路径，程序会列出 <code>map_pipeline/data/input</code> 下的图片。</p>
     <div class="terminal"><pre><span class="p">$</span> python main.py
 <span class="c">Available maps:</span>
-  [1] 01_scattered.png
-  [2] 02_maze.png
-  [3] 03_narrow.png
-  [4] 04_rooms.png
-  [5] 05_spiral.png
-  [6] 图1.jpg
+  [1] maze-maze512-16-0.png
+  [2] maze-maze512-32-0.png
+  [3] maze-maze512-4-0.png
+  [4] maze-maze512-8-0.png
+  ...（共 12 张 Moving AI Room/Maze/Random 地图）
 <span class="y">Map number (blank uses first):</span> 1</pre></div>
     <p class="muted">只要处于交互终端，就会始终列出图片并询问编号，即使只有一张也会询问；直接回车使用第一张。直接写图片路径或非交互模式时不会询问。图片路径也可以作为第一个位置参数传入。</p>
-    <div class="terminal"><pre><span class="p">$</span> python main.py map_pipeline/data/input/图1.jpg</pre></div>
+    <div class="terminal"><pre><span class="p">$</span> python main.py photos/site.jpg</pre></div>
   </section>
 
   <section id="map-pick">
@@ -254,7 +258,7 @@
 │ right-click=undo, Esc=cancel)                              │
 └────────────────────────────────────────────────────────────┘</pre></div>
     <p class="muted">也可以完全跳过窗口，直接用原图像素坐标指定：</p>
-    <div class="terminal"><pre><span class="p">$</span> python main.py map_pipeline/data/input/图1.jpg --headless --no-drive \
+    <div class="terminal"><pre><span class="p">$</span> python main.py photos/site.jpg --headless --no-drive \
     --rectify \
     --corners <span class="c">"35,15;1225,15;1225,1420;35,1420"</span> \
     --arena-width-m <span class="y">2.0</span> --grid-size-m <span class="y">0.05</span> \
@@ -288,7 +292,7 @@
 │              原始路径 / 平滑路径 / 执行段                    │
 └────────────────────────────────────────────────────────────┘</pre></div>
     <p class="muted">按 <kbd>Enter</kbd>、<kbd>Space</kbd> 或 <kbd>y</kbd> 接受；直接关闭窗口视为拒绝，流程以 <code>PATH_ACCEPTANCE_REQUIRED</code> 结束，不会启动小车。</p>
-    <p>无显示器但终端可交互时，预览确认退化为一句话：</p>
+    <p>未显式启用 <code>--headless</code>、无图形显示但终端可交互且需要驱动时，预览确认退化为一句话：</p>
     <div class="terminal"><pre><span class="c">路径预览已保存: runs/20261103T.../preview/path_preview.png</span>
 <span class="y">确认接受该路径？输入 yes 继续:</span> yes</pre></div>
   </section>
@@ -357,16 +361,16 @@ input=... reason=... Suggestion: ...
 
   <section id="headless">
     <h2><span class="num">07</span>纯终端 / 无显示器流程</h2>
-    <p class="lead">终端-only 时不打开任何窗口，起终点和四角都通过文字输入；路径预览用 <code>yes</code> 确认。</p>
+    <p class="lead">纯终端可输入起终点和四角。显式 <code>--headless</code> 默认只保存预览，不驱动；如需驱动，必须传入 <code>--drive --accept-path --yes</code>。不加 <code>--headless</code> 且检测不到图形显示的交互终端，可逐步输入 <code>yes</code> 确认路径和驱动。</p>
     <h3>方式 A：显式坐标，适合脚本</h3>
-    <div class="terminal"><pre><span class="p">$</span> python main.py map_pipeline/data/input/01_scattered.png \
-    --headless --start 2,2 --goal 37,37 --no-drive</pre></div>
+    <div class="terminal"><pre><span class="p">$</span> python main.py map_pipeline/data/input/room-16room_000.png \
+    --headless --start 313,424 --goal 311,427 --no-drive</pre></div>
     <h3>方式 B：终端输入起终点</h3>
-    <div class="terminal"><pre><span class="p">$</span> python main.py map_pipeline/data/input/图1.jpg \
+    <div class="terminal"><pre><span class="p">$</span> python main.py photos/site.jpg \
     --headless --select-terminal \
     --rectify --arena-width-m 2.0 --grid-size-m 0.05</pre></div>
     <div class="terminal"><pre><span class="dim">（先输入四个角点）</span>
-<span class="c">栅格地图: 40 行 x 47 列，栅格边长 0.05 m</span>
+<span class="c">栅格地图: 行数取决于矫正后长宽比，40 列，栅格边长 0.05 m</span>
 无标记预览: runs/.../result_preview.png
 请输入栅格坐标 row,col（地图上方为北；直接回车取消）
 <span class="y">起点 row,col:</span> 5,5

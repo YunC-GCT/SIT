@@ -61,12 +61,20 @@ class RRTPlanner(GlobalPlanner):
         return (new_r, new_c)
 
 
+    def _extension(self, nearest, sample):
+        point = self._steer(nearest, sample)
+        point = (int(round(point[0])), int(round(point[1])))
+        return point if line_of_sight(self.grid, self.rows, self.cols, nearest, point) else None
+
     def plan(self, start: Tuple[int, int], goal: Tuple[int, int]) -> Path:
         if not self.grid[start[0], start[1]] == 0 or not self.grid[goal[0], goal[1]] == 0:
             return []
+        if start == goal:
+            return [start]
 
         # 树存储为列表，每个元素是 (坐标, 父节点索引)
         tree_nodes = [(start, -1)]
+        visited = {start}
         for _ in range(self.max_iter):
             # 按概率采样目标点
             if self.rng.random() < self.goal_sample_rate:
@@ -75,16 +83,17 @@ class RRTPlanner(GlobalPlanner):
                 sample = self._sample_free()
 
             nearest, nearest_idx = self._nearest_node(tree_nodes, sample)
-            new_point = self._steer(nearest, sample)
+            point = self._extension(nearest, sample)
+            if point is None:
+                continue
+            new_r, new_c = point
 
-            # 将浮点坐标转为栅格整数坐标
-            new_r = int(round(new_point[0]))
-            new_c = int(round(new_point[1]))
-            new_r = max(0, min(self.rows-1, new_r))
-            new_c = max(0, min(self.cols-1, new_c))
+            if (new_r, new_c) in visited:
+                continue
 
             # 检查整条线段是否无碰撞
             if line_of_sight(self.grid, self.rows, self.cols, nearest, (new_r, new_c)):
+                visited.add((new_r, new_c))
                 new_idx = len(tree_nodes)
                 tree_nodes.append(((new_r, new_c), nearest_idx))
 

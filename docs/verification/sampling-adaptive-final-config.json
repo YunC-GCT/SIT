@@ -1,0 +1,103 @@
+[
+  {
+    "map": "8room_000",
+    "map_file": "datasets/movingai/room/8room_000.map",
+    "group": 1,
+    "scenario_index": 262,
+    "reference_length_octile": 105.42640686,
+    "start": [
+      393,
+      165
+    ],
+    "goal": [
+      442,
+      97
+    ],
+    "algorithm": "prm",
+    "seed": 43,
+    "parameters": {
+      "num_samples": 20000,
+      "k_neighbors": 15,
+      "retry_num_samples": 30000,
+      "max_edge_len": 15
+    },
+    "outcome": "success",
+    "planning_s": 3.5614519999944605,
+    "nodes": 18,
+    "search_diagnostics": {
+      "attempts": [
+        {
+          "requested_samples": 20000,
+          "actual_points": 20002,
+          "found": true,
+          "k_neighbors": 15,
+          "max_edge_len": 15
+        }
+      ]
+    },
+    "postprocess": "success",
+    "errors": []
+  },
+  {
+    "map": "random512-20-0",
+    "map_file": "datasets/movingai/random/random512-20-0.map",
+    "group": 1,
+    "scenario_index": 1157,
+    "reference_length_octile": 462.01428528,
+    "start": [
+      368,
+      464
+    ],
+    "goal": [
+      83,
+      177
+    ],
+    "algorithm": "rrt_star",
+    "seed": 43,
+    "parameters": {
+      "adaptive_step": true,
+      "search_time_s": 15.0,
+      "optimize_time_s": 2.0,
+      "optimize_iterations": 2000,
+      "max_iter": 200000,
+      "step_size": 5,
+      "goal_sample_rate": 0.05,
+      "search_radius": 10.0
+    },
+    "outcome": "NO_PATH",
+    "planning_s": 15.002449399995385,
+    "nodes": 0,
+    "search_diagnostics": {
+      "iterations": 10237,
+      "stop_reason": "search_time",
+      "first_solution_iteration": null,
+      "first_solution_s": null,
+      "total_s": 15.001455699995859,
+      "unique_nodes": 5288
+    }
+  },
+  {
+    "map": "random512-20-0",
+    "map_file": "datasets/movingai/random/random512-20-0.map",
+    "group": 1,
+    "scenario_index": 1157,
+    "reference_length_octile": 462.01428528,
+    "start": [
+      368,
+      464
+    ],
+    "goal": [
+      83,
+      177
+    ],
+    "algorithm": "rrt",
+    "seed": 43,
+    "parameters": {
+      "adaptive_step": true,
+      "max_iter": 200000,
+      "step_size": 5,
+      "goal_sample_rate": 0.05
+    },
+    "outcome": "timeout"
+  }
+]

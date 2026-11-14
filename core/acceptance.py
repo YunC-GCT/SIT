@@ -194,9 +194,8 @@ def run_simulated_acceptance(
     """Run real map/planner/postprocess CLIs and simulated motion in one batch."""
     image = image_path or os.path.join(
         PROJECT_ROOT,
-        "map_pipeline",
-        "data",
-        "input",
+        "tests",
+        "fixtures",
         "01_scattered.png",
     )
     effective_map_config = map_config or os.path.join(

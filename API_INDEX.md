@@ -1,6 +1,6 @@
 # 项目接口清单（后端视角）
 
-> 以四个能力模块为索引，列出所有公开类、函数、常量。交互式 UI 函数标记为 `[UI]`。
+> 以当前四个能力分组为索引，列出主要入口与常用接口；不保证穷举所有导出符号。交互式 UI 函数标记为 `[UI]`。示例导入以项目根目录为基准，精确参数与关键字限制以源码签名为准。
 
 ---
 
@@ -20,10 +20,6 @@
 
 | 接口 | 签名 | 说明 |
 |------|------|------|
-| `pipeline_config.GRID_MAP_FILENAME` | `= "grid_map.npz"` | 跨管线文件名常量 |
-| `pipeline_config.START_GOAL_FILENAME` | `= "start_goal.txt"` | |
-| `pipeline_config.PATH_DATA_FILENAME` | `= "path_data.npy"` | |
-| `validate_start_goal(filepath, max_rows, max_cols)` | `-> (start, goal)` | 校验起终点文件，错误时友好报错 |
 | `core.RunBatch` | `class` | 创建独立运行批次目录，维护 `manifest.json`、模块状态和日志路径 |
 | `core.make_result(module, run_id, status, ...)` | `-> dict` | 生成统一外层 JSON 结果，含版本、状态、输入、输出、参数、日志、错误和时间 |
 | `core.make_error(code, ..., stage, reason, input_ref, suggestion)` | `-> dict` | 生成结构化错误，供模块失败和下游恢复提示使用 |
@@ -37,6 +33,7 @@
 | `core.module_entry(name, status, ...)` | `-> dict` | 运行批次或结果中的模块清单项 |
 | `python -m core.contracts validate <result.json>` | CLI | 校验统一 JSON 结果，可加 `--require-success` 和 `--module` |
 | `python tools/minimal_contract_module.py` | CLI | 最小示例模块，生成成功或 `--fail` 失败运行批次、日志和结果 |
+| `python tools/offline_acceptance.py --output <report.json>` | CLI | 12 张公开地图、实际模块 CLI、Fake ROS2 和失败门禁验收，临时日志自动清理 |
 
 `RunBatch` 会在同一 `run_id` 下续写已有 manifest；重试使用
 `<module>/attempts/attempt-N/result.json`，失败尝试不会覆盖已成功阶段。
@@ -52,6 +49,9 @@
 | **`run_pipeline.py`** | `main()` | `[UI]` 交互式全流程 |
 | **`json_pipeline.py`** | `main()` | CLI；支持显式栅格/像素起终点和无显示器预览 |
 | `json_pipeline.process(...)` | `-> dict` | 生成版本化地图 JSON，障碍起终点直接失败 |
+| `map_pipeline.process.prepare_grid_map(image, config)` | `-> GridMap` | 按配置二值化、清理、栅格化，将目标列数限制为图片宽度 |
+| `map_pipeline.src.rectify.rectify_image(image, corners, ...)` | `-> (image, metadata)` | 四角透视矫正，返回变换元数据 |
+| `map_pipeline.src.rectify.transform_points(points, homography)` | `-> list` | 将原图像素点变换到矫正图坐标，具体参数见源码 |
 | **`MapPipeline`** | `class` | **编程调用深接口** |
 
 ### MapPipeline 类
@@ -60,7 +60,7 @@
 |------|------|------|
 | `__init__(config: dict)` | — | 从 config.yaml 字典取 default_width/threshold/grid_size 等 |
 | `process(image_path, start_px, goal_px)` | `-> (GridMap, start_grid, goal_grid)` | 一站式：load→二值化→栅格化→坐标映射→校验起终点 |
-| `save_outputs(grid_map, start, goal, dir, run_id)` | `-> result.json path` | 保存版本化地图 JSON |
+| `save_outputs(grid_map, start, goal, dir, run_id)` | `-> map_result.json path` | 保存基础版本化地图 JSON，不自动生成预览 |
 
 ### GridMap 类
 
@@ -78,11 +78,12 @@
 |------|------|------|
 | `load_image(path)` | `-> ndarray` | 中文路径兼容 |
 | `binarize(img, threshold, blur_ksize, invert)` | `-> ndarray` | threshold=0→OTSU 自动 |
-| `create_grid_map(binary, width, ratio, grid_size)` | `-> (GridMap, scale)` | 按目标列数降采样 |
+| `clean_binary(binary, *, min_area_px=0, morphology_kernel=0)` | `-> ndarray` | 小障碍连通域与形态学清理 |
+| `create_grid_map(binary, target_width, obstacle_ratio=0.5, grid_size=0.3)` | `-> (GridMap, scale)` | 按目标列数降采样，列数须不超过图宽 |
 | `map_pixel_to_grid(x, y, grid_map)` | `-> (row, col)` | 像素→栅格，边界裁剪 |
 | `validate_grid_point(grid_map, point, name)` | `-> (row, col)` | 校验坐标范围及空闲状态，不移动坐标 |
 | `validate_grid_points(grid_map, start, goal)` | `-> (start, goal)` | 校验起点和终点必须位于空闲栅格 |
-| `pick_points(img)` | `-> (px1, px2)` | `[UI]` cv2 鼠标选点 |
+| `pick_points(img, ...)` | `-> (px1, px2)` | `[UI]` 优先 Tk，按条件回退 OpenCV；支持栅格反馈 |
 | `tune_resolution(default, w, h, preview)` | `-> int` | `[UI]` 终端调栅格宽度 |
 
 ---
@@ -120,22 +121,20 @@
 
 | 类 | 构造函数参数 | 类型 |
 |------|------|------|
-| `AStarPlanner` | `(grid)` | 图搜索·曼哈顿 |
-| `DijkstraPlanner` | `(grid)` | 图搜索·无启发 |
-| `PRMPlanner` | `(grid, num_samples=500, k_neighbors=10, max_edge_len=30.0)` | 采样·路图 |
-| `RRTPlanner` | `(grid, max_iter=2000, step_size=5.0, goal_sample_rate=0.1)` | 采样·单树 |
-| `RRTStarPlanner` | `(grid, max_iter=2000, step_size=5.0, goal_sample_rate=0.1, search_radius=10.0)` | 采样·渐进最优（继承 RRT） |
+| `AStarPlanner` | `(grid, seed=None)` | 四邻域图搜索·曼哈顿 |
+| `DijkstraPlanner` | `(grid, seed=None)` | 四邻域图搜索·无启发 |
+| `PRMPlanner` | `(grid, num_samples=500, k_neighbors=10, max_edge_len=30.0, seed=None)` | 采样·路图 |
+| `RRTPlanner` | `(grid, max_iter=2000, step_size=5.0, goal_sample_rate=0.1, seed=None)` | 采样·单树 |
+| `RRTStarPlanner` | `(grid, max_iter=2000, step_size=5.0, goal_sample_rate=0.1, search_radius=10.0, seed=None)` | 采样·父节点重选与重布线（继承 RRT） |
 
 ### 共享工具
 
 | 接口 | 签名 | 说明 |
 |------|------|------|
 | `line_of_sight(grid, rows, cols, p1, p2)` | `-> bool` | Bresenham 碰撞检测；True=畅通 |
-| `compare_paths(names, grid, start, goal, factory, params)` | `-> {name: {path, steps, time}}` | 旧内部对比辅助函数；统一 JSON 结果使用 `run_planning` |
 | `draw_path(grid, path, start, goal)` | `-> ndarray` | `[UI]` cv2 路径预览图 |
 | `draw_comparison(grid, results, start, goal)` | `-> ndarray` | `[UI]` cv2 多算法对比图 |
 | `show(title, img)` | — | `[UI]` cv2 弹窗封装 |
-| `select_algorithms(available)` | `-> List[str]` | `[UI]` 终端选算法 |
 
 ---
 
@@ -152,6 +151,8 @@
 成功结果的 `outputs` 包含 `raw_path`、浮点采样 `smoothed_path`、`segments`、
 `smoothing` 和 `metrics`；平滑失败时回退到已验证原始路径，并在
 `outputs.smoothing.fallback_reason` 中记录原因。
+
+多算法 CLI 输出使用 `outputs.comparisons[*].outputs`，每项包含上述后处理输出；运动控制 CLI 只接受顶层 `outputs.segments`，需要针对选定算法单独生成后处理结果。
 
 ---
 
@@ -182,6 +183,9 @@
 | `execute_segments(segments, node=None, pub=None, ...)` | `-> ExecutionReport` | 主执行循环：转向→零速→前进→停止，timer 开环估算，finally 安全停车 |
 | `stop_robot()` | `-> None` | 重复发布零速度 Twist 并留出通信缓冲 |
 | `shutdown_once()` | `-> None` | 幂等关闭 ROS2 context |
+| `close()` | `-> None` | 再次发送零速度，销毁节点并幂等关闭 ROS2 |
+
+当前执行器没有 odom 订阅，`odom_topic` 为保留参数。`ExecutionReport.stopped` 记录零速度发布流程是否完成，不代表已通过真实车轮停转观察。
 
 ### 常量
 

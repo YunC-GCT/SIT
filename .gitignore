@@ -27,6 +27,11 @@ Thumbs.db
 desktop.ini
 
 # ---------- 运行时临时文件 ----------
+runs/
+.coverage
+.coverage.*
+.pytest_cache/
+htmlcov/
 *.log
 *.tmp
 *.bak
@@ -53,5 +58,4 @@ map_pipeline/data/output/maps/
 # 已删除的旧 path_planner/data/ 输入、输出文件不再作为必要数据维护。
 # 配置文件保持跟踪:
 #   - config.yaml
-#   - global_config.yaml
 # =====================================================

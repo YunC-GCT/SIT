@@ -346,6 +346,16 @@ class PlannerPipelineTests(unittest.TestCase):
         self.assertFalse(result["outputs"]["metrics"]["values"]["found_path"])
         self.assertEqual(result["outputs"]["raw_path"]["points"]["values"], [])
 
+    def test_sampling_budget_failure_does_not_claim_unreachable(self):
+        # A connected map, but one RRT expansion cannot reach this goal.
+        grid = np.zeros((10, 10), dtype=np.uint8)
+        self.assertEqual(run_algorithm(grid, (0, 0), (9, 9), "astar")["status"], STATUS_SUCCESS)
+        result = run_algorithm(grid, (0, 0), (9, 9), "rrt",
+                               parameters={"max_iter": 1, "step_size": 1.0}, seed=42)
+        self.assertEqual(result["errors"][0]["code"], "NO_PATH")
+        self.assertEqual(result["errors"][0]["error_type"], "search_budget_exhausted")
+        self.assertIn("预算", result["errors"][0]["reason"])
+
     def test_invalid_parameters_are_a_failed_result_with_structured_error(self):
         result = run_algorithm(
             np.zeros((4, 4), dtype=np.uint8),

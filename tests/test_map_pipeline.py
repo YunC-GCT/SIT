@@ -1063,25 +1063,28 @@ class LegacyRunPipelineTests(unittest.TestCase):
             self.assertTrue(path.endswith("only.png"))
 
     def test_find_image_prompts_and_validates_choice(self):
-        input_dir = os.path.join(
-            Path(__file__).resolve().parents[1],
-            "map_pipeline",
-            "data",
-            "input",
-        )
+        temporary_maps = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary_maps.cleanup)
+        input_dir = temporary_maps.name
+        for name in ("first.png", "second.png"):
+            Path(input_dir, name).touch()
         with patch(
             "map_pipeline.run_pipeline.sys.stdin.isatty",
             return_value=True,
         ), patch("builtins.input", return_value="2"):
             path = _find_image(input_dir, None)
-        self.assertTrue(path.endswith("02_maze.png"))
+        names = sorted(
+            name for name in os.listdir(input_dir)
+            if name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp"))
+        )
+        self.assertTrue(path.endswith(names[1]))
 
         with patch(
             "map_pipeline.run_pipeline.sys.stdin.isatty",
             return_value=True,
         ), patch("builtins.input", return_value=""):
             path = _find_image(input_dir, None)
-        self.assertTrue(path.endswith("01_scattered.png"))
+        self.assertTrue(path.endswith(names[0]))
 
         with patch(
             "map_pipeline.run_pipeline.sys.stdin.isatty",

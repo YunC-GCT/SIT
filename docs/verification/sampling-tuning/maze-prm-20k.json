@@ -1,0 +1,27 @@
+{
+  "map": "maze512-4-0",
+  "scenario": 207,
+  "start": [
+    367,
+    381
+  ],
+  "goal": [
+    350,
+    406
+  ],
+  "algorithm": "prm",
+  "params": {
+    "num_samples": 20000,
+    "k_neighbors": 150
+  },
+  "seed": 42,
+  "found": false,
+  "valid": false,
+  "nodes": 0,
+  "elapsed_s": 145.0328,
+  "samples": 15295,
+  "start_degree": 6,
+  "goal_degree": 13,
+  "start_component": 291,
+  "path": []
+}

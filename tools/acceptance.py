@@ -25,7 +25,7 @@ def _pair(value: str) -> tuple[int, int]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--image", default=os.path.join(ROOT, "map_pipeline", "data", "input", "01_scattered.png"))
+    parser.add_argument("--image", default=os.path.join(ROOT, "tests", "fixtures", "01_scattered.png"))
     parser.add_argument("--start", type=_pair, default=(2, 2))
     parser.add_argument("--goal", type=_pair, default=(37, 37))
     parser.add_argument("--mode", choices=("normal", "research"), default="normal")

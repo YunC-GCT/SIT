@@ -1,0 +1,517 @@
+{
+  "timeout_s": 30,
+  "results": [
+    {
+      "map": "8room_000",
+      "algorithm": "prm",
+      "params": {},
+      "label": "default",
+      "seed": 42,
+      "before": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.04622820000804495,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      },
+      "after": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.3105461999948602,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      }
+    },
+    {
+      "map": "8room_000",
+      "algorithm": "rrt",
+      "params": {},
+      "label": "default",
+      "seed": 42,
+      "before": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.013817099999869242,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      },
+      "after": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.013413299995590933,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      }
+    },
+    {
+      "map": "8room_000",
+      "algorithm": "rrt_star",
+      "params": {},
+      "label": "default",
+      "seed": 42,
+      "before": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.013518899999326095,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      },
+      "after": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.012534399997093715,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "algorithm": "prm",
+      "params": {},
+      "label": "default",
+      "seed": 42,
+      "before": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.05142469999555033,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      },
+      "after": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.3403942000004463,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "algorithm": "rrt",
+      "params": {},
+      "label": "default",
+      "seed": 42,
+      "before": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.012662900000577793,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      },
+      "after": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.014795499999308959,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "algorithm": "rrt_star",
+      "params": {},
+      "label": "default",
+      "seed": 42,
+      "before": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.014537399998516776,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      },
+      "after": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.015235900005791336,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      }
+    },
+    {
+      "map": "random512-10-0",
+      "algorithm": "prm",
+      "params": {},
+      "label": "default",
+      "seed": 42,
+      "before": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.06768000000738539,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      },
+      "after": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.35825910000130534,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      }
+    },
+    {
+      "map": "random512-10-0",
+      "algorithm": "rrt",
+      "params": {},
+      "label": "default",
+      "seed": 42,
+      "before": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.2138180000038119,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      },
+      "after": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.20318299999053124,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      }
+    },
+    {
+      "map": "random512-10-0",
+      "algorithm": "rrt_star",
+      "params": {},
+      "label": "default",
+      "seed": 42,
+      "before": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.30457530000421684,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      },
+      "after": {
+        "found": false,
+        "valid": false,
+        "elapsed_s": 0.29427310000755824,
+        "nodes": 0,
+        "length_grid": 0,
+        "postprocess": null,
+        "path": []
+      }
+    },
+    {
+      "map": "8room_000",
+      "algorithm": "prm",
+      "params": {
+        "num_samples": 20000,
+        "k_neighbors": 150
+      },
+      "label": "tuned",
+      "seed": 42,
+      "before": {
+        "timeout_s": 30
+      },
+      "after": {
+        "found": true,
+        "valid": true,
+        "elapsed_s": 18.539276900002733,
+        "nodes": 17,
+        "length_grid": 98.35412026170066,
+        "postprocess": "success",
+        "path": [
+          [
+            197,
+            315
+          ],
+          [
+            192,
+            316
+          ],
+          [
+            190,
+            313
+          ],
+          [
+            187,
+            308
+          ],
+          [
+            195,
+            305
+          ],
+          [
+            198,
+            307
+          ],
+          [
+            198,
+            298
+          ],
+          [
+            200,
+            294
+          ],
+          [
+            197,
+            295
+          ],
+          [
+            190,
+            289
+          ],
+          [
+            189,
+            280
+          ],
+          [
+            186,
+            273
+          ],
+          [
+            186,
+            265
+          ],
+          [
+            180,
+            266
+          ],
+          [
+            181,
+            264
+          ],
+          [
+            174,
+            258
+          ],
+          [
+            171,
+            260
+          ]
+        ]
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "algorithm": "prm",
+      "params": {
+        "num_samples": 20000,
+        "k_neighbors": 150
+      },
+      "label": "tuned",
+      "seed": 42,
+      "before": {
+        "timeout_s": 30
+      },
+      "after": {
+        "found": true,
+        "valid": true,
+        "elapsed_s": 16.5576441000012,
+        "nodes": 14,
+        "length_grid": 91.230285525665,
+        "postprocess": "success",
+        "path": [
+          [
+            367,
+            381
+          ],
+          [
+            374,
+            384
+          ],
+          [
+            376,
+            385
+          ],
+          [
+            373,
+            389
+          ],
+          [
+            366,
+            388
+          ],
+          [
+            368,
+            395
+          ],
+          [
+            362,
+            398
+          ],
+          [
+            363,
+            403
+          ],
+          [
+            356,
+            399
+          ],
+          [
+            356,
+            390
+          ],
+          [
+            351,
+            386
+          ],
+          [
+            344,
+            394
+          ],
+          [
+            343,
+            402
+          ],
+          [
+            350,
+            406
+          ]
+        ]
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "algorithm": "rrt_star",
+      "params": {
+        "step_size": 1,
+        "max_iter": 200000
+      },
+      "label": "tuned",
+      "seed": 42,
+      "before": {
+        "timeout_s": 30
+      },
+      "after": {
+        "timeout_s": 30
+      }
+    },
+    {
+      "map": "random512-10-0",
+      "algorithm": "prm",
+      "params": {
+        "num_samples": 3000
+      },
+      "label": "tuned",
+      "seed": 42,
+      "before": {
+        "found": true,
+        "valid": true,
+        "elapsed_s": 2.5488824999920325,
+        "nodes": 11,
+        "length_grid": 116.24181051619753,
+        "postprocess": "success",
+        "path": [
+          [
+            237,
+            225
+          ],
+          [
+            252,
+            226
+          ],
+          [
+            266,
+            232
+          ],
+          [
+            271,
+            233
+          ],
+          [
+            273,
+            236
+          ],
+          [
+            269,
+            254
+          ],
+          [
+            283,
+            267
+          ],
+          [
+            288,
+            260
+          ],
+          [
+            290,
+            258
+          ],
+          [
+            307,
+            256
+          ],
+          [
+            309,
+            245
+          ]
+        ]
+      },
+      "after": {
+        "found": true,
+        "valid": true,
+        "elapsed_s": 0.6092445999966003,
+        "nodes": 7,
+        "length_grid": 85.7178529823055,
+        "postprocess": "success",
+        "path": [
+          [
+            237,
+            225
+          ],
+          [
+            249,
+            230
+          ],
+          [
+            254,
+            233
+          ],
+          [
+            275,
+            237
+          ],
+          [
+            288,
+            229
+          ],
+          [
+            308,
+            236
+          ],
+          [
+            309,
+            245
+          ]
+        ]
+      }
+    }
+  ]
+}

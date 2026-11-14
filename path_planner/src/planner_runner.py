@@ -14,6 +14,7 @@ from core import (
 )
 
 from .planner_factory import (
+    RANDOM_ALGORITHMS,
     PlannerParameterError,
     create_planner,
     resolve_algorithm_parameters,
@@ -98,7 +99,7 @@ def run_algorithm(
         )
 
     if not normalized_path:
-        return _failure(
+        failed_result = _failure(
             run_id=run_id,
             input_ref=input_ref,
             start=safe_start,
@@ -109,11 +110,15 @@ def run_algorithm(
             grid_size_m=float(grid_size_m),
             code="NO_PATH",
             stage="plan",
-            error_type="unreachable",
-            reason=f"{algorithm} 未找到从 {safe_start} 到 {safe_goal} 的可行路径",
-            suggestion="检查障碍栅格、起终点连通性或增加采样/迭代参数",
+            error_type="search_budget_exhausted" if algorithm in RANDOM_ALGORITHMS else "unreachable",
+            reason=(f"{algorithm} 在本次采样/迭代预算内未找到从 {safe_start} 到 {safe_goal} 的可行路径，不能据此判定地图不连通"
+                    if algorithm in RANDOM_ALGORITHMS else
+                    f"{algorithm} 未找到从 {safe_start} 到 {safe_goal} 的可行路径"),
+            suggestion="检查起终点连通性；采样算法可增加采样/迭代预算、减小扩展步长并比较多个随机种子",
             planning_time_s=elapsed,
         )
+        failed_result["outputs"]["search_diagnostics"] = getattr(planner, "diagnostics", {})
+        return failed_result
 
     return make_result(
         MODULE,
@@ -121,6 +126,7 @@ def run_algorithm(
         STATUS_SUCCESS,
         inputs=_inputs(input_ref, safe_start, safe_goal),
         outputs={
+            "search_diagnostics": getattr(planner, "diagnostics", {}),
             "raw_path": path_payload(normalized_path),
             "metrics": _metrics(
                 normalized_path, elapsed, float(grid_size_m), seed

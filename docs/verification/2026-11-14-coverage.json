@@ -1,0 +1,675 @@
+{
+  "scope": "Parent-process unittest statement coverage; real child CLIs are validated separately, not included as subprocess coverage.",
+  "totals": {
+    "covered_lines": 3673,
+    "num_statements": 4272,
+    "percent_covered": 85.97846441947566,
+    "percent_covered_display": "86",
+    "missing_lines": 599,
+    "excluded_lines": 4,
+    "percent_statements_covered": 85.97846441947566,
+    "percent_statements_covered_display": "86"
+  },
+  "files": {
+    "core\\__init__.py": {
+      "covered_lines": 6,
+      "num_statements": 6,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "core\\acceptance.py": {
+      "covered_lines": 89,
+      "num_statements": 97,
+      "percent_covered": 91.75257731958763,
+      "percent_covered_display": "92",
+      "missing_lines": 8,
+      "excluded_lines": 0,
+      "percent_statements_covered": 91.75257731958763,
+      "percent_statements_covered_display": "92"
+    },
+    "core\\batch.py": {
+      "covered_lines": 102,
+      "num_statements": 119,
+      "percent_covered": 85.71428571428571,
+      "percent_covered_display": "86",
+      "missing_lines": 17,
+      "excluded_lines": 0,
+      "percent_statements_covered": 85.71428571428571,
+      "percent_statements_covered_display": "86"
+    },
+    "core\\commands.py": {
+      "covered_lines": 64,
+      "num_statements": 70,
+      "percent_covered": 91.42857142857143,
+      "percent_covered_display": "91",
+      "missing_lines": 6,
+      "excluded_lines": 0,
+      "percent_statements_covered": 91.42857142857143,
+      "percent_statements_covered_display": "91"
+    },
+    "core\\contracts.py": {
+      "covered_lines": 6,
+      "num_statements": 7,
+      "percent_covered": 85.71428571428571,
+      "percent_covered_display": "86",
+      "missing_lines": 1,
+      "excluded_lines": 0,
+      "percent_statements_covered": 85.71428571428571,
+      "percent_statements_covered_display": "86"
+    },
+    "core\\contracts_io.py": {
+      "covered_lines": 179,
+      "num_statements": 238,
+      "percent_covered": 75.21008403361344,
+      "percent_covered_display": "75",
+      "missing_lines": 59,
+      "excluded_lines": 0,
+      "percent_statements_covered": 75.21008403361344,
+      "percent_statements_covered_display": "75"
+    },
+    "core\\contracts_payloads.py": {
+      "covered_lines": 40,
+      "num_statements": 41,
+      "percent_covered": 97.5609756097561,
+      "percent_covered_display": "98",
+      "missing_lines": 1,
+      "excluded_lines": 0,
+      "percent_statements_covered": 97.5609756097561,
+      "percent_statements_covered_display": "98"
+    },
+    "core\\contracts_types.py": {
+      "covered_lines": 34,
+      "num_statements": 37,
+      "percent_covered": 91.89189189189189,
+      "percent_covered_display": "92",
+      "missing_lines": 3,
+      "excluded_lines": 0,
+      "percent_statements_covered": 91.89189189189189,
+      "percent_statements_covered_display": "92"
+    },
+    "core\\display.py": {
+      "covered_lines": 8,
+      "num_statements": 10,
+      "percent_covered": 80.0,
+      "percent_covered_display": "80",
+      "missing_lines": 2,
+      "excluded_lines": 0,
+      "percent_statements_covered": 80.0,
+      "percent_statements_covered_display": "80"
+    },
+    "core\\interaction.py": {
+      "covered_lines": 98,
+      "num_statements": 105,
+      "percent_covered": 93.33333333333333,
+      "percent_covered_display": "93",
+      "missing_lines": 7,
+      "excluded_lines": 0,
+      "percent_statements_covered": 93.33333333333333,
+      "percent_statements_covered_display": "93"
+    },
+    "core\\orchestrator.py": {
+      "covered_lines": 173,
+      "num_statements": 223,
+      "percent_covered": 77.57847533632287,
+      "percent_covered_display": "78",
+      "missing_lines": 50,
+      "excluded_lines": 0,
+      "percent_statements_covered": 77.57847533632287,
+      "percent_statements_covered_display": "78"
+    },
+    "core\\preview.py": {
+      "covered_lines": 68,
+      "num_statements": 78,
+      "percent_covered": 87.17948717948718,
+      "percent_covered_display": "87",
+      "missing_lines": 10,
+      "excluded_lines": 0,
+      "percent_statements_covered": 87.17948717948718,
+      "percent_statements_covered_display": "87"
+    },
+    "core\\process_runner.py": {
+      "covered_lines": 38,
+      "num_statements": 51,
+      "percent_covered": 74.50980392156863,
+      "percent_covered_display": "75",
+      "missing_lines": 13,
+      "excluded_lines": 0,
+      "percent_statements_covered": 74.50980392156863,
+      "percent_statements_covered_display": "75"
+    },
+    "map_pipeline\\__init__.py": {
+      "covered_lines": 2,
+      "num_statements": 2,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "map_pipeline\\cli.py": {
+      "covered_lines": 129,
+      "num_statements": 158,
+      "percent_covered": 81.64556962025317,
+      "percent_covered_display": "82",
+      "missing_lines": 29,
+      "excluded_lines": 0,
+      "percent_statements_covered": 81.64556962025317,
+      "percent_statements_covered_display": "82"
+    },
+    "map_pipeline\\interaction.py": {
+      "covered_lines": 74,
+      "num_statements": 98,
+      "percent_covered": 75.51020408163265,
+      "percent_covered_display": "76",
+      "missing_lines": 24,
+      "excluded_lines": 0,
+      "percent_statements_covered": 75.51020408163265,
+      "percent_statements_covered_display": "76"
+    },
+    "map_pipeline\\json_pipeline.py": {
+      "covered_lines": 10,
+      "num_statements": 12,
+      "percent_covered": 83.33333333333333,
+      "percent_covered_display": "83",
+      "missing_lines": 2,
+      "excluded_lines": 0,
+      "percent_statements_covered": 83.33333333333333,
+      "percent_statements_covered_display": "83"
+    },
+    "map_pipeline\\map_pipeline.py": {
+      "covered_lines": 33,
+      "num_statements": 33,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "map_pipeline\\process.py": {
+      "covered_lines": 56,
+      "num_statements": 62,
+      "percent_covered": 90.3225806451613,
+      "percent_covered_display": "90",
+      "missing_lines": 6,
+      "excluded_lines": 0,
+      "percent_statements_covered": 90.3225806451613,
+      "percent_statements_covered_display": "90"
+    },
+    "map_pipeline\\run_batch.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "map_pipeline\\run_pipeline.py": {
+      "covered_lines": 111,
+      "num_statements": 125,
+      "percent_covered": 88.8,
+      "percent_covered_display": "89",
+      "missing_lines": 14,
+      "excluded_lines": 0,
+      "percent_statements_covered": 88.8,
+      "percent_statements_covered_display": "89"
+    },
+    "map_pipeline\\src\\coordinate_mapper.py": {
+      "covered_lines": 21,
+      "num_statements": 26,
+      "percent_covered": 80.76923076923077,
+      "percent_covered_display": "81",
+      "missing_lines": 5,
+      "excluded_lines": 0,
+      "percent_statements_covered": 80.76923076923077,
+      "percent_statements_covered_display": "81"
+    },
+    "map_pipeline\\src\\grid_map.py": {
+      "covered_lines": 35,
+      "num_statements": 36,
+      "percent_covered": 97.22222222222223,
+      "percent_covered_display": "97",
+      "missing_lines": 1,
+      "excluded_lines": 0,
+      "percent_statements_covered": 97.22222222222223,
+      "percent_statements_covered_display": "97"
+    },
+    "map_pipeline\\src\\grid_resolution_tuner.py": {
+      "covered_lines": 23,
+      "num_statements": 25,
+      "percent_covered": 92.0,
+      "percent_covered_display": "92",
+      "missing_lines": 2,
+      "excluded_lines": 0,
+      "percent_statements_covered": 92.0,
+      "percent_statements_covered_display": "92"
+    },
+    "map_pipeline\\src\\interactive_picker.py": {
+      "covered_lines": 18,
+      "num_statements": 23,
+      "percent_covered": 78.26086956521739,
+      "percent_covered_display": "78",
+      "missing_lines": 5,
+      "excluded_lines": 0,
+      "percent_statements_covered": 78.26086956521739,
+      "percent_statements_covered_display": "78"
+    },
+    "map_pipeline\\src\\map_loader.py": {
+      "covered_lines": 65,
+      "num_statements": 74,
+      "percent_covered": 87.83783783783784,
+      "percent_covered_display": "88",
+      "missing_lines": 9,
+      "excluded_lines": 0,
+      "percent_statements_covered": 87.83783783783784,
+      "percent_statements_covered_display": "88"
+    },
+    "map_pipeline\\src\\picker_common.py": {
+      "covered_lines": 56,
+      "num_statements": 62,
+      "percent_covered": 90.3225806451613,
+      "percent_covered_display": "90",
+      "missing_lines": 6,
+      "excluded_lines": 0,
+      "percent_statements_covered": 90.3225806451613,
+      "percent_statements_covered_display": "90"
+    },
+    "map_pipeline\\src\\picker_opencv.py": {
+      "covered_lines": 84,
+      "num_statements": 106,
+      "percent_covered": 79.24528301886792,
+      "percent_covered_display": "79",
+      "missing_lines": 22,
+      "excluded_lines": 0,
+      "percent_statements_covered": 79.24528301886792,
+      "percent_statements_covered_display": "79"
+    },
+    "map_pipeline\\src\\picker_quad.py": {
+      "covered_lines": 62,
+      "num_statements": 81,
+      "percent_covered": 76.54320987654322,
+      "percent_covered_display": "77",
+      "missing_lines": 19,
+      "excluded_lines": 0,
+      "percent_statements_covered": 76.54320987654322,
+      "percent_statements_covered_display": "77"
+    },
+    "map_pipeline\\src\\picker_tk.py": {
+      "covered_lines": 104,
+      "num_statements": 128,
+      "percent_covered": 81.25,
+      "percent_covered_display": "81",
+      "missing_lines": 24,
+      "excluded_lines": 0,
+      "percent_statements_covered": 81.25,
+      "percent_statements_covered_display": "81"
+    },
+    "map_pipeline\\src\\preview.py": {
+      "covered_lines": 41,
+      "num_statements": 44,
+      "percent_covered": 93.18181818181819,
+      "percent_covered_display": "93",
+      "missing_lines": 3,
+      "excluded_lines": 0,
+      "percent_statements_covered": 93.18181818181819,
+      "percent_statements_covered_display": "93"
+    },
+    "map_pipeline\\src\\rectify.py": {
+      "covered_lines": 88,
+      "num_statements": 101,
+      "percent_covered": 87.12871287128714,
+      "percent_covered_display": "87",
+      "missing_lines": 13,
+      "excluded_lines": 0,
+      "percent_statements_covered": 87.12871287128714,
+      "percent_statements_covered_display": "87"
+    },
+    "motion_control\\run_follower.py": {
+      "covered_lines": 129,
+      "num_statements": 143,
+      "percent_covered": 90.20979020979021,
+      "percent_covered_display": "90",
+      "missing_lines": 14,
+      "excluded_lines": 0,
+      "percent_statements_covered": 90.20979020979021,
+      "percent_statements_covered_display": "90"
+    },
+    "motion_control\\src\\ros2_compat.py": {
+      "covered_lines": 15,
+      "num_statements": 15,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 4,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "motion_control\\src\\ros2_executor.py": {
+      "covered_lines": 208,
+      "num_statements": 242,
+      "percent_covered": 85.9504132231405,
+      "percent_covered_display": "86",
+      "missing_lines": 34,
+      "excluded_lines": 0,
+      "percent_statements_covered": 85.9504132231405,
+      "percent_statements_covered_display": "86"
+    },
+    "motion_control\\src\\ros2_geometry.py": {
+      "covered_lines": 61,
+      "num_statements": 72,
+      "percent_covered": 84.72222222222223,
+      "percent_covered_display": "85",
+      "missing_lines": 11,
+      "excluded_lines": 0,
+      "percent_statements_covered": 84.72222222222223,
+      "percent_statements_covered_display": "85"
+    },
+    "motion_control\\src\\ros2_interface.py": {
+      "covered_lines": 7,
+      "num_statements": 7,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "motion_control\\src\\ros2_twist.py": {
+      "covered_lines": 14,
+      "num_statements": 14,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "motion_control\\src\\ros2_types.py": {
+      "covered_lines": 21,
+      "num_statements": 21,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "motion_control\\src\\simulation.py": {
+      "covered_lines": 129,
+      "num_statements": 132,
+      "percent_covered": 97.72727272727273,
+      "percent_covered_display": "98",
+      "missing_lines": 3,
+      "excluded_lines": 0,
+      "percent_statements_covered": 97.72727272727273,
+      "percent_statements_covered_display": "98"
+    },
+    "path_planner\\json_pipeline.py": {
+      "covered_lines": 95,
+      "num_statements": 109,
+      "percent_covered": 87.1559633027523,
+      "percent_covered_display": "87",
+      "missing_lines": 14,
+      "excluded_lines": 0,
+      "percent_statements_covered": 87.1559633027523,
+      "percent_statements_covered_display": "87"
+    },
+    "path_planner\\preview.py": {
+      "covered_lines": 2,
+      "num_statements": 2,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "path_planner\\run_planner.py": {
+      "covered_lines": 8,
+      "num_statements": 10,
+      "percent_covered": 80.0,
+      "percent_covered_display": "80",
+      "missing_lines": 2,
+      "excluded_lines": 0,
+      "percent_statements_covered": 80.0,
+      "percent_statements_covered_display": "80"
+    },
+    "path_planner\\src\\grid_utils.py": {
+      "covered_lines": 24,
+      "num_statements": 26,
+      "percent_covered": 92.3076923076923,
+      "percent_covered_display": "92",
+      "missing_lines": 2,
+      "excluded_lines": 0,
+      "percent_statements_covered": 92.3076923076923,
+      "percent_statements_covered_display": "92"
+    },
+    "path_planner\\src\\path_visualizer.py": {
+      "covered_lines": 66,
+      "num_statements": 72,
+      "percent_covered": 91.66666666666667,
+      "percent_covered_display": "92",
+      "missing_lines": 6,
+      "excluded_lines": 0,
+      "percent_statements_covered": 91.66666666666667,
+      "percent_statements_covered_display": "92"
+    },
+    "path_planner\\src\\planner_base.py": {
+      "covered_lines": 13,
+      "num_statements": 14,
+      "percent_covered": 92.85714285714286,
+      "percent_covered_display": "93",
+      "missing_lines": 1,
+      "excluded_lines": 0,
+      "percent_statements_covered": 92.85714285714286,
+      "percent_statements_covered_display": "93"
+    },
+    "path_planner\\src\\planner_factory.py": {
+      "covered_lines": 55,
+      "num_statements": 64,
+      "percent_covered": 85.9375,
+      "percent_covered_display": "86",
+      "missing_lines": 9,
+      "excluded_lines": 0,
+      "percent_statements_covered": 85.9375,
+      "percent_statements_covered_display": "86"
+    },
+    "path_planner\\src\\planner_pipeline.py": {
+      "covered_lines": 4,
+      "num_statements": 4,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "path_planner\\src\\planner_results.py": {
+      "covered_lines": 20,
+      "num_statements": 22,
+      "percent_covered": 90.9090909090909,
+      "percent_covered_display": "91",
+      "missing_lines": 2,
+      "excluded_lines": 0,
+      "percent_statements_covered": 90.9090909090909,
+      "percent_statements_covered_display": "91"
+    },
+    "path_planner\\src\\planner_runner.py": {
+      "covered_lines": 47,
+      "num_statements": 61,
+      "percent_covered": 77.04918032786885,
+      "percent_covered_display": "77",
+      "missing_lines": 14,
+      "excluded_lines": 0,
+      "percent_statements_covered": 77.04918032786885,
+      "percent_statements_covered_display": "77"
+    },
+    "path_planner\\src\\planner_validation.py": {
+      "covered_lines": 51,
+      "num_statements": 54,
+      "percent_covered": 94.44444444444444,
+      "percent_covered_display": "94",
+      "missing_lines": 3,
+      "excluded_lines": 0,
+      "percent_statements_covered": 94.44444444444444,
+      "percent_statements_covered_display": "94"
+    },
+    "path_planner\\src\\planners\\__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "path_planner\\src\\planners\\a_star.py": {
+      "covered_lines": 33,
+      "num_statements": 33,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "path_planner\\src\\planners\\dijkstra.py": {
+      "covered_lines": 30,
+      "num_statements": 30,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "path_planner\\src\\planners\\prm.py": {
+      "covered_lines": 75,
+      "num_statements": 81,
+      "percent_covered": 92.5925925925926,
+      "percent_covered_display": "93",
+      "missing_lines": 6,
+      "excluded_lines": 0,
+      "percent_statements_covered": 92.5925925925926,
+      "percent_statements_covered_display": "93"
+    },
+    "path_planner\\src\\planners\\rrt.py": {
+      "covered_lines": 62,
+      "num_statements": 69,
+      "percent_covered": 89.85507246376811,
+      "percent_covered_display": "90",
+      "missing_lines": 7,
+      "excluded_lines": 0,
+      "percent_statements_covered": 89.85507246376811,
+      "percent_statements_covered_display": "90"
+    },
+    "path_planner\\src\\planners\\rrt_star.py": {
+      "covered_lines": 77,
+      "num_statements": 82,
+      "percent_covered": 93.90243902439025,
+      "percent_covered_display": "94",
+      "missing_lines": 5,
+      "excluded_lines": 0,
+      "percent_statements_covered": 93.90243902439025,
+      "percent_statements_covered_display": "94"
+    },
+    "path_postprocess\\__init__.py": {
+      "covered_lines": 3,
+      "num_statements": 3,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "path_postprocess\\run_postprocess.py": {
+      "covered_lines": 81,
+      "num_statements": 107,
+      "percent_covered": 75.70093457943925,
+      "percent_covered_display": "76",
+      "missing_lines": 26,
+      "excluded_lines": 0,
+      "percent_statements_covered": 75.70093457943925,
+      "percent_statements_covered_display": "76"
+    },
+    "path_postprocess\\src\\__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "path_postprocess\\src\\geometry.py": {
+      "covered_lines": 81,
+      "num_statements": 99,
+      "percent_covered": 81.81818181818181,
+      "percent_covered_display": "82",
+      "missing_lines": 18,
+      "excluded_lines": 0,
+      "percent_statements_covered": 81.81818181818181,
+      "percent_statements_covered_display": "82"
+    },
+    "path_postprocess\\src\\parameters.py": {
+      "covered_lines": 38,
+      "num_statements": 50,
+      "percent_covered": 76.0,
+      "percent_covered_display": "76",
+      "missing_lines": 12,
+      "excluded_lines": 0,
+      "percent_statements_covered": 76.0,
+      "percent_statements_covered_display": "76"
+    },
+    "path_postprocess\\src\\path_postprocessor.py": {
+      "covered_lines": 6,
+      "num_statements": 6,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "path_postprocess\\src\\processor.py": {
+      "covered_lines": 63,
+      "num_statements": 71,
+      "percent_covered": 88.73239436619718,
+      "percent_covered_display": "89",
+      "missing_lines": 8,
+      "excluded_lines": 0,
+      "percent_statements_covered": 88.73239436619718,
+      "percent_statements_covered_display": "89"
+    },
+    "path_postprocess\\src\\segments.py": {
+      "covered_lines": 164,
+      "num_statements": 194,
+      "percent_covered": 84.5360824742268,
+      "percent_covered_display": "85",
+      "missing_lines": 30,
+      "excluded_lines": 0,
+      "percent_statements_covered": 84.5360824742268,
+      "percent_statements_covered_display": "85"
+    },
+    "path_postprocess\\src\\smoothers.py": {
+      "covered_lines": 74,
+      "num_statements": 85,
+      "percent_covered": 87.05882352941177,
+      "percent_covered_display": "87",
+      "missing_lines": 11,
+      "excluded_lines": 0,
+      "percent_statements_covered": 87.05882352941177,
+      "percent_statements_covered_display": "87"
+    }
+  }
+}

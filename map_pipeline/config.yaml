@@ -1,10 +1,10 @@
 # 默认栅格化参数
-default_width: 500          # 默认目标栅格宽度（列数）
-threshold: 0                # 0 表示使用 OTSU 自动阈值，否则为固定灰度值 (0-255)
+default_width: 512          # Moving AI 主实验地图原始列数，保持一格一像素
+threshold: 127              # 黑白基准地图使用固定阈值
 obstacle_ratio: 0.5         # 栅格单元内黑色像素占比超过此值则视为障碍
 invert: false               # 是否反转二值图（true: 白色为障碍）
-blur_ksize: 5               # 高斯模糊核大小（奇数）
-grid_size: 0.3              # 每个栅格对应的真实世界物理尺寸（米）
+blur_ksize: 1               # 不模糊，保留基准地图细障碍与窄走廊
+grid_size: 1.0              # 离线实验约定尺度，未做真实米制标定；实车必须另配尺度
 
 # 透视矫正（命令行 --rectify 可覆盖）
 rectify: false              # true 时先做四点透视矫正和裁剪

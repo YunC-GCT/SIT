@@ -14,6 +14,7 @@ from .planners.a_star import AStarPlanner
 from .planners.dijkstra import DijkstraPlanner
 from .planners.prm import PRMPlanner
 from .planners.rrt import RRTPlanner
+from .planners.rrt_adaptive import RRTAdaptivePlanner
 from .planners.rrt_star import RRTStarPlanner
 
 # 注册表：(PlannerClass, default_kwargs)
@@ -21,13 +22,15 @@ from .planners.rrt_star import RRTStarPlanner
 _registry = {
     'astar':      (AStarPlanner,    {}),
     'dijkstra':   (DijkstraPlanner, {}),
-    'prm':        (PRMPlanner,      {'num_samples': 500, 'k_neighbors': 10, 'max_edge_len': 30.0}),
+    'prm':        (PRMPlanner,      {'num_samples': 500, 'k_neighbors': 10, 'max_edge_len': 30.0, 'retry_num_samples': 0}),
     'rrt':        (RRTPlanner,      {'max_iter': 2000, 'step_size': 5.0, 'goal_sample_rate': 0.1}),
+    'rrt_adaptive': (RRTAdaptivePlanner, {'max_iter': 2000, 'step_size': 5.0, 'goal_sample_rate': 0.1, 'adaptive_step': True}),
     'rrt_star':   (RRTStarPlanner,  {'max_iter': 2000, 'step_size': 5.0,
-                                      'goal_sample_rate': 0.1, 'search_radius': 10.0}),
+                                      'goal_sample_rate': 0.1, 'search_radius': 10.0, 'adaptive_step': False,
+                                      'optimize_iterations': None, 'search_time_s': 0.0, 'optimize_time_s': 0.0}),
 }
 
-RANDOM_ALGORITHMS = frozenset({"prm", "rrt", "rrt_star"})
+RANDOM_ALGORITHMS = frozenset({"prm", "rrt", "rrt_adaptive", "rrt_star"})
 
 
 class PlannerParameterError(ValueError):
@@ -57,6 +60,18 @@ def validate_algorithm_parameters(name, params=None):
         )
 
     normalized = dict(params)
+    if "adaptive_step" in normalized and not isinstance(normalized["adaptive_step"], bool):
+        raise PlannerParameterError("adaptive_step 必须是布尔值")
+    for field in ("retry_num_samples", "optimize_iterations"):
+        if field in normalized:
+            value = normalized[field]
+            if field == "optimize_iterations" and value is None:
+                continue
+            if not isinstance(value, Integral) or isinstance(value, bool) or value < 0:
+                raise PlannerParameterError(f"{field} 必须是非负整数")
+    for field in ("search_time_s", "optimize_time_s"):
+        if field in normalized and (not _is_number(normalized[field]) or not 0 <= normalized[field] < float('inf')):
+            raise PlannerParameterError(f"{field} 必须是有限非负数")
     integer_fields = {"num_samples", "k_neighbors", "max_iter"}
     positive_number_fields = {"max_edge_len", "step_size", "search_radius"}
     for field in integer_fields:

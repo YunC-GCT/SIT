@@ -1,10 +1,10 @@
-"""Generate 5 test maps for path planning, saved to map_pipeline/data/input/."""
+"""Generate synthetic regression fixtures, separate from public experiment maps."""
 import numpy as np
 import cv2
 import os
 
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                       "map_pipeline", "data", "input")
+                       "tests", "fixtures")
 os.makedirs(OUT_DIR, exist_ok=True)
 
 
