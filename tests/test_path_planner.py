@@ -33,6 +33,25 @@ from path_planner.src.planner_validation import (
 
 
 class PlannerPipelineTests(unittest.TestCase):
+    def test_research_preserves_search_diagnostics(self):
+        result = run_planning(np.zeros((8, 8), dtype=np.uint8), (0, 0), (7, 7),
+            ['rrt_star'], parameters={'rrt_star': {'goal_sample_rate': 1., 'optimize_iterations': 0}}, seed=42)
+        self.assertEqual(result['status'], STATUS_SUCCESS)
+        self.assertIn('first_solution_s', result['outputs']['comparisons'][0]['search_diagnostics'])
+
+    def test_boundary_rejects_cross_obstacle_edges_and_nonfinite_inputs(self):
+        grid = np.zeros((3, 3), dtype=np.uint8)
+        grid[1, 1] = 1
+        with self.assertRaises(ValueError):
+            _normalize_path([(0, 0), (2, 2)], grid, (0, 0), (2, 2))
+        with self.assertRaises(PlannerParameterError):
+            _validate_grid([[0, 2], [0, 0]])
+        for number in (float('nan'), float('inf')):
+            with self.assertRaises(PlannerParameterError):
+                _validate_inputs(grid, (0, 0), (2, 2), number)
+            with self.assertRaises(PlannerParameterError):
+                validate_algorithm_parameters('rrt', {'step_size': number})
+
     def test_cli_runs_a_planner_and_writes_a_structured_result(self):
         with tempfile.TemporaryDirectory() as tmp:
             map_path = os.path.join(tmp, "map.json")
@@ -208,8 +227,8 @@ class PlannerPipelineTests(unittest.TestCase):
 
         self.assertEqual(_normalize_path(None, grid, (0, 0), (2, 2)), [])
         self.assertEqual(
-            _normalize_path([(0, 0), (2, 2)], grid, (0, 0), (2, 2)),
-            [(0, 0), (2, 2)],
+            _normalize_path([(0, 0), (0, 2), (2, 2)], grid, (0, 0), (2, 2)),
+            [(0, 0), (0, 2), (2, 2)],
         )
         with self.assertRaises(ValueError):
             _normalize_path([(0, 0)], grid, (0, 0), (2, 2))

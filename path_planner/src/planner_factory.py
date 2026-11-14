@@ -83,7 +83,7 @@ def validate_algorithm_parameters(name, params=None):
             raise PlannerParameterError(f"{field} 必须是正整数")
     for field in positive_number_fields:
         if field in normalized and (
-            not _is_number(normalized[field]) or normalized[field] <= 0
+            not _is_number(normalized[field]) or not 0 < normalized[field] < float('inf')
         ):
             raise PlannerParameterError(f"{field} 必须是正数")
     if "goal_sample_rate" in normalized and (

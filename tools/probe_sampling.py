@@ -60,7 +60,7 @@ def main():
     begin = time.perf_counter()
     path = planner.plan(start, goal)
     valid = bool(path) and path[0] == start and path[-1] == goal and all(
-        line_of_sight(grid, *grid.shape, a, b) for a, b in zip(path, path[1:]))
+        line_of_sight(grid, int(grid.shape[0]), int(grid.shape[1]), a, b) for a, b in zip(path, path[1:]))
     result = dict(map=args.map, scenario=index, start=start, goal=goal,
                          algorithm=args.algorithm, params=json.loads(args.params), seed=42,
                          found=bool(path), valid=valid, nodes=len(path),

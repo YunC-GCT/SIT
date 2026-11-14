@@ -5,8 +5,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import tempfile
 from typing import Any
+
+from .atomic_json import write_json_atomic
 
 from .contracts_types import (
     ContractError,
@@ -280,16 +281,7 @@ def write_result(path: str, result: dict, *, overwrite: bool = True) -> str:
         else:
             if existing.get("status") == STATUS_SUCCESS and result.get("status") != STATUS_SUCCESS:
                 raise ContractError("失败结果不能覆盖已有 success 结果")
-    directory = os.path.dirname(os.path.abspath(path))
-    fd, tmp = tempfile.mkstemp(prefix=".result-", suffix=".json", dir=directory)
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            json.dump(result, handle, ensure_ascii=False, indent=2)
-            handle.write("\n")
-        os.replace(tmp, path)
-    finally:
-        if os.path.exists(tmp):
-            os.unlink(tmp)
+    write_json_atomic(path, result)
     return path
 
 def read_result(path: str) -> dict:

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 import time
-from typing import Any, Callable, Sequence
+from typing import Any, Callable, Protocol, Sequence
 
 from .ros2_compat import Node, Twist, rclpy
 from .ros2_geometry import (
@@ -14,6 +14,14 @@ from .ros2_geometry import (
 )
 from .ros2_twist import CHASSIS_NODE_NAME, CMD_VEL_TOPIC, make_twist
 from .ros2_types import CmdVelPreflight, ExecutionReport, MotionSafetyError
+
+class ExecutorNode(Protocol):
+    """Node operations shared by ROS2 and the offline simulator."""
+
+    def get_namespace(self) -> str: ...
+    def get_name(self) -> str: ...
+    def destroy_node(self) -> None: ...
+
 
 class Ros2PathExecutor:
     def __init__(
@@ -62,7 +70,7 @@ class Ros2PathExecutor:
         self.communication_buffer_s = float(communication_buffer_s)
         self.sleep = sleep or time.sleep
 
-        self.node: Node | None = None
+        self.node: ExecutorNode | None = None
         self.pub: Any = None
         self.done = False
         self._shutdown_done = False
@@ -77,16 +85,17 @@ class Ros2PathExecutor:
             raise RuntimeError("ROS2 Python packages are not available")
         if not rclpy.ok():
             rclpy.init(args=None)
-        self.node = Node("path_follower")
+        node = Node("path_follower")
+        self.node = node
         self._node_destroyed = False
-        self.pub = self.node.create_publisher(Twist, self.cmd_vel_topic, 1)
+        self.pub = node.create_publisher(Twist, self.cmd_vel_topic, 1)
         return self.node, self.pub
 
     def execute_segments(
         self,
         segments: Sequence[dict],
         *,
-        node: Node | None = None,
+        node: ExecutorNode | None = None,
         pub: Any = None,
         require_preflight: bool = True,
         allow_other_publishers: bool = False,
@@ -375,8 +384,9 @@ class Ros2PathExecutor:
             logger.warn(message)
 
     def _logger(self):
-        if self.node is not None and hasattr(self.node, "get_logger"):
-            return self.node.get_logger()
+        get_logger = getattr(self.node, "get_logger", None)
+        if get_logger is not None:
+            return get_logger()
         return None
 
 def _sign(value: float) -> float:

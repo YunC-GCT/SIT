@@ -1,6 +1,7 @@
 """Bounded before/after comparison using a local pre-fix snapshot."""
 import argparse
 import importlib
+from typing import Any
 import json
 import os
 import subprocess
@@ -29,7 +30,7 @@ def child(case, version):
     path = planner.plan(start, goal)
     elapsed = time.perf_counter()-begin
     from path_planner.src.grid_utils import line_of_sight
-    valid = bool(path) and path[0] == start and path[-1] == goal and all(line_of_sight(grid, *grid.shape, a, b) for a, b in zip(path, path[1:]))
+    valid = bool(path) and path[0] == start and path[-1] == goal and all(line_of_sight(grid, int(grid.shape[0]), int(grid.shape[1]), a, b) for a, b in zip(path, path[1:]))
     from path_postprocess import process_path
     post = process_path(grid, path, start=start, goal=goal, grid_size_m=1.0) if valid else None
     print(json.dumps(dict(found=bool(path), valid=valid, elapsed_s=elapsed, nodes=len(path),
@@ -60,7 +61,7 @@ def main():
     results = []
     target = ROOT / args.output
     for case in cases:
-        row = dict(**case, seed=42)
+        row: dict[str, Any] = dict(**case, seed=42)
         for version in ['before', 'after']:
             try:
                 proc = subprocess.run([sys.executable, __file__, '--child', json.dumps(case), '--version', version],

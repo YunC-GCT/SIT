@@ -16,13 +16,14 @@ from core import (
 )
 from path_postprocess import (
     PathPostprocessParameterError,
+    PathSmoother,
     process_path,
     resolve_postprocess_parameters,
 )
 from path_postprocess.run_postprocess import main as postprocess_main
 
 
-class CollidingSmoother:
+class CollidingSmoother(PathSmoother):
     def smooth(self, path, sample_spacing_grid):
         return [(0.0, 0.0), (0.5, 0.5), (2.0, 2.0)]
 

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import tempfile
-from typing import Tuple
+from typing import Tuple, Any
 
 import cv2
 import numpy as np
@@ -31,7 +31,7 @@ def _display_geometry(
         1, int(round(height * scale))
     )
 
-def _normalize_key(key: object) -> int:
+def _normalize_key(key: Any) -> int:
     """Normalize OpenCV backend key codes to the low-byte key value."""
     try:
         value = int(key)
@@ -39,7 +39,7 @@ def _normalize_key(key: object) -> int:
         return -1
     return value if value < 0 else value & 0xFF
 
-def _is_confirm_key(key: object) -> bool:
+def _is_confirm_key(key: Any) -> bool:
     """Recognize Enter/Return codes emitted by common OpenCV backends."""
     try:
         value = int(key)

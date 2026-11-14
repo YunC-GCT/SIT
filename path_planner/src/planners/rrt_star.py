@@ -93,7 +93,7 @@ class RRTStarPlanner(RRTAdaptivePlanner):
                 stop_reason = "search_time"
                 break
             if first_solution_time is not None:
-                if self.optimize_iterations is not None and iteration-first_solution_iteration >= self.optimize_iterations:
+                if self.optimize_iterations is not None and first_solution_iteration is not None and iteration-first_solution_iteration >= self.optimize_iterations:
                     stop_reason = "optimize_iterations"
                     break
                 if self.optimize_time_s and now-first_solution_time >= self.optimize_time_s:

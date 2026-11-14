@@ -139,6 +139,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="在终端输入 row,col 起终点",
     )
     args = parser.parse_args(argv)
+    image_path = args.image or ""
 
     batch = RunBatch(root=args.run_root, run_id=args.run_id).start()
     stage_dir = batch.stage_dir("map_pipeline")

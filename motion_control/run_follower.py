@@ -156,9 +156,9 @@ def _success_result(
 def _failure_result(
     *,
     run_id: str,
-    postprocess_result: str,
+    postprocess_result: str | None,
     stage: str,
-    exc: Exception,
+    exc: BaseException,
     suggestion: str,
     code: str = "MOTION_CONTROL_ERROR",
     config: dict | None = None,

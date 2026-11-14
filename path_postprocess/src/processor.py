@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-from numbers import Real
 from typing import Any, Iterable, Sequence
 
 from core import (
@@ -123,7 +122,7 @@ def process_path(
 
     fallback = False
     fallback_reason: str | None = None
-    smoothed_curve: Sequence[Sequence[Real]] | None = None
+    smoothed_curve: Sequence[Sequence[float]] | None = None
     if not effective_parameters["smooth"]:
         effective_path = normalized_path
         smoothing_applied = False
@@ -224,7 +223,7 @@ def process_path(
     }
     if fallback_reason:
         smoothing_output["fallback_reason"] = fallback_reason
-    metric_path: Sequence[Sequence[Real]] = (
+    metric_path: Sequence[Sequence[float]] = (
         smoothed_curve if smoothing_applied and smoothed_curve is not None
         else effective_path
     )

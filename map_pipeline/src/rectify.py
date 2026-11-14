@@ -174,7 +174,7 @@ def rectify_image(
         },
         "arena_size_m": (
             {
-                "width": float(arena_width_m),
+                "width": float(arena_width_m) if arena_width_m is not None else None,
                 "height": (
                     float(arena_height_m)
                     if arena_height_m is not None

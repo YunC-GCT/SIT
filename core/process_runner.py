@@ -60,6 +60,7 @@ def _run_stop_only(command: Sequence[str]) -> None:
         kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
     else:
         kwargs["start_new_session"] = True
+    stop_process = None
     try:
         stop_process = subprocess.Popen(stop_command, **kwargs)
         stop_process.wait(timeout=8)
@@ -71,7 +72,8 @@ def _run_stop_only(command: Sequence[str]) -> None:
             file=sys.stderr,
         )
         try:
-            stop_process.kill()
+            if stop_process is not None:
+                stop_process.kill()
         except (UnboundLocalError, OSError):
             pass
 

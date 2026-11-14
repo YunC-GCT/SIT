@@ -1,6 +1,7 @@
 """Bounded parameter probes on the previously selected tasks, preserving failures."""
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import argparse
+from typing import Any
 import json
 import subprocess
 import sys
@@ -38,7 +39,7 @@ def main():
             params = dict(num_samples=20000 if narrow else 6000, k_neighbors=15, max_edge_len=15 if narrow else 40)
             probes.append({**{k:base[k] for k in ['map','map_file','group','scenario_index','reference_length_octile','start','goal','algorithm','seed']},
                            'parameters':params,'baseline_outcome':base['outcome']})
-    report = dict(scope='selected PRM profiles on all 36 original tasks' if args.confirm else 'parameter screening only; same official tasks/seeds as baseline; not full acceptance',timeout_s=15,results=[])
+    report: dict[str, Any] = dict(scope='selected PRM profiles on all 36 original tasks' if args.confirm else 'parameter screening only; same official tasks/seeds as baseline; not full acceptance',timeout_s=15,results=[])
     target = ROOT / ('docs/verification/sampling-prm-profile-validation.json' if args.confirm else 'docs/verification/sampling-parameter-screening.json')
     def run(case):
         try:

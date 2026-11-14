@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from numbers import Integral, Real
+from numbers import Integral
 from typing import Any, Iterable, Sequence
 
 import numpy as np
@@ -108,13 +108,13 @@ def _validate_path(
         if not _line_of_sight(grid, first, second):
             raise RawPathError(f"raw path connection is blocked: {first} -> {second}")
 
-def _path_length(path: Sequence[Sequence[Real]]) -> float:
+def _path_length(path: Sequence[Sequence[float]]) -> float:
     return sum(
         math.hypot(second[0] - first[0], second[1] - first[1])
         for first, second in zip(path, path[1:])
     )
 
-def _heading_degrees(point: tuple[int, int], target: tuple[int, int]) -> float:
+def _heading_degrees(point: Sequence[float], target: Sequence[float]) -> float:
     delta_row = target[0] - point[0]
     delta_col = target[1] - point[1]
     return math.degrees(math.atan2(delta_col, -delta_row)) % 360.0

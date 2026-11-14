@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from typing import Callable, ClassVar
 from pathlib import Path
 from unittest.mock import patch
 
@@ -467,6 +468,7 @@ class MapPipelineTests(unittest.TestCase):
             self.assertTrue(os.path.exists(preview_path))
             preview = cv2.imread(preview_path)
             self.assertIsNotNone(preview)
+            assert preview is not None
             self.assertGreater(int(np.count_nonzero(preview)), 0)
 
     def test_headless_cli_creates_an_isolated_run_batch_when_output_is_omitted(self):
@@ -854,7 +856,7 @@ class InteractivePickerTests(unittest.TestCase):
 class TkPickerTests(unittest.TestCase):
     class FakeRoot:
         instances = []
-        scenario = None
+        scenario: ClassVar[Callable[["TkPickerTests.FakeRoot"], None] | None] = None
 
         def __init__(self):
             self.bindings = {}
@@ -884,8 +886,9 @@ class TkPickerTests(unittest.TestCase):
             pass
 
         def mainloop(self):
-            if type(self).scenario is not None:
-                type(self).scenario(self)
+            scenario = type(self).scenario
+            if scenario is not None:
+                scenario(self)
 
         def destroy(self):
             self.destroyed = True

@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Sequence
 
 from .batch import RunBatch
+from .atomic_json import JsonSaveError
 from .commands import CommandMixin
 from .contracts import (
     STATUS_FAILED,
@@ -153,10 +154,14 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
                 report = self._run_once(start_index)
                 if report.status != STATUS_SUCCESS or not self.interactive_menu:
                     return report
-                action = self._completion_action()
-                if action == "quit":
-                    return report
-                start_index = self._apply_completion_action(action)
+                while True:
+                    action = self._completion_action()
+                    if action == "quit":
+                        return report
+                    next_index = self._apply_completion_action(action)
+                    if next_index is not None:
+                        start_index = next_index
+                        break
                 self.batch.reload().start()
         except KeyboardInterrupt:
             error = make_error(
@@ -169,6 +174,20 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
                 suggestion="confirm the vehicle is stopped before rerunning",
             )
             return self._failure_report("workflow", error, finish=True)
+        except JsonSaveError as exc:
+            # Do not try to record this failure through the same locked file.
+            return PipelineReport(
+                STATUS_FAILED, self.batch.run_id, self.batch.manifest_path,
+                stage="save_json",
+                errors=[make_error(
+                    "JSON_SAVE_FAILED", module="top_level", stage="save_json",
+                    error_type=type(exc).__name__, reason=str(exc), input_ref=exc.path,
+                    suggestion=(
+                        "关闭占用该文件的程序并检查目录权限；原 JSON 和模块结果保留，"
+                        f"待保存内容位于 {exc.candidate}"
+                    ),
+                )],
+            )
         except Exception as exc:
             error = make_error(
                 "TOP_LEVEL_ERROR",
@@ -193,6 +212,8 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
 
         try:
             preview_path = self._create_preview()
+        except JsonSaveError:
+            raise
         except Exception as exc:
             return self._failure_report(
                 "preview",
@@ -309,7 +330,21 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
             if result is not None and result.get("status") == STATUS_SUCCESS:
                 return None
 
-            action = self._recovery_action(module, errors)
+            while True:
+                action = self._recovery_action(module, errors)
+                if module == "map_pipeline" and action in {"map", "back"}:
+                    if not self._select_map():
+                        continue
+                    action = "retry"
+                elif module == "path_planner" and action in {"algorithm", "back"}:
+                    if not self._select_algorithms():
+                        continue
+                    action = "retry"
+                elif action == "edit":
+                    if not self._edit_parameters(module):
+                        continue
+                    action = "retry"
+                break
             self.batch.record_event(
                 {
                     "type": "recovery_action",
@@ -318,9 +353,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
                     "errors": errors,
                 }
             )
-            if action in {"retry", "edit"}:
-                if action == "edit":
-                    self._edit_parameters(module)
+            if action == "retry":
                 self.batch.reload().start()
                 continue
             if action == "back":

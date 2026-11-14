@@ -74,8 +74,8 @@ class RectifyTests(unittest.TestCase):
     def test_rectify_image_warps_a_trapezoid_back_to_a_rectangle(self):
         source = np.full((100, 100, 3), 255, dtype=np.uint8)
         source[25:75, 25:75] = 0
-        source_quad = np.float32([[0, 0], [99, 0], [99, 99], [0, 99]])
-        photo_quad = np.float32([[20, 10], [90, 0], [99, 95], [5, 80]])
+        source_quad = np.array([[0, 0], [99, 0], [99, 99], [0, 99]], dtype=np.float32)
+        photo_quad = np.array([[20, 10], [90, 0], [99, 95], [5, 80]], dtype=np.float32)
         homography = cv2.getPerspectiveTransform(source_quad, photo_quad)
         photo = cv2.warpPerspective(
             source,
@@ -86,7 +86,7 @@ class RectifyTests(unittest.TestCase):
 
         rectified, metadata = rectify_image(
             photo,
-            photo_quad,
+            photo_quad.tolist(),
             output_width=100,
         )
 

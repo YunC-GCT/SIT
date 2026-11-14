@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import platform
-from typing import Any
+from typing import Any, Sequence
 
 from .contracts_types import (
     ContractError,
@@ -14,7 +14,7 @@ from .contracts_types import (
     utc_now,
 )
 
-def _point(row_col: tuple[int, int] | list[int]) -> dict:
+def _point(row_col: Sequence[float]) -> dict:
     if len(row_col) != 2:
         raise ContractError("坐标必须包含 row 和 col")
     row, col = row_col
@@ -67,7 +67,7 @@ def grid_map_payload(
     return payload
 
 def path_payload(
-    points: list[tuple[int, int]] | list[list[int]] | list[tuple[float, float]] | list[list[float]],
+    points: Sequence[Sequence[float]],
     *,
     coordinate_system: dict[str, Any] | None = None,
     units: dict[str, str] | None = None,
@@ -95,8 +95,8 @@ def path_payload(
 def path_segment_payload(
     index: int,
     *,
-    start: tuple[int, int] | list[int],
-    end: tuple[int, int] | list[int],
+    start: Sequence[float],
+    end: Sequence[float],
     direction_deg: float,
     turn_angle_deg: float,
     grid_distance: float,

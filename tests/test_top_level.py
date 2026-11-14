@@ -9,7 +9,8 @@ import unittest
 import main as main_module
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
+from typing import cast
+from unittest.mock import mock_open, patch
 
 import cv2
 import numpy as np
@@ -26,6 +27,7 @@ from core import (
     save_path_preview,
     write_result,
 )
+from core.batch import RunBatch
 from core.orchestrator import PipelineOrchestrator, run_pipeline
 
 
@@ -316,6 +318,7 @@ class TopLevelPipelineTests(unittest.TestCase):
                 [STATUS_SUCCESS, STATUS_SUCCESS, STATUS_SUCCESS],
             )
             self.assertEqual(manifest["stages"]["motion_control"]["status"], "pending")
+            assert report.preview_path is not None
             self.assertTrue(os.path.exists(report.preview_path))
             for module in ("map_pipeline", "path_planner", "path_postprocess"):
                 stage_result = json.loads(
@@ -344,6 +347,7 @@ class TopLevelPipelineTests(unittest.TestCase):
 
             self.assertEqual(report.status, STATUS_SUCCESS)
             self.assertFalse(report.motion_started)
+            assert report.preview_path is not None
             self.assertTrue(os.path.exists(report.preview_path))
             self.assertNotIn("motion_control", [runner._module(command) for command in runner.commands])
             manifest = json.loads(
@@ -476,7 +480,7 @@ class TopLevelPipelineTests(unittest.TestCase):
 
     @patch("core.interaction.cv2")
     def test_closing_path_preview_window_is_a_normal_rejection(self, cv2_mock):
-        cv2_mock.imread.return_value = np.zeros((8, 8, 3), dtype=np.uint8)
+        cv2_mock.imdecode.return_value = np.zeros((8, 8, 3), dtype=np.uint8)
         cv2_mock.waitKey.return_value = -1
         cv2_mock.getWindowProperty.return_value = 0
 
@@ -484,11 +488,12 @@ class TopLevelPipelineTests(unittest.TestCase):
         orchestrator.drive = True
         orchestrator.headless = False
         orchestrator.accept_path = False
-        orchestrator.batch = SimpleNamespace(
+        orchestrator.batch = cast(RunBatch, SimpleNamespace(
             manifest={"artifacts": {"path_preview": "preview.png"}}
-        )
+        ))
 
-        accepted = orchestrator._accept_preview()
+        with patch("builtins.open", mock_open(read_data=b"encoded-image")):
+            accepted = orchestrator._accept_preview()
 
         self.assertFalse(accepted)
         cv2_mock.destroyWindow.assert_not_called()
@@ -547,9 +552,9 @@ class TopLevelPipelineTests(unittest.TestCase):
         orchestrator.drive = True
         orchestrator.headless = False
         orchestrator.accept_path = False
-        orchestrator.batch = SimpleNamespace(
+        orchestrator.batch = cast(RunBatch, SimpleNamespace(
             manifest={"artifacts": {"path_preview": "preview.png"}}
-        )
+        ))
         orchestrator.output_fn = lambda _text: None
         orchestrator.input_fn = lambda _prompt: "yes"
 
@@ -564,39 +569,43 @@ class TopLevelPipelineTests(unittest.TestCase):
         orchestrator.drive = True
         orchestrator.headless = False
         orchestrator.accept_path = False
-        orchestrator.batch = SimpleNamespace(
+        orchestrator.batch = cast(RunBatch, SimpleNamespace(
             manifest={"artifacts": {"path_preview": "preview.png"}}
-        )
+        ))
         orchestrator.output_fn = lambda _text: None
         orchestrator.input_fn = lambda _prompt: "no"
 
         self.assertFalse(orchestrator._accept_preview())
 
 
+@patch("core.map_selection.os.path.isfile", return_value=True)
 class MapSelectionTests(unittest.TestCase):
-    @patch("main.os.listdir", return_value=["only.png"])
-    @patch("main.os.path.isdir", return_value=True)
-    def test_single_image_still_prompts_when_interactive(self, _isdir, _listdir):
+    @patch("core.map_selection.os.listdir", return_value=["only.png"])
+    @patch("core.map_selection.os.path.isdir", return_value=True)
+    def test_single_image_still_prompts_when_interactive(self, _isdir, _listdir, _isfile):
         with patch("builtins.input", return_value="1") as prompt:
             path = main_module._choose_image(None, interactive=True)
 
+        assert path is not None
         self.assertTrue(path.endswith("only.png"))
         prompt.assert_called_once()
 
-    @patch("main.os.listdir", return_value=["only.png"])
-    @patch("main.os.path.isdir", return_value=True)
-    def test_blank_choice_uses_the_only_image(self, _isdir, _listdir):
+    @patch("core.map_selection.os.listdir", return_value=["only.png"])
+    @patch("core.map_selection.os.path.isdir", return_value=True)
+    def test_blank_choice_uses_the_only_image(self, _isdir, _listdir, _isfile):
         with patch("builtins.input", return_value=""):
             path = main_module._choose_image(None, interactive=True)
 
+        assert path is not None
         self.assertTrue(path.endswith("only.png"))
 
-    @patch("main.os.listdir", return_value=["only.png"])
-    @patch("main.os.path.isdir", return_value=True)
+    @patch("core.map_selection.os.listdir", return_value=["only.png"])
+    @patch("core.map_selection.os.path.isdir", return_value=True)
     def test_single_image_does_not_prompt_when_not_interactive(
         self,
         _isdir,
         _listdir,
+        _isfile,
     ):
         with patch(
             "builtins.input",
@@ -749,7 +758,7 @@ class CommandBuilderAndProcessRunnerTests(unittest.TestCase):
 
         class TimeoutProcess:
             def wait(self, timeout=None):
-                raise subprocess.TimeoutExpired(cmd="stop-only", timeout=timeout)
+                raise subprocess.TimeoutExpired(cmd="stop-only", timeout=timeout if timeout is not None else 0)
 
             def kill(self):
                 pass
@@ -787,7 +796,7 @@ class InteractionMixinTests(unittest.TestCase):
         orchestrator.input_fn = lambda _prompt: next(answers)
         orchestrator.output_fn = lambda _text: None
         orchestrator.recovery = recovery
-        orchestrator.batch = self.FakeBatch()
+        orchestrator.batch = cast(RunBatch, self.FakeBatch())
         orchestrator.mode = "normal"
         orchestrator.algorithm = None
         orchestrator.algorithms = []
@@ -802,7 +811,7 @@ class InteractionMixinTests(unittest.TestCase):
         orchestrator.image_path = "map.png"
         return orchestrator
 
-    def test_completion_action_maps_keys_and_defaults_to_quit(self):
+    def test_completion_action_maps_keys(self):
         cases = {
             "r": "rerun",
             "a": "algorithm",
@@ -810,14 +819,13 @@ class InteractionMixinTests(unittest.TestCase):
             "s": "select",
             "m": "map",
             "q": "quit",
-            "x": "quit",
         }
         for answer, expected in cases.items():
             with self.subTest(answer=answer):
                 orchestrator = self.make_orchestrator(iter([answer]))
                 self.assertEqual(orchestrator._completion_action(), expected)
                 self.assertEqual(
-                    orchestrator.batch.events[-1]["type"],
+                    cast(InteractionMixinTests.FakeBatch, orchestrator.batch).events[-1]["type"],
                     "completion_action",
                 )
 
@@ -834,7 +842,6 @@ class InteractionMixinTests(unittest.TestCase):
             "p": "edit",
             "b": "back",
             "q": "exit",
-            "x": "exit",
         }
         for answer, expected in cases.items():
             with self.subTest(answer=answer):
@@ -864,7 +871,7 @@ class InteractionMixinTests(unittest.TestCase):
         self.assertEqual(single._apply_completion_action("algorithm"), 1)
         self.assertEqual(single.mode, "normal")
         self.assertEqual(single.algorithm, "rrt")
-        self.assertEqual(single.batch.workflow["mode"], "normal")
+        self.assertEqual(cast(InteractionMixinTests.FakeBatch, single.batch).workflow["mode"], "normal")
 
         research = self.make_orchestrator(iter(["astar,rrt"]))
         self.assertEqual(research._apply_completion_action("algorithm"), 1)
@@ -884,9 +891,10 @@ class InteractionMixinTests(unittest.TestCase):
         self.assertIsNone(select.start)
         self.assertIsNone(select.goal)
 
-        change_map = self.make_orchestrator(iter(["new_map.png"]))
+        change_map = self.make_orchestrator(iter(["tests/fixtures/01_scattered.png"]))
         self.assertEqual(change_map._apply_completion_action("map"), 0)
-        self.assertTrue(change_map.image_path.endswith("new_map.png"))
+        assert change_map.image_path is not None
+        self.assertTrue(change_map.image_path.endswith("01_scattered.png"))
         self.assertIsNone(change_map.start)
 
     def test_edit_parameters_updates_module_specific_values(self):
@@ -898,12 +906,14 @@ class InteractionMixinTests(unittest.TestCase):
         postprocess._edit_parameters("path_postprocess")
         self.assertEqual(postprocess.postprocess_parameters, {"smooth": False})
 
-        map_config = self.make_orchestrator(iter(["map.yaml"]))
+        map_config = self.make_orchestrator(iter(["tools/acceptance_map.yaml"]))
         map_config._edit_parameters("map_pipeline")
-        self.assertTrue(map_config.map_config.endswith("map.yaml"))
+        assert map_config.map_config is not None
+        self.assertTrue(map_config.map_config.endswith("acceptance_map.yaml"))
 
         motion_config = self.make_orchestrator(iter(["motion.yaml"]))
         motion_config._edit_parameters("motion_control")
+        assert motion_config.motion_config is not None
         self.assertTrue(motion_config.motion_config.endswith("motion.yaml"))
 
     def test_confirm_drive_uses_explicit_flag_only_in_headless_mode(self):

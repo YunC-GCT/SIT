@@ -99,26 +99,9 @@
   .r { color: var(--red); }
   .b { color: var(--blue); }
   .dim { color: #64748b; }
-  .flow {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;
-    align-items: stretch; margin: 8px 0 18px;
-  }
-  .flow .step {
-    position: relative; padding: 14px 12px; border-radius: 12px;
-    border: 1px solid var(--line); background: rgba(255,255,255,.025);
-    font-size: 12.5px; color: var(--muted);
-  }
-  .flow .step b { display: block; color: var(--text); font-size: 13px; margin-bottom: 4px; }
-  .flow .step::after {
-    content: "→"; position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
-    color: var(--cyan); font-size: 14px;
-  }
-  .flow .step:last-child::after { display: none; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media (max-width: 860px) {
     .grid2 { grid-template-columns: 1fr; }
-    .flow { grid-template-columns: repeat(2, 1fr); }
-    .flow .step::after { display: none; }
   }
   table { width: 100%; border-collapse: collapse; margin: 12px 0 6px; font-size: 13.5px; }
   th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -146,6 +129,7 @@
   footer { margin-top: 42px; color: var(--muted); font-size: 12.5px; text-align: center; }
   a { color: var(--blue); }
 </style>
+<link rel="stylesheet" href="report-diagrams.css">
 </head>
 <body>
 <aside style="margin:16px;padding:16px;border:1px solid #fbbf24;border-radius:8px;color:#e6edf7;background:#16233a">
@@ -167,7 +151,7 @@
       <span class="badge">GUI：Tk / OpenCV</span>
       <span class="badge">终端：stdin/stdout</span>
       <span class="badge amber">安全确认：/cmd_vel 预检 + yes</span>
-      <span class="badge">报告日期：2026-11-03</span>
+      <span class="badge">报告日期：2026-11-14</span>
     </div>
   </header>
 
@@ -185,15 +169,12 @@
 
   <section id="overview">
     <h2><span class="num">00</span>一次普通模式的交互流程</h2>
-    <p class="lead">普通模式面向一次实车任务：只保留选图、起终点、路径确认和驱动确认。</p>
-    <div class="flow">
-      <div class="step"><b>启动</b>python main.py</div>
-      <div class="step"><b>选图</b>终端编号或直接给路径</div>
-      <div class="step"><b>起终点</b>GUI 点两次 / 终端输入</div>
-      <div class="step"><b>预览</b>原始路径、平滑路径、执行段</div>
-      <div class="step"><b>驱动确认</b>预检 /cmd_vel + 输入 yes</div>
-      <div class="step"><b>完成菜单</b>重跑 / 换算法 / 退出</div>
-    </div>
+    <p class="lead">从选图到完成菜单形成可重复使用的会话；本地无驱动与真机驱动共享前三个能力模块。</p>
+<figure class="figure"><div class="figure-head"><strong>01 / 主流程与会话循环</strong><span>从上到下阅读 · 分支在下方说明</span></div><ol class="sequence"><li><b>统一选地图</b><span>编号 / 自定义图片路径；输错原地重选，b 取消。</span></li><li><b>矫正与起终点</b><span>按需先选四角矫正，再用 GUI 或终端选择起点、终点。</span></li><li><b>规划与后处理</b><span>读取地图 JSON → 搜索路径 → 平滑与碰撞复核 → 执行段。</span></li><li><b>保存路径预览</b><span>生成原始路径、平滑路径和执行段；驱动模式下还需接受路径。</span></li><li><b>按运行模式分支</b><span>--no-drive：直接进入完成菜单；驱动模式：/cmd_vel 预检 + yes → 执行。</span></li><li><b>任务完成菜单</b><span>r 重跑 / a 换算法 / p 后处理 / s 起终点 / m 换地图 / q 退出。</span></li></ol><div class="branch-grid">
+<div class="branch"><b>m → 地图选择</b><span>合法输入才提交新地图，清空旧起终点；b 回完成菜单，不启动任何模块。</span></div>
+<div class="branch warn"><b>模块失败 → 恢复菜单</b><span>地图失败用 m / b 重选地图；规划失败用 a / b 重选算法。取消后回恢复菜单。</span></div>
+<div class="branch blue"><b>r / a / p / s → 对应阶段</b><span>换算法列出编号与说明；取消不重跑。JSON 参数输错重输，--no-drive 持续有效。</span></div>
+</div><div class="return-path">↩ 同一会话循环：完成菜单 → 选择操作 → 对应阶段 → 完成菜单。只有 q 主动退出；无效菜单输入会重新提示。</div><figcaption>普通模式默认允许驱动；本地运行请显式传 --no-drive。选图、选点和模块重试始终使用同一批次。</figcaption></figure>
     <div class="callout info">
       可选前置步骤：如果输入是俯拍照片而不是干净的正视地图，会在选点之前插入
       <code>--rectify</code> 四角矫正与裁剪。它发生在“选图”和“起终点”之间。
@@ -203,15 +184,15 @@
   <section id="start">
     <h2><span class="num">01</span>启动与选图</h2>
     <p class="lead"><span class="pill term">终端</span>如果命令行没有给图片路径，程序会列出 <code>map_pipeline/data/input</code> 下的图片。</p>
-    <div class="terminal"><pre><span class="p">$</span> python main.py
-<span class="c">Available maps:</span>
+    <div class="terminal"><pre><span class="p">$</span> python main.py --no-drive
+<span class="c">可用地图 / Available maps:</span>
   [1] maze-maze512-16-0.png
   [2] maze-maze512-32-0.png
   [3] maze-maze512-4-0.png
   [4] maze-maze512-8-0.png
   ...（共 12 张 Moving AI Room/Maze/Random 地图）
-<span class="y">Map number (blank uses first):</span> 1</pre></div>
-    <p class="muted">只要处于交互终端，就会始终列出图片并询问编号，即使只有一张也会询问；直接回车使用第一张。直接写图片路径或非交互模式时不会询问。图片路径也可以作为第一个位置参数传入。</p>
+<span class="y">输入地图编号或图片路径（回车使用第一张，b 取消）：</span> 1</pre></div>
+    <p class="muted">启动、完成后的换图和地图失败恢复共用一个选择器：支持编号和自定义图片路径（含空格的路径可加引号）。启动时回车使用第一张；换图时回车使用当前地图并重新选点。编号越界、文件不存在或扩展名不支持时原地重选。启动时 b 取消并退出；换图时 b 返回原菜单。显式传入图片参数或非交互模式不弹出选择器。</p>
     <div class="terminal"><pre><span class="p">$</span> python main.py photos/site.jpg</pre></div>
   </section>
 
@@ -333,15 +314,24 @@
     <div class="grid2">
       <div>
         <h3>任务完成</h3>
-        <div class="terminal"><pre><span class="y">Task complete:</span> rerun [r], change algorithm [a],
-reprocess [p], reselect points [s], change map [m], quit [q]:</pre></div>
+        <div class="terminal"><pre><span class="y">任务完成：</span>重跑 [r]，换算法 [a]，调整后处理 [p]，
+重选起终点 [s]，换地图 [m]，退出 [q]：m
+<span class="c">可用地图 / Available maps:</span>
+  [1] maze-maze512-16-0.png
+  [2] maze-maze512-32-0.png
+  …
+<span class="y">输入地图编号或图片路径（回车保留当前地图，b 取消）：</span>99
+<span class="r">地图编号无效，请使用列表中的编号或输入图片路径。</span>
+<span class="y">输入地图编号或图片路径（回车保留当前地图，b 取消）：</span>2
+<span class="c">已选择：maze-maze512-32-0.png</span>
+接下来请重新选择起点和终点。</pre></div>
         <table>
           <tr><th>输入</th><th>动作</th></tr>
           <tr><td><kbd>r</kbd></td><td>相同批次重跑</td></tr>
-          <tr><td><kbd>a</kbd></td><td>更换算法（可逗号分隔多个）</td></tr>
+          <tr><td><kbd>a</kbd></td><td>列出算法编号与说明，支持多选；回车 / b 返回，不触发重跑</td></tr>
           <tr><td><kbd>p</kbd></td><td>修改后处理参数后重跑</td></tr>
           <tr><td><kbd>s</kbd></td><td>重新选择起终点</td></tr>
-          <tr><td><kbd>m</kbd></td><td>切换地图</td></tr>
+          <tr><td><kbd>m</kbd></td><td>显示编号/路径选择器；b 取消回菜单，合法选择后重新选点</td></tr>
           <tr><td><kbd>q</kbd></td><td>退出</td></tr>
         </table>
       </div>
@@ -349,13 +339,36 @@ reprocess [p], reselect points [s], change map [m], quit [q]:</pre></div>
         <h3>模块失败</h3>
         <div class="terminal"><pre><span class="r">[top-level] path_planner execute:</span>
 input=... reason=... Suggestion: ...
-<span class="y">Choose retry [r], edit parameters [p],</span>
-<span class="y">back [b], or exit [q]:</span></pre></div>
+<span class="y">失败恢复：重试 [r]，修改参数 [p]，返回上一步 [b]，退出 [q]：</span>
+
+<span class="dim">地图阶段使用专用恢复菜单：</span>
+<span class="y">地图处理失败：重试 [r]，重新选地图 [m]，修改栅格配置 [p]，
+返回地图选择 [b]，退出 [q]：</span>
+
+<span class="dim">规划阶段使用专用恢复菜单：</span>
+<span class="y">规划失败：重试 [r]，重选算法 [a]，修改参数 [p]，返回算法选择 [b]，退出 [q]：</span></pre></div>
         <p class="muted">失败会保留运行目录、日志和已成功阶段；交互模式可重试、改参数、返回或退出。headless/批处理模式不提示，直接返回非零状态并跳过后续阶段。</p>
       </div>
     </div>
+    <h3>换算法：按列表选择</h3>
+    <div class="terminal"><pre><span class="y">任务完成：… 换算法 [a] …：</span>a
+<span class="c">可用规划算法：</span>
+  [1] A*（启发式搜索）  (astar)
+  [2] Dijkstra（最短路径搜索）  (dijkstra)
+  [3] PRM（概率路线图）  (prm)
+  [4] RRT（快速探索随机树）  (rrt)
+  [5] 自适应 RRT（独立实验变体）  (rrt_adaptive)
+  [6] RRT*（重布线优化）  (rrt_star)
+当前选择：astar
+<span class="y">输入算法编号或名称（多个用逗号分隔；回车保留，b 取消）：</span>m
+<span class="r">算法选项无效，请输入列表中的编号或名称；换地图请先 b 返回，再输入 m。</span>
+<span class="y">输入算法编号或名称（多个用逗号分隔；回车保留，b 取消）：</span>2
+<span class="c">已选择算法：dijkstra</span>
+切换算法后使用配置中的默认参数，已清除上一算法的临时参数。</pre></div>
+    <p class="muted">算法编号按规划配置的可用列表生成；这里是当前默认配置示例。输入 1,2 可比较 A* 与 Dijkstra，自动进入研究模式并关闭驱动。回车或 b 不修改状态、不重跑；换地图需先 b 返回完成菜单，再输入 m。规划失败时 a / b 直接返回算法选择，不会重新建图。</p>
+    <p class="muted">规划和后处理参数使用 JSON 对象；1、数组、错误 JSON 都会原地重输。输入 {} 清除临时覆盖，回车保留，b 取消；取消后回原菜单且不重试。参数字段及取值的语义仍由对应模块校验。</p>
     <div class="callout">
-      当前实现对无法识别的菜单输入采用“默认退出”（完成菜单落到 quit，恢复菜单落到 exit），不会重新提示。这是一个已知的交互优化点。
+      菜单输入错误会重新提示，不会退出。地图失败时 r 重试原输入，m / b 进入地图选择，p 只修改栅格配置 YAML 文件路径（不接受地图编号），q 退出；选择器内 b 取消后回到恢复菜单，不会重试错误地图。配置路径无效也会原地重输，回车或 b 保留原配置。
     </div>
   </section>
 
@@ -388,6 +401,8 @@ input=... reason=... Suggestion: ...
     </table>
   </section>
 
+  <div class="callout info"><strong>Windows 文件保存与取消：</strong>运行记录和模块结果使用独立临时文件后原子替换；遇到短暂 PermissionError 时最多等待 1.25 秒重试。持续失败时保留原 JSON 和待保存文件并报告实际保存路径，不把错误归咎于地图输入。此机制不支持多个进程并发修改同一批次。在启动选图时 Ctrl+C 简短退出（130），尚未运行运动模块；运动中仍沿用先停车再退出。重新选择当前默认算法会保留临时参数。</div>
+
   <section id="notes">
     <h2><span class="num">08</span>交互层现状与注意</h2>
     <table>
@@ -398,19 +413,20 @@ input=... reason=... Suggestion: ...
       <tr><td>确认点</td><td>路径预览确认 + 驱动前 <code>yes</code>，共两次</td></tr>
       <tr><td>运行目录</td><td>每次交互生成 <code>runs/&lt;run-id&gt;/</code>，保存各阶段 result.json、日志、预览</td></tr>
       <tr><td>退出码</td><td>成功 0；失败 2；运动中 Ctrl+C 为 130</td></tr>
-      <tr><td>已知体验问题</td><td>菜单中英文混杂；无效菜单输入默认退出；运动中只有分段日志，没有紧凑进度条</td></tr>
+      <tr><td>已知体验问题</td><td>部分模块日志仍为英文；运动中只有分段日志，没有紧凑进度条；尚无二维小车动态仿真</td></tr>
     </table>
     <div class="callout info">
       代码位置：<code>main.py</code>（CLI）、<code>core/orchestrator.py</code>（调度）、
-      <code>core/interaction.py</code>（菜单/确认）、<code>core/commands.py</code>（命令构建）、
+      <code>core/interaction.py</code>（菜单/确认）、<code>core/map_selection.py</code>（统一选图）、<code>core/algorithm_selection.py</code>（算法列表）、<code>core/commands.py</code>（命令构建）、
       <code>map_pipeline/src/interactive_picker.py</code>（图形选点/四角）、
       <code>map_pipeline/json_pipeline.py</code>（终端选点/矫正）、
       <code>motion_control/run_follower.py</code>（预检/驱动确认）。
     </div>
+    <p class="muted">本轮验证：184 项软件测试通过，pyflakes 与 pyright 无错误；两份报告在 Edge 1440px / 390px 视口完成渲染检查。测试覆盖换图取消、失败重选、错误输入重输及 --no-drive 保持；中文路径预览已通过真实图片读取与解码检查，窗口操作使用模拟验证；尚未进行人工 GUI 点击或实车验收。</p>
   </section>
 
   <footer>
-    SIT_LJGH_PROJECT · 交互形式说明 · 生成于 2026-11-03
+    SIT_LJGH_PROJECT · 交互形式说明 · 更新于 2026-11-14
   </footer>
 </div>
 </body>

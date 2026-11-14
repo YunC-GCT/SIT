@@ -1,5 +1,6 @@
 """Run the explicit adaptive RRT variant on the same 36 baseline tasks."""
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any
 import json
 import subprocess
 import sys
@@ -14,7 +15,7 @@ def main():
     baseline = json.loads((ROOT / 'docs/verification/all-maps-latest-config.json').read_text(encoding='utf-8'))
     parameters = yaml.safe_load((ROOT / 'path_planner/config.yaml').read_text(encoding='utf-8'))['path_planner']['algorithm_params']['rrt_adaptive']
     cases = [row for row in baseline['results'] if row['algorithm'] == 'rrt']
-    report = dict(algorithm='rrt_adaptive', parameters=parameters, timeout_s=30,
+    report: dict[str, Any] = dict(algorithm='rrt_adaptive', parameters=parameters, timeout_s=30,
                   baseline='all-maps-latest-config.json', expected=36, results=[])
     target = ROOT / 'docs/verification/rrt-adaptive-full-test.json'
     def run(row):

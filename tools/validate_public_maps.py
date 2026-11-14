@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any
 import json
 import random
 import subprocess
@@ -30,7 +31,7 @@ def evaluate(case):
     path = planner.plan(start, goal)
     elapsed = time.perf_counter() - begin
     valid = bool(path) and path[0] == start and path[-1] == goal and all(
-        line_of_sight(grid, *grid.shape, a, b) for a, b in zip(path, path[1:]))
+        line_of_sight(grid, int(grid.shape[0]), int(grid.shape[1]), a, b) for a, b in zip(path, path[1:]))
     result = dict(outcome='success' if valid else 'NO_PATH' if not path else 'invalid_path',
                   planning_s=elapsed, nodes=len(path), search_diagnostics=getattr(planner, 'diagnostics', {}))
     if valid:
@@ -71,7 +72,7 @@ def main():
                                   reference_length_octile=float(task[8]),start=[int(task[5]),int(task[4])],
                                   goal=[int(task[7]),int(task[6])],algorithm=algorithm,parameters=params,seed=42+group))
     target = ROOT / args.output
-    report = dict(selection_seed=20261114, selection='three uniform official scenario indices per map, no distance filter',
+    report: dict[str, Any] = dict(selection_seed=20261114, selection='three uniform official scenario indices per map, no distance filter',
                   timeout_s=args.timeout, planner_config=config, expected=len(cases), results=[])
     def run(case):
         try:

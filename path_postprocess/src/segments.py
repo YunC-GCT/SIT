@@ -24,7 +24,7 @@ class SegmentationError(ValueError):
     """Raised when the configured segment limit cannot be represented."""
 
 def _discretize_curve(
-    curve: Sequence[Sequence[Real]],
+    curve: Sequence[Sequence[float]],
     *,
     grid_shape: tuple[int, int],
     start: tuple[int, int],
@@ -69,7 +69,7 @@ def _discretize_curve(
 
 def _validate_sampled_curve(
     grid: np.ndarray,
-    curve: Sequence[Sequence[Real]],
+    curve: Sequence[Sequence[float]],
     *,
     start: tuple[int, int],
     goal: tuple[int, int],
@@ -212,7 +212,7 @@ def _execution_endpoints(
     return compacted, False
 
 def _resample_curve(
-    curve: Sequence[Sequence[Real]],
+    curve: Sequence[Sequence[float]],
     max_segment_length_grid: float,
 ) -> list[tuple[float, float]]:
     """Resample a smoothed curve by arc length into execution endpoints.
@@ -288,14 +288,14 @@ def _make_segments(
     grid: np.ndarray,
     path: Sequence[tuple[int, int]],
     *,
-    curve: Sequence[Sequence[Real]] | None = None,
+    curve: Sequence[Sequence[float]] | None = None,
     grid_size_m: float,
     max_segment_length_grid: float,
     move_speed_m_s: float,
     turn_speed_rad_s: float,
     initial_heading: str | float,
 ) -> tuple[list[dict], bool]:
-    endpoints: Sequence[Sequence[Real]]
+    endpoints: Sequence[Sequence[float]]
     normalization_fallback = False
     if curve is not None:
         curve_endpoints = _resample_curve(curve, max_segment_length_grid)

@@ -59,7 +59,9 @@ class SamplingRegressions(unittest.TestCase):
             goal_sample_rate=1.0, optimize_iterations=0, seed=42)
         path = planner.plan((0, 0), (9, 9))
         self.assertEqual(path[-1], (9, 9))
-        self.assertLess(planner.diagnostics['iterations'], 10)
+        iterations = planner.diagnostics['iterations']
+        assert isinstance(iterations, int)
+        self.assertLess(iterations, 10)
         self.assertEqual(planner.diagnostics['stop_reason'], 'optimize_iterations')
     def test_collision_checks_both_directions_of_undirected_edge(self):
         grid = np.zeros((3, 3), dtype=np.uint8)
@@ -109,6 +111,7 @@ class SamplingRegressions(unittest.TestCase):
             def capture(nodes, point):
                 sizes.append(len(nodes))
                 return original(nodes, point)
-            planner._nearest_node = capture
-            self.assertEqual(planner.plan((0, 0), (9, 9)), [])
+            from unittest.mock import patch
+            with patch.object(planner, "_nearest_node", capture):
+                self.assertEqual(planner.plan((0, 0), (9, 9)), [])
             self.assertEqual(sizes, [1] * 5)

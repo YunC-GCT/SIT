@@ -5,12 +5,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from typing import Sequence
 
 from core import display_available, interactive_terminal
 from core.orchestrator import PipelineReport, run_pipeline
+from core.map_selection import choose_map
 
 
 def _pair(value: str) -> tuple[int, int]:
@@ -38,28 +38,7 @@ def _choose_image(requested: str | None, *, interactive: bool) -> str | None:
         return requested
     if not interactive:
         return None
-    input_dir = os.path.join(os.path.dirname(__file__), "map_pipeline", "data", "input")
-    if not os.path.isdir(input_dir):
-        return None
-    extensions = (".jpg", ".jpeg", ".png", ".bmp")
-    files = [
-        name
-        for name in sorted(os.listdir(input_dir))
-        if name.lower().endswith(extensions)
-    ]
-    if not files:
-        return None
-    if interactive:
-        print("Available maps:")
-        for index, name in enumerate(files, 1):
-            print(f"  [{index}] {name}")
-        choice = input("Map number (blank uses first): ").strip()
-        if choice:
-            try:
-                return os.path.join(input_dir, files[int(choice) - 1])
-            except (ValueError, IndexError) as exc:
-                raise ValueError("invalid map number") from exc
-    return os.path.join(input_dir, files[0])
+    return choose_map()
 
 
 def run_script(script_path: str) -> bool:
@@ -162,6 +141,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.image_option or args.image,
             interactive=not headless,
         )
+        if image is None and not headless:
+            print("已取消地图选择。")
+            return 0
         algorithms = (
             [name.strip() for name in args.algorithms.split(",") if name.strip()]
             if args.algorithms
@@ -196,6 +178,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             motion_config=args.motion_config,
             interactive_menu=not headless,
         )
+    except KeyboardInterrupt:
+        print("\n已取消启动。")
+        return 130
     except (argparse.ArgumentTypeError, ValueError, OSError, TypeError) as exc:
         parser.error(str(exc))
 

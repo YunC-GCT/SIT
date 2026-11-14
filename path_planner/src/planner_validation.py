@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 from numbers import Integral, Real
+import math
 from typing import Any, Iterable
 
 import numpy as np
 
 from .planner_factory import PlannerParameterError
+from .grid_utils import line_of_sight
 
-def _point(value: Iterable[int], name: str) -> tuple[int, int]:
+def _point(value: Any, name: str) -> tuple[int, int]:
+    """Validate an untrusted coordinate before returning integer row/col."""
     if not isinstance(value, (tuple, list)) or len(value) != 2:
         raise PlannerParameterError(f"{name} 必须是 [row, col] 坐标")
     if any(
@@ -25,6 +28,8 @@ def _validate_grid(grid: Any) -> np.ndarray:
         raise PlannerParameterError("grid 必须是二维栅格数组")
     if normalized.shape[0] == 0 or normalized.shape[1] == 0:
         raise PlannerParameterError("grid 不能为空")
+    if not np.all((normalized == 0) | (normalized == 1)):
+        raise PlannerParameterError("grid 只能包含 0（空闲）和 1（障碍）")
     return normalized
 
 def _validate_inputs(
@@ -49,12 +54,13 @@ def _validate_inputs(
         not isinstance(grid_size_m, Real)
         or isinstance(grid_size_m, bool)
         or grid_size_m <= 0
+        or not math.isfinite(grid_size_m)
     ):
         raise PlannerParameterError("grid_size_m 必须是正数")
     return normalized_grid, normalized_start, normalized_goal
 
 def _normalize_path(
-    path: Iterable[Iterable[int]],
+    path: Iterable[Iterable[int]] | None,
     grid: np.ndarray,
     start: tuple[int, int],
     goal: tuple[int, int],
@@ -83,6 +89,9 @@ def _normalize_path(
         normalized.append(point_tuple)
     if normalized and (normalized[0] != start or normalized[-1] != goal):
         raise ValueError("规划器路径必须以 start 开始并以 goal 结束")
+    for first, second in zip(normalized, normalized[1:]):
+        if not line_of_sight(grid, rows, cols, first, second):
+            raise ValueError(f"规划器路径线段穿过障碍: {first} -> {second}")
     return normalized
 
 

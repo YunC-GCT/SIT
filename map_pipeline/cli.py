@@ -267,13 +267,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             start, goal, coordinate = args.start, args.goal, "grid"
         elif pixel_pair_complete:
             start, goal = args.start_px, args.goal_px
+            assert start is not None and goal is not None
             if rectification is not None:
                 transformed = transform_points(
                     [start, goal],
                     rectification["homography"],
                 )
-                start = tuple(int(round(value)) for value in transformed[0])
-                goal = tuple(int(round(value)) for value in transformed[1])
+                start = (int(round(transformed[0][0])), int(round(transformed[0][1])))
+                goal = (int(round(transformed[1][0])), int(round(transformed[1][1])))
             coordinate = "pixel"
         elif args.select_terminal:
             if not interactive_terminal():
@@ -317,14 +318,18 @@ def main(argv: Sequence[str] | None = None) -> int:
             error=exc,
             parameters=locals().get("config", {}),
             suggestion=(
-                "无显示器时使用 --headless --select-terminal 在终端输入起终点，"
-                "或显式提供 --start/--goal；否则检查图片和栅格参数"
+                "检查图片路径与配置 YAML 是否存在；交互模式可用 m / b 重新选地图，"
+                "用 p 修改栅格配置路径"
+                if isinstance(exc, FileNotFoundError) else
+                "检查图片和栅格参数；无显示器时使用 --headless --select-terminal "
+                "输入起终点，或显式提供 --start/--goal"
             ),
         )
         print(result["errors"][0]["reason"], file=sys.stderr)
         print(f"地图处理 failed: {output_path}", file=sys.stderr)
         return 2
 
+    assert start is not None and goal is not None
     result = process(
         args.image,
         start=start,

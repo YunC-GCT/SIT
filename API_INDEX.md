@@ -13,6 +13,9 @@
 | `core.PipelineOrchestrator` | `class` | 运行批次、恢复、预览确认和运动门禁 |
 | `core.save_path_preview(...)` | `-> str` | 从地图、规划和后处理 JSON 生成路径预览 |
 | `run_script(path)` | `-> bool` | 兼容入口：启动单个模块脚本 |
+| `core.map_selection.choose_map(...)` | `-> str \| None` | `[UI]` 启动、换地图和恢复共用编号/路径选择器；校验文件，错误重输，`b` 取消且不修改调用方状态 |
+| `core.algorithm_selection.choose_algorithms(...)` | `-> list[str] \| None` | `[UI]` 从规划模块公开目录按编号或名称选算法；支持多选，错误重输，回车/`b` 保留当前选择 |
+| `path_planner.catalog.algorithm_catalog(config_path=None)` | `-> (list[dict[str, str]], str)` | 按规划配置返回可选算法名称、显示说明和默认算法；注册表为算法名称的唯一来源 |
 
 ---
 
@@ -134,7 +137,6 @@
 | `line_of_sight(grid, rows, cols, p1, p2)` | `-> bool` | Bresenham 碰撞检测；True=畅通 |
 | `draw_path(grid, path, start, goal)` | `-> ndarray` | `[UI]` cv2 路径预览图 |
 | `draw_comparison(grid, results, start, goal)` | `-> ndarray` | `[UI]` cv2 多算法对比图 |
-| `show(title, img)` | — | `[UI]` cv2 弹窗封装 |
 
 ---
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from numbers import Integral
+from typing import Any
 
 from core import grid_map_payload, make_error, make_result, write_result
 
@@ -40,13 +41,14 @@ def prepare_grid_map(image, config: dict):
     )[0]
 
 def _validate_pixel_point(
-    point: tuple[int, int],
+    point: Any,
     image_shape: tuple[int, ...],
     name: str,
 ) -> tuple[int, int]:
     x, y = point
     if not isinstance(x, Integral) or not isinstance(y, Integral):
         raise ValueError(f"{name} 像素坐标必须是整数")
+    x, y = int(x), int(y)
     height, width = image_shape[:2]
     if not (0 <= x < width and 0 <= y < height):
         raise ValueError(

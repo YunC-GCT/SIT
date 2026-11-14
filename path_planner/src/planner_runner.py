@@ -146,6 +146,7 @@ def _comparison_entry(result: dict) -> dict:
         "status": result["status"],
         "raw_path": result["outputs"]["raw_path"],
         "metrics": result["outputs"]["metrics"],
+        "search_diagnostics": result["outputs"].get("search_diagnostics", {}),
         "parameters": result["parameters"]["algorithm_parameters"],
         "seed": result["parameters"]["seed"],
         "errors": result["errors"],

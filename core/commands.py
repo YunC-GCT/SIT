@@ -6,10 +6,35 @@ import json
 import os
 import sys
 from typing import Callable
+from .batch import RunBatch
 
 
 class CommandMixin:
     """Command builders used by PipelineOrchestrator."""
+
+    batch: RunBatch
+    image_path: str | None
+    start: tuple[int, int] | None
+    goal: tuple[int, int] | None
+    terminal_select: bool
+    headless: bool
+    rectify: bool
+    corners: str | None
+    arena_width_m: float | None
+    arena_height_m: float | None
+    rectify_output_width: int | None
+    grid_size_m: float | None
+    map_config: str | None
+    planner_config: str | None
+    postprocess_config: str | None
+    motion_config: str | None
+    mode: str
+    algorithms: list[str]
+    algorithm: str | None
+    seed: int | None
+    parameters: dict
+    postprocess_parameters: dict
+    confirm_drive: bool
 
     def _command_for(self, module: str) -> Callable[[str], list[str]]:
         return {
@@ -35,7 +60,7 @@ class CommandMixin:
             "map_pipeline.json_pipeline",
             self.image_path or "",
         ]
-        if self.start is not None:
+        if self.start is not None and self.goal is not None:
             command += ["--start", f"{self.start[0]},{self.start[1]}"]
             command += ["--goal", f"{self.goal[0]},{self.goal[1]}"]
         elif self.terminal_select:

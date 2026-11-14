@@ -9,6 +9,8 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any
 
+from .atomic_json import write_json_atomic
+
 from .contracts import (
     SCHEMA_VERSION,
     STATUSES,
@@ -178,11 +180,7 @@ class RunBatch:
     def _save(self) -> None:
         os.makedirs(self.path, exist_ok=True)
         self.manifest["updated_at"] = datetime.now(timezone.utc).isoformat()
-        temporary = self.manifest_path + ".tmp"
-        with open(temporary, "w", encoding="utf-8") as handle:
-            json.dump(self.manifest, handle, ensure_ascii=False, indent=2)
-            handle.write("\n")
-        os.replace(temporary, self.manifest_path)
+        write_json_atomic(self.manifest_path, self.manifest)
 
     def __enter__(self) -> "RunBatch":
         return self.start()
