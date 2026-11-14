@@ -59,3 +59,8 @@ map_pipeline/data/output/maps/
 # 配置文件保持跟踪:
 #   - config.yaml
 # =====================================================
+
+# 本发布分支不收录本地 Agent 工作资料
+AGENTS.md
+.scratch/
+docs/agents/

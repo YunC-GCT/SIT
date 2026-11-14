@@ -1,10 +1,17 @@
 # SIT_LJGH_PROJECT — 机器人路径规划与循迹系统
 
-> **当前状态：统一 JSON 流水线、交互恢复、路径后处理和 turn 控制已实现，曾生成 Fake ROS2 软件验收成功记录；实车方向、速度与路径跟随验收仍待完成。** 当前使用方式见 [整体程序介绍与使用手册](docs/程序介绍与使用手册.md)，设计要求见 [正式规格](.scratch/path-planning-control-redesign/spec.md) 和已接受 ADR。历史运行生成物已移出仓库，`runs/` 已加入 Git 忽略规则；历史验收记录不等于当前版本已重新验证。
+> **当前状态：统一 JSON 流水线、交互恢复、路径后处理和 turn 控制已实现，曾生成 Fake ROS2 软件验收成功记录；实车方向、速度与路径跟随验收仍待完成。** 当前使用方式见 [整体程序介绍与使用手册](docs/程序介绍与使用手册.md)，设计约定见 [架构决策记录](docs/adr/) 和 [硬件与部署参考](docs/turbopi-hardware.md)。历史运行生成物已移出仓库，`runs/` 已加入 Git 忽略规则；历史验收记录不等于当前版本已重新验证。
 
 > 大创项目：地图图片 → 栅格化 → 路径规划 → 路径后处理 → ROS2 TurboPi turn 模式循迹。各模块通过文件解耦，可独立运行。
 
 ---
+
+## 阅读入口
+
+- [程序介绍与使用手册](docs/程序介绍与使用手册.md)
+- [项目设计 HTML 报告](docs/project-design-report.html)与[交互 HTML 报告](docs/interaction-report.html)：下载仓库后使用浏览器打开。
+- [文档目录](docs/README.md)：使用、开发、硬件与实验记录。
+- [接口清单](API_INDEX.md)与[领域词汇](CONTEXT.md)。
 
 ## 架构
 
@@ -145,4 +152,4 @@ Python 3.10+ · ROS2 Humble（实车） · 依赖：`numpy opencv-python pyyaml`
 
 公开地图来源、格式转换及实验口径见 [公开地图数据集选型](docs/public-map-datasets.md)。优先使用 Moving AI 的 Room、Maze、Random，自制小图仅保留在 tests/fixtures/ 作为快速软件回归夹具。
 
-最新[实验结果总览](docs/verification/README.md)：软件回归 151 项通过；12 张图各 3 组任务的五算法全量测试成功 121/180，PRM 32/36、基础 RRT 10/36、RRT* 7/36；独立自适应 RRT 变体成功 6/36，未优于基础版。当前尚未全图跑通，实车待验收。早期[非真机流程验收](docs/verification/2026-11-14-offline.md)及其覆盖率仅为历史记录。运行 `python tools/offline_acceptance.py --output docs/verification/latest-offline.json` 可复验流程并自动清理临时日志。
+最新[实验结果总览](docs/verification/README.md)：软件回归 184 项通过；12 张图各 3 组任务的五算法全量测试成功 121/180，PRM 32/36、基础 RRT 10/36、RRT* 7/36；独立自适应 RRT 变体成功 6/36，未优于基础版。当前尚未全图跑通，实车待验收。早期[非真机流程验收](docs/verification/2026-11-14-offline.md)及其覆盖率仅为历史记录。运行 `python tools/offline_acceptance.py --output docs/verification/latest-offline.json` 可复验流程并自动清理临时日志。
