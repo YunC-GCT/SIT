@@ -1,4 +1,4 @@
-"""Bounded before/after comparison using a local pre-fix snapshot."""
+"""使用本地修复前归档进行限时前后对照。"""
 import argparse
 import importlib
 from typing import Any
@@ -17,6 +17,7 @@ from import_movingai import parse_map
 
 
 def child(case, version):
+    """运行修复前归档或当前版本的单个采样任务，检查路径及后处理并输出 JSON。"""
     factory = importlib.import_module('planner_before.planner_factory' if version == 'before' else 'path_planner.src.planner_factory')
     manifest = json.loads((ROOT / 'datasets/movingai/manifest.json').read_text(encoding='utf-8'))
     item = next(x for x in manifest['maps'] if x['name'] == case['map'])
@@ -39,6 +40,7 @@ def child(case, version):
 
 
 def main():
+    """对子进程设置超时，比较修复前后的代表任务；旧版依赖外部归档目录。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--child')
     parser.add_argument('--version')

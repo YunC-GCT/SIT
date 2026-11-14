@@ -1,4 +1,4 @@
-"""Replaceable path smoothing implementations."""
+"""可替换的路径平滑器接口与实现。"""
 
 from __future__ import annotations
 
@@ -11,11 +11,11 @@ Point = tuple[float, float]
 
 
 class SmoothingError(ValueError):
-    """Raised when a smoother cannot produce a finite curve."""
+    """平滑器不能生成有效有限曲线时抛出的异常。"""
 
 
 class PathSmoother(ABC):
-    """Public adapter boundary for path smoothing implementations."""
+    """路径平滑实现的公共适配边界，可在此接入其他平滑库。"""
 
     @abstractmethod
     def smooth(
@@ -23,17 +23,20 @@ class PathSmoother(ABC):
         path: Sequence[Point],
         sample_spacing_grid: float,
     ) -> list[Point]:
-        """Return sampled curve points with the requested maximum spacing."""
+        """定义可替换平滑器接口，返回满足最大采样间距的浮点 row,col 曲线点。"""
 
 
 class NaturalCubicSplineSmoother(PathSmoother):
-    """Natural-boundary cubic splines parameterized by cumulative arc length."""
+    """以累计弧长为参数、使用自然边界条件的分段三次样条。"""
 
     def smooth(
         self,
         path: Sequence[Point],
         sample_spacing_grid: float,
     ) -> list[Point]:
+        """按累计弧长参数构造自然三次样条，细化采样直到满足间距，并保留原端点。
+
+        点数不足、重复点或非有限坐标抛出 SmoothingError；碰撞校验由后处理流程负责。"""
         if not isinstance(sample_spacing_grid, Real) or (
             isinstance(sample_spacing_grid, bool) or sample_spacing_grid <= 0
         ):
@@ -104,6 +107,7 @@ class NaturalCubicSplineSmoother(PathSmoother):
         fraction: float,
         total_length: float,
     ) -> Point:
+        """在总弧长的指定比例处分别计算行、列样条值，返回曲线点。"""
         arc_length = total_length * fraction
         return (
             cls._evaluate(knots, row_coefficients, arc_length),
@@ -115,6 +119,7 @@ class NaturalCubicSplineSmoother(PathSmoother):
         knots: Sequence[float],
         values: Sequence[float],
     ) -> tuple[list[float], list[float], list[float], list[float]]:
+        """根据递增节点和标量值求自然边界三次样条的分段多项式系数。"""
         count = len(values)
         if count < 3 or len(knots) != count:
             raise SmoothingError("natural cubic spline needs at least three knots")
@@ -173,6 +178,7 @@ class NaturalCubicSplineSmoother(PathSmoother):
         coefficients: tuple[list[float], list[float], list[float], list[float]],
         value: float,
     ) -> float:
+        """定位弧长所在的样条区间，计算该段多项式值。"""
         constants, linear, quadratic, cubic = coefficients
         interval_index = len(constants) - 1
         for index in range(len(knots) - 1):

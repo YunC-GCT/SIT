@@ -1,4 +1,4 @@
-"""Replay an official ~80-cell task directly through a planner (no run logs)."""
+"""直接用规划器复现参考长度约 80 格的官方任务，不生成批次日志。"""
 from __future__ import annotations
 
 import argparse
@@ -18,6 +18,7 @@ from path_planner.src.grid_utils import line_of_sight
 
 
 def main():
+    """选择官方参考长度约 80 格的任务，运行指定采样算法并输出路径和搜索诊断。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--map', default='random512-10-0')
     parser.add_argument('--algorithm', default='prm')
@@ -38,6 +39,7 @@ def main():
     if args.algorithm in ('rrt', 'rrt_star'):
         original_nearest = planner._nearest_node
         def capture_tree(nodes, point):
+            """包装最近节点查询，记录树节点数、唯一点数及距目标的最近距离。"""
             extra.update(tree_nodes=len(nodes), unique_nodes=len({node[0] for node in nodes}),
                          nearest_goal=round(min(planner._distance(node[0], goal) for node in nodes), 3))
             return original_nearest(nodes, point)
@@ -45,6 +47,7 @@ def main():
     if args.algorithm == 'prm':
         original = planner._build_roadmap
         def capture(points):
+            """包装 PRM 建图，统计起终点度数及起点所在连通分量大小。"""
             roadmap, points = original(points)
             pending = [points.index(start)]
             reached = set(pending)

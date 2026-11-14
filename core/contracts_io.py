@@ -1,4 +1,4 @@
-"""Contract result construction, validation, and file IO."""
+"""统一契约结果的构造、校验与文件读写。"""
 
 from __future__ import annotations
 
@@ -31,12 +31,9 @@ def make_error(
     suggestion: str | None = None,
     details: Any = None,
 ) -> dict:
-    """Create a structured module error.
+    """构造带模块、阶段、输入、原因和建议动作的结构化错误。
 
-    ``message`` is kept for compatibility with earlier callers; new callers
-    should fill ``reason`` and ``input_ref`` so downstream recovery can point at
-    the failing stage and input.
-    """
+    message 参数兼容旧调用；新调用应提供 reason 和 input_ref，便于下游定位与重试。"""
     effective_reason = reason or message
     error = {"code": code}
     if message:
@@ -60,6 +57,7 @@ def make_error(
 def make_result(module: str, run_id: str, status: str, *, inputs=None,
                 outputs=None, parameters=None, errors=None, logs=None,
                 metadata=None, message: str | None = None) -> dict:
+    """组装统一版本的模块结果，补齐公共字段并执行契约校验。"""
     if status not in STATUSES:
         raise ContractError(f"未知结果状态: {status}")
     errors = [_error_with_default_module(error, module) for error in (errors or [])]
@@ -83,6 +81,9 @@ def make_result(module: str, run_id: str, status: str, *, inputs=None,
     return validate_result(result)
 
 def validate_result(result: dict) -> dict:
+    """校验结果版本、必需字段、状态及已知输出，成功后返回原字典。
+
+    failed 状态必须包含结构化错误；不符合契约时抛出 ContractError。"""
     if not isinstance(result, dict):
         raise ContractError("结果必须是 JSON 对象")
     required = {"schema_version", "status", "module", "run_id", "created_at",
@@ -106,12 +107,13 @@ def validate_result(result: dict) -> dict:
     return result
 
 def _error_with_default_module(error: Any, module: str) -> Any:
+    """仅为缺少 module 的错误字典补入默认模块标识。"""
     if isinstance(error, dict) and "module" not in error:
         return {**error, "module": module}
     return error
 
 def validate_error(error: Any) -> dict:
-    """Validate a structured error and return it."""
+    """校验结构化错误的必需字段均为非空字符串，返回原错误字典。"""
     if not isinstance(error, dict):
         raise ContractError("error 必须是对象")
     required = {"code", "module", "stage", "reason", "input", "suggestion"}
@@ -124,6 +126,7 @@ def validate_error(error: Any) -> dict:
     return error
 
 def _validate_known_outputs(outputs: Any) -> None:
+    """按输出名称分派地图、路径、执行段、指标及模块列表的契约校验。"""
     if not isinstance(outputs, dict):
         raise ContractError("outputs 必须是对象")
     if "map" in outputs:
@@ -139,6 +142,7 @@ def _validate_known_outputs(outputs: Any) -> None:
         _validate_modules_payload(outputs["modules"])
 
 def _validate_array_payload(payload: Any, name: str) -> None:
+    """核对数组元信息和实际形状，兼容形状为 [0, 2] 的空路径。"""
     if not isinstance(payload, dict):
         raise ContractError(f"{name} 必须是对象")
     required = {"values", "shape", "dtype", "units", "coordinate_system"}
@@ -163,11 +167,13 @@ def _validate_array_payload(payload: Any, name: str) -> None:
         raise ContractError(f"{name}.coordinate_system 必须是对象")
 
 def _validate_row_col_coordinate_system(payload: dict, name: str) -> None:
+    """要求载荷显式声明 row、col 两个坐标轴。"""
     axes = payload.get("coordinate_system", {}).get("axes")
     if axes != ["row", "col"]:
         raise ContractError(f"{name} 坐标轴必须是 row/col")
 
 def _validate_map_payload(payload: Any) -> None:
+    """校验二维地图载荷、坐标系及正值米制栅格尺寸。"""
     if not isinstance(payload, dict):
         raise ContractError("map 必须是对象")
     required = {"grid", "grid_size_m", "free_value", "obstacle_value", "coordinate_system"}
@@ -183,6 +189,7 @@ def _validate_map_payload(payload: Any) -> None:
         raise ContractError("map.grid_size_m 必须是正数")
 
 def _validate_path_payload(payload: Any, name: str) -> None:
+    """校验路径坐标系及点数组形状 [N, 2]，不在此检查碰撞。"""
     if not isinstance(payload, dict) or "points" not in payload or "coordinate_system" not in payload:
         raise ContractError(f"{name} 缺少 points 或 coordinate_system")
     _validate_array_payload(payload["points"], f"{name}.points")
@@ -193,6 +200,7 @@ def _validate_path_payload(payload: Any, name: str) -> None:
         raise ContractError(f"{name}.points.shape 必须是 [N, 2]")
 
 def _validate_segments_payload(payload: Any) -> None:
+    """校验执行段列表及各段端点、方向、距离、耗时和运动类型字段。"""
     if not isinstance(payload, list):
         raise ContractError("segments 必须是数组")
     required = {
@@ -247,6 +255,7 @@ def _validate_segments_payload(payload: Any) -> None:
             raise ContractError("segment.units 缺少必需单位")
 
 def _validate_metrics_payload(payload: Any) -> None:
+    """校验指标载荷包含数值及单位字典。"""
     if not isinstance(payload, dict) or not isinstance(payload.get("values"), dict) or not isinstance(payload.get("units"), dict):
         raise ContractError("metrics 必须包含 values 和 units 对象")
     missing_units = sorted(set(payload["values"]) - set(payload["units"]))
@@ -254,6 +263,7 @@ def _validate_metrics_payload(payload: Any) -> None:
         raise ContractError(f"metrics 缺少单位: {', '.join(missing_units)}")
 
 def _validate_modules_payload(payload: Any) -> None:
+    """校验模块列表中每个条目的名称、状态及相关元信息。"""
     if not isinstance(payload, list):
         raise ContractError("modules 必须是数组")
     required = {"name", "status", "updated_at", "version", "inputs", "outputs", "parameters"}
@@ -285,10 +295,12 @@ def write_result(path: str, result: dict, *, overwrite: bool = True) -> str:
     return path
 
 def read_result(path: str) -> dict:
+    """按 UTF-8 读取结果 JSON 并验证契约，返回结果字典。"""
     with open(path, "r", encoding="utf-8") as handle:
         return validate_result(json.load(handle))
 
 def require_success(path: str, *, module: str | None = None) -> dict:
+    """读取并要求结果为 success，可同时核对模块名称；不满足时抛出契约错误。"""
     result = read_result(path)
     if result["status"] != STATUS_SUCCESS:
         raise ContractError(f"下游拒绝非成功结果: {path} ({result['status']})")
@@ -297,6 +309,7 @@ def require_success(path: str, *, module: str | None = None) -> dict:
     return result
 
 def _main(argv: list[str] | None = None) -> int:
+    """提供结果 JSON 的命令行校验入口，以退出码表示验证是否成功。"""
     parser = argparse.ArgumentParser(description="统一 JSON 契约读写与校验工具")
     subparsers = parser.add_subparsers(dest="command", required=True)
 

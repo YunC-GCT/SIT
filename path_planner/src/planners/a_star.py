@@ -2,10 +2,12 @@ import heapq
 from ..planner_base import GlobalPlanner
 
 def manhattan_distance(a, b):
+    """计算两点行列差绝对值之和，作为四邻接 A* 的启发式估计。"""
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 class AStarPlanner(GlobalPlanner):
     def plan(self, start, goal):
+        """在四邻接空闲栅格上执行 A*，回溯起点到终点的路径；不可达时返回空列表。"""
         rows, cols = self.grid.shape
         neighbors = [(1,0),(-1,0),(0,1),(0,-1)]
         open_heap = []

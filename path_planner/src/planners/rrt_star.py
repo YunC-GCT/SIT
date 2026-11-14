@@ -20,6 +20,7 @@ class RRTStarPlanner(RRTAdaptivePlanner):
                  seed: int | None = None, adaptive_step: bool = False,
                  optimize_iterations: int | None = None, search_time_s: float = 0.0,
                  optimize_time_s: float = 0.0):
+        """配置 RRT* 邻域半径、可选自适应步长及首解搜索和后续优化预算。"""
         super().__init__(grid, max_iter=max_iter, step_size=step_size,
                          goal_sample_rate=goal_sample_rate, seed=seed, adaptive_step=adaptive_step)
         self.search_radius = search_radius
@@ -29,6 +30,7 @@ class RRTStarPlanner(RRTAdaptivePlanner):
         self.diagnostics = {}
 
     def _nearby_nodes(self, tree_nodes, point):
+        """返回与候选点距离不超过 search_radius 的已有树节点索引。"""
         indices = []
         for i, (coord, _, _) in enumerate(tree_nodes):
             if self._distance(coord, point) <= self.search_radius:
@@ -36,6 +38,7 @@ class RRTStarPlanner(RRTAdaptivePlanner):
         return indices
 
     def _choose_parent(self, tree_nodes, new_point, near_indices, nearest_idx):
+        """在可无碰撞连接的邻近节点中选择累计路径代价最低的父节点。"""
         best_idx = nearest_idx
         coord, cost, _ = tree_nodes[nearest_idx]
         best_cost = cost + self._distance(coord, new_point)
@@ -49,6 +52,7 @@ class RRTStarPlanner(RRTAdaptivePlanner):
         return best_idx, best_cost
 
     def _rewire(self, tree_nodes, new_idx, near_indices):
+        """尝试经新节点降低邻居代价，并沿父子链同步更新后代累计代价。"""
         new_coord, new_cost, _ = tree_nodes[new_idx]
         for idx in near_indices:
             coord, old_cost, _ = tree_nodes[idx]
@@ -56,7 +60,7 @@ class RRTStarPlanner(RRTAdaptivePlanner):
             if new_cost + d < old_cost:
                 if line_of_sight(self.grid, self.rows, self.cols, new_coord, coord):
                     tree_nodes[idx] = (coord, new_cost + d, new_idx)
-                    # All descendant costs must agree with their current parent chain.
+                    # 重布线后需同步后代代价，确保与当前父节点链一致。
                     children = {}
                     for child, (_, _, parent) in enumerate(tree_nodes):
                         children.setdefault(parent, []).append(child)
@@ -70,6 +74,9 @@ class RRTStarPlanner(RRTAdaptivePlanner):
                             pending.append(child)
 
     def plan(self, start: Tuple[int, int], goal: Tuple[int, int]) -> Path:
+        """执行 RRT* 扩展、重选父节点和重布线，按首解与优化预算决定停止时机。
+
+        最终按当前树代价选择目标连接点并记录停止原因；未发现连接时返回空路径。"""
         if not self.grid[start[0], start[1]] == 0 or not self.grid[goal[0], goal[1]] == 0:
             return []
         if start == goal:

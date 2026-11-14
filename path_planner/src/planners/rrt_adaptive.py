@@ -1,4 +1,4 @@
-"""Explicit RRT variant with clearance-aware extension and collision backoff."""
+"""独立注册的 RRT 自适应变体，受阻时缩短扩展步长。"""
 from __future__ import annotations
 
 import numpy as np
@@ -9,12 +9,13 @@ from ..grid_utils import line_of_sight
 class RRTAdaptivePlanner(RRTPlanner):
     def __init__(self, grid, max_iter=2000, step_size=5.0, goal_sample_rate=0.1,
                  seed=None, adaptive_step=True):
+        """初始化独立的 RRT 自适应变体，保留是否启用步长缩减的选项。"""
         super().__init__(grid, max_iter=max_iter, step_size=step_size,
                          goal_sample_rate=goal_sample_rate, seed=seed)
         self.adaptive_step = adaptive_step
 
     def _extension(self, nearest, sample):
-        """Shrink blocked extensions, down to one grid cell; keep fixed-step mode available."""
+        """扩展受阻时逐步缩短步长，最小尝试一个栅格；关闭自适应时沿用固定步长。"""
         step = self.step_size
         if self.adaptive_step:
             r, c = nearest

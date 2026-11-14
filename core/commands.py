@@ -1,4 +1,4 @@
-"""Module CLI command construction for the pipeline orchestrator."""
+"""顶层调度器使用的模块 CLI 命令构造。"""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from .batch import RunBatch
 
 
 class CommandMixin:
-    """Command builders used by PipelineOrchestrator."""
+    """为 PipelineOrchestrator 提供各模块的命令构造方法。"""
 
     batch: RunBatch
     image_path: str | None
@@ -37,6 +37,7 @@ class CommandMixin:
     confirm_drive: bool
 
     def _command_for(self, module: str) -> Callable[[str], list[str]]:
+        """按模块标识返回命令构造函数，未知标识由字典查询抛出 KeyError。"""
         return {
             "map_pipeline": self._map_command,
             "path_planner": self._planner_command,
@@ -44,6 +45,7 @@ class CommandMixin:
         }[module]
 
     def _common_args(self, output_path: str) -> list[str]:
+        """构造各模块共用的结果路径、批次根目录及 run_id 命令行参数。"""
         return [
             "--output",
             output_path,
@@ -54,6 +56,7 @@ class CommandMixin:
         ]
 
     def _map_command(self, output_path: str) -> list[str]:
+        """构造建图命令，传递完整起终点或交互选点方式以及地图尺度配置。"""
         command = [
             sys.executable,
             "-m",
@@ -84,6 +87,7 @@ class CommandMixin:
         return command + self._common_args(output_path)
 
     def _planner_command(self, output_path: str) -> list[str]:
+        """构造规划命令，引用当前地图结果并附加算法、随机种子和参数。"""
         command = [
             sys.executable,
             "-m",
@@ -106,6 +110,7 @@ class CommandMixin:
         return command + self._common_args(output_path)
 
     def _postprocess_command(self, output_path: str) -> list[str]:
+        """构造后处理命令，引用当前地图及规划结果并附加后处理参数。"""
         command = [
             sys.executable,
             "-m",
@@ -125,6 +130,7 @@ class CommandMixin:
         return command + self._common_args(output_path)
 
     def _motion_command(self, output_path: str) -> list[str]:
+        """构造运动控制命令，引用后处理结果并传递配置与显式启动确认。"""
         command = [
             sys.executable,
             "-m",
@@ -139,6 +145,7 @@ class CommandMixin:
         return command + self._common_args(output_path)
 
     def _current_result(self, module: str) -> str:
+        """读取清单中指定模块当前结果路径，作为下游模块的输入。"""
         stage = self.batch.manifest.get("stages", {}).get(module, {})
         result = stage.get("result")
         if not result:

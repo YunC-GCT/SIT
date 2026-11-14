@@ -1,1 +1,1 @@
-"""Implementation package for path post-processing."""
+"""路径后处理的内部实现包。"""

@@ -1,4 +1,4 @@
-"""Perspective rectification and cropping for map images."""
+"""地图图像的透视校正与裁剪。"""
 
 from __future__ import annotations
 
@@ -11,14 +11,14 @@ import numpy as np
 
 
 class RectificationError(ValueError):
-    """Raised when four-corner rectification input is invalid."""
+    """四角透视校正输入无效时抛出的异常。"""
 
 
 MAX_RECTIFIED_DIMENSION = 8000
 
 
 def parse_corners(text: str) -> list[tuple[float, float]]:
-    """Parse ``x,y;x,y;x,y;x,y`` into four pixel coordinates."""
+    """将 x,y;x,y;x,y;x,y 文本解析为四个像素坐标。"""
     if not isinstance(text, str) or not text.strip():
         raise RectificationError("corners must contain four x,y pairs")
     parts = [part for part in re.split(r"[;|]", text) if part.strip()]
@@ -42,7 +42,7 @@ def parse_corners(text: str) -> list[tuple[float, float]]:
 
 
 def _order_quad(points: Sequence[Sequence[float]]) -> np.ndarray:
-    """Order four points as top-left, top-right, bottom-right, bottom-left."""
+    """将四角排序为左上、右上、右下、左下。"""
     array = np.asarray(points, dtype=np.float32)
     if array.shape != (4, 2):
         raise RectificationError("corners must contain four x,y points")
@@ -67,6 +67,7 @@ def _order_quad(points: Sequence[Sequence[float]]) -> np.ndarray:
 
 
 def _is_convex(points: np.ndarray) -> bool:
+    """判断按顺序连接的四边形是否为凸四边形。"""
     signs = []
     for index in range(4):
         first = points[index]
@@ -84,6 +85,7 @@ def validate_corners(
     corners: Sequence[Sequence[float]],
     image_shape: Sequence[int],
 ) -> list[tuple[float, float]]:
+    """对四角进行排序和几何校验，要求各点都在给定图像范围内。"""
     height, width = int(image_shape[0]), int(image_shape[1])
     ordered = _order_quad(corners)
     result = []
@@ -98,6 +100,7 @@ def validate_corners(
 
 
 def _side_length(first: np.ndarray, second: np.ndarray) -> float:
+    """计算两个像素点之间的欧氏距离。"""
     return float(math.hypot(second[0] - first[0], second[1] - first[1]))
 
 
@@ -109,7 +112,7 @@ def rectify_image(
     arena_width_m: float | None = None,
     arena_height_m: float | None = None,
 ) -> tuple[np.ndarray, dict]:
-    """Warp a four-corner quadrilateral to a top-down rectangle."""
+    """将场地四角围成的区域透视变换为俯视矩形，返回校正图及变换元信息。"""
     ordered = validate_corners(corners, image.shape)
     points = np.asarray(ordered, dtype=np.float32)
     source_width = max(
@@ -195,7 +198,7 @@ def transform_points(
     points: Sequence[Sequence[float]],
     homography: Sequence[Sequence[float]],
 ) -> list[tuple[float, float]]:
-    """Map points through a homography matrix."""
+    """通过单应矩阵变换点坐标，用于同步映射原图中的起终点。"""
     array = np.asarray([points], dtype=np.float32)
     matrix = np.asarray(homography, dtype=np.float64)
     transformed = cv2.perspectiveTransform(array, matrix)[0]

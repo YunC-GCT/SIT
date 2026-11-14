@@ -1,7 +1,7 @@
-"""Cross-module JSON contracts.
+"""跨模块 JSON 契约的公共导出接口。
 
-Implementation modules: contracts_types, contracts_payloads, contracts_io.
-The public names remain importable from ``core.contracts``.
+具体实现位于 contracts_types、contracts_payloads 和 contracts_io，
+外部调用仍可从 core.contracts 导入公共名称。
 """
 
 from __future__ import annotations

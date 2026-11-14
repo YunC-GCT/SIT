@@ -34,6 +34,7 @@ MODULE = "contract_example"
 
 
 def run_example(*, run_root: str, run_id: str | None = None, fail: bool = False) -> dict:
+    """演示独立模块如何建立批次、写日志并输出统一成功或失败契约。"""
     batch = RunBatch(root=run_root, run_id=run_id).start()
     batch.register_module(MODULE)
     stage_dir = batch.stage_dir(MODULE)
@@ -131,6 +132,7 @@ def run_example(*, run_root: str, run_id: str | None = None, fail: bool = False)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """运行最小契约模块示例，将命令行参数交给示例 API 并返回退出码。"""
     parser = argparse.ArgumentParser(description="运行最小统一 JSON 契约示例模块")
     parser.add_argument("--run-root", default="runs")
     parser.add_argument("--run-id")

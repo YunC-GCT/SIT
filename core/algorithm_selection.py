@@ -1,4 +1,4 @@
-"""Validated terminal selection over the planner's public catalog."""
+"""基于规划器公共目录的终端算法选择与校验。"""
 
 from typing import Callable, Sequence
 
@@ -12,7 +12,7 @@ def choose_algorithms(
     input_fn: Callable[[str], str] = input,
     output_fn: Callable[[str], None] = print,
 ) -> list[str] | None:
-    """Return selected names, or None on cancellation; invalid input retries."""
+    """交互选择已注册算法，返回名称列表；取消返回 None，非法输入继续提示。"""
     catalog, default = algorithm_catalog(config_path)
     names = [item["name"] for item in catalog]
     output_fn("可用规划算法：")

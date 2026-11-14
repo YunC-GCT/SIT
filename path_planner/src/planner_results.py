@@ -1,4 +1,4 @@
-"""Planner result payloads, metrics, and structured failures."""
+"""规划结果载荷、指标及结构化失败信息。"""
 
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ METRIC_UNITS = {
 }
 
 def _path_length_grid(path: list[tuple[int, int]]) -> float:
+    """累加路径相邻点的欧氏距离，单位为栅格。"""
     return sum(
         math.hypot(next_point[0] - point[0], next_point[1] - point[1])
         for point, next_point in zip(path, path[1:])
@@ -35,6 +36,7 @@ def _metrics(
     grid_size_m: float,
     seed: int | None,
 ) -> dict:
+    """封装规划耗时、点数和栅格/米制长度等指标及其单位。"""
     length_grid = _path_length_grid(path)
     return metric_payload(
         {
@@ -49,6 +51,7 @@ def _metrics(
     )
 
 def _inputs(input_ref: str, start: tuple[int, int], goal: tuple[int, int]) -> dict:
+    """构造规划输入引用，记录地图来源与起终点。"""
     return {
         "map_result": os.path.abspath(input_ref) if input_ref else "<memory-grid>",
         "start": {"row": start[0], "col": start[1]},
@@ -72,6 +75,7 @@ def _failure(
     suggestion: str,
     planning_time_s: float = 0.0,
 ) -> dict:
+    """构造算法失败的标准结果，保留参数、输入及结构化故障信息。"""
     safe_start = start or (0, 0)
     safe_goal = goal or (0, 0)
     try:

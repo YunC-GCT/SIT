@@ -77,12 +77,14 @@ def draw_grid_preview(
 
 
 def _load_config(path: str) -> dict:
+    """读取建图 YAML 配置，供独立交互入口使用。"""
     with open(path, encoding="utf-8") as handle:
         raw = yaml.safe_load(handle) or {}
     return raw.get("map_pipeline", raw)
 
 
 def _find_image(input_dir: str, requested: str | None) -> str:
+    """在输入目录中定位指定图片或默认图片，找不到时抛出文件错误。"""
     if requested:
         return os.path.abspath(requested)
     extensions = (".jpg", ".jpeg", ".png", ".bmp")
@@ -109,6 +111,7 @@ def _find_image(input_dir: str, requested: str | None) -> str:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """运行交互式建图入口，支持调整栅格宽度、选择起终点并保存批次结果。"""
     base_dir = os.path.dirname(os.path.abspath(__file__))
     parser = argparse.ArgumentParser(description="交互式地图处理")
     parser.add_argument("--image", help="地图图片路径；省略时使用 data/input 第一张图片")
@@ -243,6 +246,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 def _load_image(image_path: str):
+    """读取原始图片，兼容中文路径并报告读取失败。"""
     try:
         from .src.map_loader import load_image
     except ImportError:

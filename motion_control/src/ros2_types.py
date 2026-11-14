@@ -1,11 +1,11 @@
-"""Shared motion-control result and safety types."""
+"""运动控制共用的执行结果与安全异常类型。"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
 class MotionSafetyError(RuntimeError):
-    """Raised when the ROS graph is not safe enough to drive the chassis."""
+    """ROS2 话题图未满足底盘运动预检要求时抛出的异常。"""
 
 
 @dataclass(frozen=True)

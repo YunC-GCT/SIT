@@ -1,4 +1,4 @@
-"""Interactive prompts and confirmations for the pipeline orchestrator."""
+"""顶层调度器的交互提示、参数修改及运行确认。"""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from path_planner.catalog import algorithm_catalog
 
 
 class InteractionMixin:
-    """Prompt/confirmation methods used by PipelineOrchestrator."""
+    """为 PipelineOrchestrator 提供交互和确认方法。"""
 
     batch: RunBatch
     drive: bool
@@ -32,6 +32,7 @@ class InteractionMixin:
     postprocess_config: str | None
 
     def _accept_preview(self) -> bool:
+        """按运行模式展示路径预览并等待接受；关闭窗口或拒绝时返回 False。"""
         if not self.drive:
             return True
         if self.headless:
@@ -49,7 +50,7 @@ class InteractionMixin:
                 "确认接受该路径？输入 yes 继续: "
             ).strip().lower()
             return answer == "yes"
-        # OpenCV imread cannot reliably open Unicode Windows paths.
+        # OpenCV imread 对 Windows 中文路径支持不稳定，使用字节读取再解码。
         with open(image_path, "rb") as handle:
             image = cv2.imdecode(np.frombuffer(handle.read(), dtype=np.uint8), cv2.IMREAD_COLOR)
         if image is None:
@@ -66,13 +67,15 @@ class InteractionMixin:
         return key in {10, 13, 32, ord("y"), ord("Y")}
 
     def _confirm_drive(self) -> bool:
+        """检查显式运动确认，或在可交互环境中询问是否启动底盘。"""
         if self.headless:
             return self.confirm_drive
-        # The motion-control CLI performs the /cmd_vel preflight and asks for
-        # the final interactive confirmation after printing its graph report.
+        # 运动控制 CLI 完成 /cmd_vel 预检，并在输出话题图报告后
+        # 进行最终的交互启动确认。
         return True
 
     def _recovery_action(self, module: str, errors: list[dict]) -> str:
+        """通过恢复回调、终端菜单或无界面默认行为确定失败阶段的后续动作。"""
         for error in errors:
             self.output_fn(
                 f"[top-level] {error.get('module', module)} "
@@ -105,6 +108,7 @@ class InteractionMixin:
             self.output_fn("无效选项，请输入括号中的字母。")
 
     def _prompt_parameters(self, current: dict, label: str) -> dict | None:
+        """交互读取 JSON 参数对象；输入无效时重试，取消时返回 None。"""
         self.output_fn(f"当前{label}参数：{json.dumps(current, ensure_ascii=False)}")
         while True:
             raw = self.input_fn(
@@ -124,6 +128,7 @@ class InteractionMixin:
             return values
 
     def _edit_parameters(self, module: str) -> bool:
+        """按模块更新配置路径或参数字典，并将变化登记到工作流清单。"""
         if module == "path_planner":
             values = self._prompt_parameters(self.parameters, "规划")
             if values is None:
@@ -164,6 +169,7 @@ class InteractionMixin:
         return True
 
     def _completion_action(self) -> str:
+        """读取任务完成后的操作选项并记录事件，返回规范化动作名称。"""
         choices = {
             "r": "rerun",
             "a": "algorithm",
@@ -185,6 +191,7 @@ class InteractionMixin:
         return action
 
     def _apply_completion_action(self, action: str) -> int | None:
+        """应用完成菜单动作，返回应重启的阶段索引；取消修改时返回 None。"""
         if action == "algorithm":
             return 1 if self._select_algorithms() else None
         if action == "postprocess":
@@ -206,6 +213,7 @@ class InteractionMixin:
         return 1
 
     def _select_algorithms(self) -> bool:
+        """选择一个或多个算法并同步普通/研究模式；取消时保留原状态。"""
         _, default = algorithm_catalog(self.planner_config)
         previous = self.algorithms if self.mode == "research" else [self.algorithm or default]
         names = choose_algorithms(
@@ -230,6 +238,7 @@ class InteractionMixin:
         return True
 
     def _select_map(self) -> bool:
+        """选择新地图，成功后清除旧起终点并更新清单；取消返回 False。"""
         path = choose_map(
             current=self.image_path, input_fn=self.input_fn, output_fn=self.output_fn,
         )
@@ -237,7 +246,7 @@ class InteractionMixin:
             self.output_fn("已取消换图，保留当前地图和已有结果。")
             return False
         if path != self.image_path:
-            # Corners are pixel coordinates belonging to the previous image.
+            # 四角是上一张图的像素坐标，切图后必须清除。
             self.corners = None
         self.image_path = path
         self.start = None

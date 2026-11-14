@@ -46,7 +46,7 @@ class PRMPlanner(GlobalPlanner):
         为所有采样点建立邻接表形式的 roadmap。
         :return: road_map (每个点的邻居列表索引), points (最终使用的点列表)
         """
-        # Spatial buckets restrict candidates to the edge radius without an all-pairs sort.
+        # 按最大连边半径划分空间桶，避免对全部点两两排序。
         buckets = {}
         width = self.max_edge_len
         for i, (r, c) in enumerate(points):
@@ -114,6 +114,7 @@ class PRMPlanner(GlobalPlanner):
 
     def plan(self, start: Tuple[int, int], goal: Tuple[int, int]) -> Path:
         # 确保起点和终点是自由栅格
+        """采样自由点并建立无向路网，通过 Dijkstra 搜索起终点连接，失败返回空路径。"""
         if not (self.grid[start[0], start[1]] == 0 and self.grid[goal[0], goal[1]] == 0):
             return []
         self.diagnostics = {"attempts": []}

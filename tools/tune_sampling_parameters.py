@@ -1,4 +1,4 @@
-"""Bounded parameter probes on the previously selected tasks, preserving failures."""
+"""对已选任务进行限时参数探测，并保留失败结果。"""
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import argparse
 from typing import Any
@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main():
+    """构造分场景采样参数候选，限时运行并保存调参比较记录。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--confirm', action='store_true', help='Validate selected PRM profile on all original tasks')
     args = parser.parse_args()
@@ -42,6 +43,7 @@ def main():
     report: dict[str, Any] = dict(scope='selected PRM profiles on all 36 original tasks' if args.confirm else 'parameter screening only; same official tasks/seeds as baseline; not full acceptance',timeout_s=15,results=[])
     target = ROOT / ('docs/verification/sampling-prm-profile-validation.json' if args.confirm else 'docs/verification/sampling-parameter-screening.json')
     def run(case):
+        """执行单个参数候选的子进程并收集状态、耗时或超时信息。"""
         try:
             proc = subprocess.run([sys.executable,str(ROOT/'tools/validate_public_maps.py'),'--child',json.dumps(case)],
                                   cwd=ROOT,capture_output=True,timeout=15)

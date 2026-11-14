@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run path post-processing from map and planner JSON results."""
+"""从地图与规划 JSON 结果运行路径后处理。"""
 
 from __future__ import annotations
 
@@ -33,12 +33,14 @@ from .src.path_postprocessor import (  # noqa: E402
 
 
 def _load_config(path: str) -> dict:
+    """读取后处理 YAML 配置并返回字典。"""
     with open(path, encoding="utf-8") as handle:
         raw = yaml.safe_load(handle) or {}
     return raw.get("path_postprocess", raw)
 
 
 def _read_map(path: str):
+    """读取成功的地图结果并提取栅格、起终点及米制尺度。"""
     result = require_success(path, module="map_pipeline")
     payload = result["outputs"].get("map")
     if not isinstance(payload, dict):
@@ -55,6 +57,7 @@ def _read_map(path: str):
 
 
 def _read_planner(path: str):
+    """读取成功的规划结果，并选取本次后处理使用的算法路径。"""
     result = require_success(path, module="path_planner")
     payload = result["outputs"].get("raw_path")
     if isinstance(payload, dict):
@@ -98,6 +101,7 @@ def _failure_result(
     input_ref: str | None = None,
     code: str = "POSTPROCESS_INPUT_ERROR",
 ) -> dict:
+    """将后处理 CLI 异常封装为结构化失败结果，保留输入和建议动作。"""
     return make_result(
         MODULE,
         run_id,
@@ -122,6 +126,7 @@ def _failure_result(
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """解析后处理 CLI 参数，读取上游 JSON，生成平滑路径、执行段及预览并保存结果。"""
     parser = argparse.ArgumentParser(description="Generate executable path segments")
     parser.add_argument("--map-result", required=True)
     parser.add_argument("--planner-result", required=True)

@@ -1,4 +1,4 @@
-"""Path preview rendering for the top-level workflow."""
+"""顶层工作流使用的路径预览渲染。"""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from .contracts import STATUS_SUCCESS, require_success
 
 
 def _destroy_window_safely(window_name: str) -> None:
-    """Close an OpenCV window without failing if the user already closed it."""
+    """关闭 OpenCV 窗口，容忍用户已经关闭窗口造成的后端异常。"""
     try:
         visible = cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE)
     except cv2.error:
@@ -25,6 +25,7 @@ def _destroy_window_safely(window_name: str) -> None:
 
 
 def _as_path(points_payload: dict) -> list[tuple[float, float]]:
+    """将公共路径载荷中的点数组转换为用于绘图的行列坐标序列。"""
     values = points_payload.get("points", {}).get("values", [])
     return [(float(point[0]), float(point[1])) for point in values]
 
@@ -35,7 +36,7 @@ def save_path_preview(
     postprocess_result_path: str,
     output_path: str,
 ) -> str:
-    """Render the accepted path view from public JSON result payloads."""
+    """读取地图、规划和后处理的公共 JSON，绘制路径预览并返回保存路径。"""
     map_result = require_success(map_result_path, module="map_pipeline")
     planner_result = require_success(planner_result_path, module="path_planner")
     postprocess_result = require_success(

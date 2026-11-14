@@ -29,6 +29,7 @@ from .src.planner_pipeline import run_planning  # noqa: E402
 
 
 def _parse_row_col(value: str) -> tuple[int, int]:
+    """解析 CLI 的 row,col 文本为整数坐标。"""
     try:
         first, second = value.split(",", 1)
         return int(first), int(second)
@@ -37,12 +38,14 @@ def _parse_row_col(value: str) -> tuple[int, int]:
 
 
 def _load_config(path: str) -> dict:
+    """读取规划器 YAML 配置并返回字典。"""
     with open(path, encoding="utf-8") as handle:
         raw = yaml.safe_load(handle) or {}
     return raw.get("path_planner", raw)
 
 
 def _read_map(path: str):
+    """读取成功的地图模块结果，提取栅格、起终点及物理尺度。"""
     result = require_success(path, module="map_pipeline")
     map_payload = result["outputs"].get("map")
     if not isinstance(map_payload, dict):
@@ -63,6 +66,7 @@ def _parameters_from_cli(
     config: dict,
     raw_json: str | None,
 ) -> dict[str, dict]:
+    """汇总 CLI 提供的算法参数，形成覆盖默认配置的参数字典。"""
     values = {
         name: dict(config.get("algorithm_params", {}).get(name, {}) or {})
         for name in selected
@@ -94,6 +98,7 @@ def _failure_result(
     stage: str,
     exc: Exception,
 ) -> dict:
+    """将规划入口异常封装为包含输入及恢复建议的失败结果。"""
     return make_result(
         "path_planner",
         run_id,
@@ -114,6 +119,7 @@ def _failure_result(
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """运行规划 CLI，加载地图与配置，执行单算法或对照实验并保存统一结果。"""
     parser = argparse.ArgumentParser(description="生成统一 JSON 规划结果")
     parser.add_argument("--map-result", required=True, help="map_pipeline 的 success JSON")
     parser.add_argument("--algorithm", default=None, help="单个算法名称")

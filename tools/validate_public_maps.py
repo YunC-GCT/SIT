@@ -1,4 +1,4 @@
-"""Reproducible random official tasks across every imported map, with bounded workers."""
+"""以固定种子和有限并发复测全部导入地图的随机官方任务。"""
 from __future__ import annotations
 
 import argparse
@@ -20,6 +20,7 @@ from import_movingai import parse_map
 
 
 def evaluate(case):
+    """执行单个地图规划任务及后处理，输出有效性、状态和耗时；超时由父进程控制。"""
     from path_planner.src.planner_factory import create_planner
     from path_planner.src.grid_utils import line_of_sight
     from path_postprocess import process_path
@@ -43,6 +44,7 @@ def evaluate(case):
 
 
 def main():
+    """按固定随机种子为每张公开地图抽取三组任务，执行算法对照并保存精简统计。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--child')
     parser.add_argument('--output', default='docs/verification/all-maps-three-tasks.json')
@@ -75,6 +77,7 @@ def main():
     report: dict[str, Any] = dict(selection_seed=20261114, selection='three uniform official scenario indices per map, no distance filter',
                   timeout_s=args.timeout, planner_config=config, expected=len(cases), results=[])
     def run(case):
+        """执行一项地图、任务和算法组合，返回用于汇总的实验记录。"""
         try:
             proc = subprocess.run([sys.executable,__file__,'--child',json.dumps(case)],cwd=ROOT,capture_output=True,timeout=args.timeout)
             result = json.loads(proc.stdout) if proc.returncode == 0 else dict(outcome='error',stderr=proc.stderr.decode(errors='replace')[-1500:])

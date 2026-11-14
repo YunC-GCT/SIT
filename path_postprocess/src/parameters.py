@@ -1,4 +1,4 @@
-"""Path post-processing parameter validation."""
+"""路径后处理参数的默认值合并与校验。"""
 
 from __future__ import annotations
 
@@ -23,14 +23,14 @@ HEADINGS_DEG = {
 }
 
 class PathPostprocessParameterError(ValueError):
-    """Raised when post-processing parameters are invalid."""
+    """路径后处理参数非法时抛出的异常。"""
 
 def resolve_postprocess_parameters(
     parameters: dict[str, Any] | None = None,
     *,
     grid_size_m: float = 0.3,
 ) -> dict[str, Any]:
-    """Validate and return effective post-processing parameters."""
+    """合并默认值并校验后处理参数，返回实际使用的配置。"""
     if parameters is not None and not isinstance(parameters, dict):
         raise PathPostprocessParameterError("parameters must be a JSON object")
     values = dict(DEFAULT_PARAMETERS)

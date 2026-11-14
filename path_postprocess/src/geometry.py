@@ -1,4 +1,4 @@
-"""Path geometry, normalization, and collision validation helpers."""
+"""路径几何计算、归一化与碰撞校验辅助函数。"""
 
 from __future__ import annotations
 
@@ -11,15 +11,17 @@ import numpy as np
 from .parameters import HEADINGS_DEG
 
 class RawPathError(ValueError):
-    """Raised when the planner path cannot be safely executed."""
+    """规划路径不满足执行校验要求时抛出的异常。"""
 
 def _normalize_grid(grid: Any) -> np.ndarray:
+    """将地图转为非空二维数组，非法输入抛出 RawPathError。"""
     normalized = np.asarray(grid)
     if normalized.ndim != 2 or 0 in normalized.shape:
         raise RawPathError("grid must be a non-empty two-dimensional array")
     return normalized
 
 def _normalize_path(path: Iterable[Iterable[int]]) -> list[tuple[int, int]]:
+    """规范化原始整数行列路径，拒绝缺失、空路径及非法点，并处理重复点。"""
     if path is None:
         raise RawPathError("raw path is missing")
     try:
@@ -56,6 +58,7 @@ def _bresenham_points(
     first: tuple[int, int],
     second: tuple[int, int],
 ) -> list[tuple[int, int]]:
+    """将整数端点间的连线离散为 Bresenham 栅格点列表。"""
     row, col = first
     target_row, target_col = second
     points = [first]
@@ -80,6 +83,7 @@ def _line_of_sight(
     first: tuple[int, int],
     second: tuple[int, int],
 ) -> bool:
+    """双向检查端点连线的栅格边界与障碍，返回是否可直连。"""
     rows, cols = grid.shape
     for row, col in _bresenham_points(first, second):
         if not (0 <= row < rows and 0 <= col < cols):
@@ -95,6 +99,7 @@ def _validate_path(
     expected_start: tuple[int, int] | None = None,
     expected_goal: tuple[int, int] | None = None,
 ) -> None:
+    """检查路径点和相邻线段均在地图内且可通行，否则抛出 RawPathError。"""
     if expected_start is not None and path[0] != expected_start:
         raise RawPathError("raw path does not start at the map start")
     if expected_goal is not None and path[-1] != expected_goal:
@@ -109,28 +114,33 @@ def _validate_path(
             raise RawPathError(f"raw path connection is blocked: {first} -> {second}")
 
 def _path_length(path: Sequence[Sequence[float]]) -> float:
+    """累加相邻点欧氏距离，返回以栅格为单位的路径长度。"""
     return sum(
         math.hypot(second[0] - first[0], second[1] - first[1])
         for first, second in zip(path, path[1:])
     )
 
 def _heading_degrees(point: Sequence[float], target: Sequence[float]) -> float:
+    """根据 row,col 位移计算航向角：北为 0 度，顺时针增大。"""
     delta_row = target[0] - point[0]
     delta_col = target[1] - point[1]
     return math.degrees(math.atan2(delta_col, -delta_row)) % 360.0
 
 def _signed_angle_difference(target: float, current: float) -> float:
+    """计算目标与当前航向的最短有符号角度差。"""
     difference = (target - current + 180.0) % 360.0 - 180.0
     if math.isclose(difference, -180.0, abs_tol=1e-9):
         return 180.0
     return difference
 
 def _initial_heading_degrees(value: str | float) -> float:
+    """将方向名称或数值初始朝向转换为角度。"""
     if isinstance(value, str):
         return HEADINGS_DEG[value]
     return float(value) % 360.0
 
 def _normalize_endpoint(value: Iterable[int], name: str) -> tuple[int, int]:
+    """校验给定端点包含两个非布尔整数，返回标准 row,col 元组。"""
     try:
         point = tuple(value)
     except TypeError as exc:

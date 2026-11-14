@@ -1,4 +1,4 @@
-"""OpenCV four-corner picker used for perspective rectification."""
+"""透视校正使用的 OpenCV 四角选择器。"""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ def pick_quad(
     image: np.ndarray,
     window_name: str = "Select Arena Corners",
 ) -> list[Tuple[int, int]]:
-    """Click four arena corners in the image, in any consistent order."""
+    """在图片上交互选择场地四角，返回原图像素坐标供校正流程排序与校验。"""
     if not isinstance(image, np.ndarray) or image.ndim < 2:
         raise ValueError("选点图像必须是至少二维的 numpy 数组")
     base_display, scale, display_width, display_height = _picker_image(image)
@@ -30,11 +30,13 @@ def pick_quad(
     )
 
     def to_original_point(x: int, y: int) -> Tuple[int, int]:
+        """将显示窗口位置还原为原图像素坐标。"""
         original_x = max(0, min(width - 1, int(x / scale)))
         original_y = max(0, min(height - 1, int(y / scale)))
         return original_x, original_y
 
     def draw() -> None:
+        """绘制当前四角选择、连接线及操作提示。"""
         output = base_display.copy()
         for index, point in enumerate(points):
             display_point = (int(point[0] * scale), int(point[1] * scale))
@@ -74,6 +76,7 @@ def pick_quad(
         cv2.imshow(window_name, output)
 
     def on_mouse(event: int, x: int, y: int, _flags: int, _param: object) -> None:
+        """根据鼠标事件追加角点或撤销最近的角点。"""
         nonlocal message
         if event == cv2.EVENT_LBUTTONDOWN:
             if len(points) >= 4:

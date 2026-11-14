@@ -38,11 +38,12 @@ class PlannerParameterError(ValueError):
 
 
 def _is_number(value):
+    """判断参数是否为有限实数，并排除布尔值。"""
     return isinstance(value, Real) and not isinstance(value, bool)
 
 
 def validate_algorithm_parameters(name, params=None):
-    """Validate and normalize one algorithm's constructor parameters."""
+    """按算法的参数规则校验并规范化构造参数，未知或非法参数抛出参数错误。"""
     if name not in _registry:
         raise PlannerParameterError(
             f"未知算法: {name}，可选: {list(_registry.keys())}"
@@ -95,7 +96,7 @@ def validate_algorithm_parameters(name, params=None):
 
 
 def resolve_algorithm_parameters(name, params=None):
-    """Return effective parameters after applying registered defaults."""
+    """合并已注册默认值与覆盖参数，返回经校验的实际算法配置。"""
     normalized = validate_algorithm_parameters(name, params)
     defaults = _registry[name][1]
     effective = dict(defaults)

@@ -1,6 +1,6 @@
-"""Verify public maps and real CLIs without hardware; retain a compact JSON report.
+"""在无硬件环境检查公开地图与真实模块 CLI，保留精简 JSON 报告。
 
-Detailed runs live in a TemporaryDirectory and are removed after verification.
+详细运行数据写入临时目录，验证结束后自动删除。
 """
 from __future__ import annotations
 
@@ -26,6 +26,7 @@ from map_pipeline.process import prepare_grid_map
 
 
 def invoke(arguments: list[str], result: Path, timeout: int = 45) -> dict:
+    """限时执行真实模块 CLI，读取结果并区分超时、缺失结果和模块返回状态。"""
     try:
         proc = subprocess.run(
             [sys.executable, *arguments], cwd=ROOT, capture_output=True,
@@ -42,10 +43,12 @@ def invoke(arguments: list[str], result: Path, timeout: int = 45) -> dict:
 
 
 def compact(result: dict) -> dict:
+    """去除完整 payload，仅保留状态与错误等精简验收信息。"""
     return {key: value for key, value in result.items() if key != "payload"}
 
 
 def main() -> int:
+    """核对公开地图与真实模块链路，把精简离线验收报告保存到指定文件。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()

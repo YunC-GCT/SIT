@@ -1,4 +1,4 @@
-"""Top-level workflow orchestration through module CLI contracts."""
+"""通过统一模块 CLI 契约调度顶层工作流。"""
 
 from __future__ import annotations
 
@@ -36,11 +36,12 @@ class PipelineReport:
 
     @property
     def exit_code(self) -> int:
+        """把流水线成功/失败状态转换为命令行退出码。"""
         return 0 if self.status == STATUS_SUCCESS else 2
 
 
 class PipelineOrchestrator(CommandMixin, InteractionMixin):
-    """Deep top-level module for normal and research workflow modes."""
+    """封装普通与研究模式的顶层工作流调度器。"""
 
     def __init__(
         self,
@@ -78,6 +79,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
         output_fn: Callable[[str], None] = print,
         preview_renderer: Callable[[str, str, str, str], str] = save_path_preview,
     ):
+        """保存运行参数、创建隔离批次，并配置模块运行器、恢复交互和预览接口。"""
         if mode not in {"normal", "research"}:
             raise ValueError("mode must be normal or research")
         if (start is None) != (goal is None):
@@ -132,6 +134,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
         )
 
     def run(self) -> PipelineReport:
+        """执行工作流及交互重跑循环，把中断、保存失败和其他异常转换为运行报告。"""
         try:
             self._validate_inputs()
         except ValueError as exc:
@@ -175,7 +178,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
             )
             return self._failure_report("workflow", error, finish=True)
         except JsonSaveError as exc:
-            # Do not try to record this failure through the same locked file.
+            # 同一文件仍可能被锁定，避免再次写入清单来记录保存失败。
             return PipelineReport(
                 STATUS_FAILED, self.batch.run_id, self.batch.manifest_path,
                 stage="save_json",
@@ -201,6 +204,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
             return self._failure_report("workflow", error, finish=True)
 
     def _run_once(self, start_index: int) -> PipelineReport:
+        """从指定阶段运行一次流水线，处理失败恢复、路径确认与可选运动控制。"""
         while True:
             outcome = self._run_modules(start_index)
             if isinstance(outcome, PipelineReport):
@@ -285,6 +289,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
         )
 
     def _validate_inputs(self) -> None:
+        """核对地图、起终点组合及运行模式所需参数，非法输入抛出 ValueError。"""
         if self.image_path is None:
             raise ValueError("an image path is required")
         if self.start is None and not self.terminal_select:
@@ -309,6 +314,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
                 self.output_fn("start and goal will be selected by the map module")
 
     def _run_modules(self, start_index: int) -> int | PipelineReport | None:
+        """依序执行指定索引开始的模块，遇到未恢复的失败时返回阶段信息。"""
         for index in range(start_index, len(MODULE_STAGES)):
             module = MODULE_STAGES[index]
             result = self._run_stage_with_recovery(module, self._command_for(module))
@@ -324,6 +330,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
         module: str,
         command_factory: Callable[[str], list[str]],
     ) -> PipelineReport | None:
+        """执行单阶段，依据恢复动作重试、改参、返回前级或生成失败报告。"""
         while True:
             output_path = self._next_output_path(module)
             result, errors = self._invoke_module(module, command_factory(output_path), output_path)
@@ -372,6 +379,9 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
         command: Sequence[str],
         output_path: str,
     ) -> tuple[dict | None, list[dict]]:
+        """运行模块 CLI，校验退出码、结果契约、模块名及批次标识。
+
+        成功时同步阶段状态；失败时保存结构化错误并返回结果与错误列表。"""
         try:
             return_code = int(self.runner(command))
         except KeyboardInterrupt:
@@ -447,6 +457,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
         return result, errors
 
     def _sync_stage(self, module: str, output_path: str, result: dict) -> None:
+        """将通过校验的模块状态及结果路径同步到顶层清单。"""
         current = self.batch.manifest.get("stages", {}).get(module, {})
         if (
             current.get("status") == STATUS_SUCCESS
@@ -461,6 +472,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
         output_path: str,
         errors: list[dict],
     ) -> None:
+        """保存阶段失败结果与清单记录，同时保护已有成功结果。"""
         self.batch.reload()
         current = self.batch.manifest.get("stages", {}).get(module, {})
         if (
@@ -490,6 +502,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
         *,
         finish: bool,
     ) -> PipelineReport:
+        """规范化错误并生成失败报告，根据 finish 决定是否结束批次。"""
         normalized = errors if isinstance(errors, list) else [errors]
         current = self.batch.manifest.get("stages", {}).get(stage, {})
         if current.get("status") != STATUS_FAILED:
@@ -510,6 +523,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
         )
 
     def _next_output_path(self, module: str) -> str:
+        """生成当前阶段的结果路径，为重试选择独立名称以保护已有结果。"""
         stage = self.batch.manifest.get("stages", {}).get(module)
         base = os.path.join(self.batch.stage_dir(module), "result.json")
         if not stage and not os.path.exists(base):
@@ -523,6 +537,7 @@ class PipelineOrchestrator(CommandMixin, InteractionMixin):
         )
 
     def _create_preview(self) -> str:
+        """调用可替换的渲染接口生成路径预览，并在批次清单中登记。"""
         map_result = self._current_result("map_pipeline")
         planner_result = self._current_result("path_planner")
         postprocess_result = self._current_result("path_postprocess")
@@ -541,7 +556,7 @@ def run_pipeline(
     image_path: str | None,
     **kwargs: Any,
 ) -> PipelineReport:
-    """Run the top-level workflow using module CLI contracts."""
+    """通过统一模块 CLI 契约运行顶层工作流，返回 PipelineReport。"""
     return PipelineOrchestrator(image_path, **kwargs).run()
 
 

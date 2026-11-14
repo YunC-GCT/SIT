@@ -1,4 +1,4 @@
-"""Shared contract constants, errors, and low-level helpers."""
+"""公共契约常量、异常及基础辅助函数。"""
 
 from __future__ import annotations
 
@@ -22,9 +22,11 @@ class ContractError(ValueError):
     """输入或输出不符合统一契约。"""
 
 def utc_now() -> str:
+    """返回带时区的 UTC 时间字符串，供结果和清单统一记录时间。"""
     return datetime.now(timezone.utc).isoformat()
 
 def _json_ready(value: Any) -> Any:
+    """递归转换数组、标量和容器，使其适合 JSON 序列化。"""
     if hasattr(value, "tolist"):
         return value.tolist()
     if isinstance(value, tuple):
@@ -36,6 +38,7 @@ def _json_ready(value: Any) -> Any:
     return value
 
 def _shape_of(value: Any) -> list[int]:
+    """递归推断嵌套列表的形状，非规则数组抛出契约错误。"""
     if hasattr(value, "shape"):
         return [int(part) for part in value.shape]
     if isinstance(value, (list, tuple)):

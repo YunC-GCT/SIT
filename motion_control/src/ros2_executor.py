@@ -1,4 +1,4 @@
-"""ROS2 path executor with turn-mode motion and safe stop."""
+"""支持原地转向后前进及安全停车的 ROS2 路径执行器。"""
 
 from __future__ import annotations
 
@@ -16,11 +16,17 @@ from .ros2_twist import CHASSIS_NODE_NAME, CMD_VEL_TOPIC, make_twist
 from .ros2_types import CmdVelPreflight, ExecutionReport, MotionSafetyError
 
 class ExecutorNode(Protocol):
-    """Node operations shared by ROS2 and the offline simulator."""
+    """真实 ROS2 节点与离线模拟器共用的最小节点接口。"""
 
-    def get_namespace(self) -> str: ...
-    def get_name(self) -> str: ...
-    def destroy_node(self) -> None: ...
+    def get_namespace(self) -> str:
+        """返回节点命名空间；真实节点和离线节点都需提供此接口。"""
+        ...
+    def get_name(self) -> str:
+        """返回节点名称，供识别本节点的速度发布者使用。"""
+        ...
+    def destroy_node(self) -> None:
+        """释放节点资源；执行器保证先完成停车流程再调用。"""
+        ...
 
 
 class Ros2PathExecutor:
@@ -41,6 +47,9 @@ class Ros2PathExecutor:
         communication_buffer_s: float = 0.1,
         sleep: Callable[[float], None] | None = None,
     ):
+        """配置速度指令、计时周期、初始朝向和停车发送策略，初始化执行状态。
+
+        经验前进速度用于开环时间估算，不等于已验证的通用速度标定；odom_topic 当前仅保留。"""
         if turn_speed <= 0:
             raise ValueError("turn_speed must be positive")
         if move_speed <= 0:
@@ -81,6 +90,7 @@ class Ros2PathExecutor:
         self._forward_ticks_due = 0.0
 
     def setup_ros2(self):
+        """按需初始化 ROS2，创建路径跟随节点及 /cmd_vel 发布器并返回。"""
         if rclpy is None:
             raise RuntimeError("ROS2 Python packages are not available")
         if not rclpy.ok():
@@ -101,6 +111,9 @@ class Ros2PathExecutor:
         allow_other_publishers: bool = False,
         require_chassis_subscriber: bool = True,
     ) -> ExecutionReport:
+        """执行转向与前进路径段，可注入模拟节点及发布器进行离线验证。
+
+        默认先做话题预检；正常结束和异常退出均执行停车，异常继续向调用方传播。"""
         if node is not None:
             self.node = node
         if pub is not None:
@@ -154,6 +167,7 @@ class Ros2PathExecutor:
         allow_other_publishers: bool = False,
         require_chassis_subscriber: bool = True,
     ) -> CmdVelPreflight:
+        """查询速度话题的底盘订阅者和其他发布者，按安全要求确认或拒绝启动。"""
         subscribers = self._topic_endpoint_names("subscriptions")
         publishers = self._topic_endpoint_names("publishers")
         self_name = self._node_name()
@@ -185,6 +199,9 @@ class Ros2PathExecutor:
         return report
 
     def stop_robot(self) -> None:
+        """禁用后续运动，重复发送零速度并留出通信缓冲，成功完成后记录停车状态。
+
+        允许重复调用；停车发送不依赖后续 ROS2 shutdown 是否成功。"""
         if self.pub is not None:
             zero = make_twist()
             published = 0
@@ -209,6 +226,7 @@ class Ros2PathExecutor:
         self._log_info("小车已停止（Twist 零速度已重复发出）。")
 
     def close(self) -> None:
+        """依次停车、销毁节点并关闭 ROS2，使用 finally 保证资源清理顺序。"""
         try:
             self.stop_robot()
         finally:
@@ -224,6 +242,7 @@ class Ros2PathExecutor:
                 self.shutdown_once()
 
     def shutdown_once(self) -> None:
+        """仅关闭一次 ROS2 上下文，容忍已关闭类错误以避免重复 shutdown。"""
         if self._shutdown_done:
             return
         self._shutdown_done = True
@@ -238,14 +257,15 @@ class Ros2PathExecutor:
                 raise
 
     def _run_turn_segments(self, segments: Sequence[dict]) -> int:
+        """逐段先原地转向、零速过渡，再沿底盘 X 正方向前进并累计发布次数。"""
         command_count = 0
         turns = compute_segment_turns(segments, initial_heading=self.initial_heading)
         for segment, turn in zip(segments, turns):
             index = int(segment.get("index", command_count))
             for partial_turn in split_turn_angle_deg(turn):
                 command_count += self._publish_for_duration(
-                    # Compass heading increases clockwise; ROS angular.z is
-                    # positive counter-clockwise in the x-forward/y-left frame.
+                    # 地图航向顺时针递增；在 X 向前、Y 向左的底盘坐标系中，
+                    # ROS angular.z 以逆时针为正，因此发布时需要反号。
                     make_twist(angular_z=-_sign(partial_turn) * self.turn_speed),
                     math.radians(abs(partial_turn)) / self.turn_speed,
                     state=f"segment {index} rotate {partial_turn:.1f}deg",
@@ -261,12 +281,9 @@ class Ros2PathExecutor:
         return command_count
 
     def _publish_forward_distance(self, distance_m: float, *, state: str) -> int:
-        """Publish forward commands for one segment without per-segment rounding bias.
+        """根据距离及经验前进速度累计应发布的控制周期数，再发送前进指令。
 
-        Whole control ticks are accounted cumulatively across segments, so the
-        total travel time tracks the total path distance regardless of how many
-        segments the path post-processor produced.
-        """
+        跨路径段保留不足一周期的余量，避免每段独立取整造成总行驶时间偏差。"""
         if not self._movement_enabled:
             return 0
         target_s = max(0.0, float(distance_m)) / self.empirical_forward_speed_m_s
@@ -289,6 +306,7 @@ class Ros2PathExecutor:
         return published
 
     def _publish_for_duration(self, twist: Twist, duration_s: float, *, state: str) -> int:
+        """按计时周期发送指定 Twist，运动被禁用时停止发布，返回本次周期计数。"""
         if not self._movement_enabled:
             return 0
         count = max(1, int(math.ceil(max(0.0, duration_s) / self.timer_period)))
@@ -301,6 +319,7 @@ class Ros2PathExecutor:
         return count
 
     def _publish_zero_transition(self, segment_index: int) -> int:
+        """发送指定时长的零速过渡，隔开转向与前进动作。"""
         return self._publish_for_duration(
             make_twist(),
             self.zero_transition_s,
@@ -315,6 +334,7 @@ class Ros2PathExecutor:
         completed: bool,
         preflight: CmdVelPreflight | None,
     ) -> ExecutionReport:
+        """保存执行段数、命令数、完成和停车状态，返回执行报告。"""
         report = ExecutionReport(
             segment_count=len(segments),
             command_count=command_count,
@@ -327,6 +347,7 @@ class Ros2PathExecutor:
         return report
 
     def _topic_endpoint_names(self, kind: str) -> tuple[str, ...]:
+        """查询话题端点并整理节点名称；查询失败时形成安全预检错误。"""
         if self.node is None:
             return ()
         method_name = (
@@ -355,6 +376,7 @@ class Ros2PathExecutor:
         return tuple(names)
 
     def _node_name(self) -> str:
+        """读取执行器当前节点的命名空间及名称，组合为完整节点名。"""
         if self.node is None:
             return ""
         try:
@@ -366,6 +388,7 @@ class Ros2PathExecutor:
             return ""
 
     def _log_preflight(self, report: CmdVelPreflight) -> None:
+        """记录速度话题预检摘要及警告。"""
         self._log_info(
             f"预检 {report.topic}: subscribers={list(report.subscribers)}, "
             f"publishers={list(report.publishers)}"
@@ -374,25 +397,30 @@ class Ros2PathExecutor:
             self._log_warn(warning)
 
     def _log_info(self, message: str) -> None:
+        """若节点提供日志器，则记录一般运行信息。"""
         logger = self._logger()
         if logger is not None:
             logger.info(message)
 
     def _log_warn(self, message: str) -> None:
+        """若节点提供日志器，则记录警告信息。"""
         logger = self._logger()
         if logger is not None:
             logger.warn(message)
 
     def _logger(self):
+        """获取可选节点日志器；无节点或模拟节点未提供日志器时返回 None。"""
         get_logger = getattr(self.node, "get_logger", None)
         if get_logger is not None:
             return get_logger()
         return None
 
 def _sign(value: float) -> float:
+    """返回数值符号，非负数返回 1.0，负数返回 -1.0。"""
     return 1.0 if value >= 0 else -1.0
 
 def _full_node_name(namespace: str, name: str) -> str:
+    """将命名空间和节点名组合为用于话题预检的完整节点名称。"""
     if not name:
         return ""
     namespace = namespace or "/"

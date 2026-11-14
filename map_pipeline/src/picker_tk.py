@@ -1,4 +1,4 @@
-"""Tk two-point picker."""
+"""基于 Tk 的起终点选择器。"""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def _pick_points_tk(
     window_name: str,
     grid_map: GridMap | None,
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
-    """Use Tk to avoid Windows OpenCV HighGUI display offset issues."""
+    """用 Tk 选择起终点，规避 Windows OpenCV 窗口的显示偏移问题。"""
     import tkinter as tk
 
     height, width = img.shape[:2]
@@ -67,11 +67,13 @@ def _pick_points_tk(
     canvas.create_image(0, 0, image=photo, anchor=tk.NW)
 
     def to_original_point(x: int, y: int) -> Tuple[int, int]:
+        """将画布坐标按缩放比例转换回原图 x,y。"""
         original_x = max(0, min(width - 1, int(x / scale)))
         original_y = max(0, min(height - 1, int(y / scale)))
         return original_x, original_y
 
     def point_info(point: Tuple[int, int]) -> Tuple[Tuple[int, int] | None, str]:
+        """返回所选像素对应的栅格位置及占用状态。"""
         if grid_map is None:
             return None, "grid=unknown"
         grid_point = map_pixel_to_grid(point[0], point[1], grid_map)
@@ -79,6 +81,7 @@ def _pick_points_tk(
         return grid_point, state_name
 
     def draw() -> None:
+        """刷新 Tk 画布中的地图、起终点标记和提示文字。"""
         canvas.delete("overlay")
         if grid_map is not None:
             for col in range(1, grid_map.cols):
@@ -162,11 +165,13 @@ def _pick_points_tk(
         )
 
     def update_message(value: str) -> None:
+        """更新选点提示并重绘画布。"""
         nonlocal message
         message = value
         draw()
 
     def on_left(event: object) -> None:
+        """记录左键选择，吸附到栅格中心并提示当前点的状态。"""
         x = int(getattr(event, "x"))
         y = int(getattr(event, "y"))
         if len(points) >= 2:
@@ -183,6 +188,7 @@ def _pick_points_tk(
         )
 
     def on_right(_event: object | None = None) -> None:
+        """撤销最近一次选点，空选择时只更新提示。"""
         if points:
             points.pop()
             update_message("Last point removed")
@@ -190,11 +196,13 @@ def _pick_points_tk(
             update_message("No point to remove")
 
     def cancel(reason: str = "已取消起终点选择") -> None:
+        """登记取消原因并退出 Tk 交互循环。"""
         state["cancelled"] = True
         state["reason"] = reason
         root.quit()
 
     def confirm(_event: object | None = None) -> None:
+        """仅在已选两点且均可通行时结束交互，保留选择供调用方读取。"""
         if len(points) != 2:
             update_message("Enter requires start and goal")
             return
@@ -207,6 +215,7 @@ def _pick_points_tk(
         root.quit()
 
     def reset(_event: object | None = None) -> None:
+        """清空已选起终点并重新提示。"""
         points.clear()
         update_message("Selection reset")
 

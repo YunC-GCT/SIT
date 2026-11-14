@@ -42,6 +42,7 @@ class RRTPlanner(GlobalPlanner):
         raise RuntimeError("地图中没有空闲栅格，无法采样")
 
     def _distance(self, p1, p2):
+        """计算两个行列坐标之间的欧氏距离，单位为栅格。"""
         return math.hypot(p1[0]-p2[0], p1[1]-p2[1])
 
     def _nearest_node(self, tree_nodes, point):
@@ -62,11 +63,15 @@ class RRTPlanner(GlobalPlanner):
 
 
     def _extension(self, nearest, sample):
+        """按固定步长扩展并取整；连线穿障或越界时返回 None。"""
         point = self._steer(nearest, sample)
         point = (int(round(point[0])), int(round(point[1])))
         return point if line_of_sight(self.grid, self.rows, self.cols, nearest, point) else None
 
     def plan(self, start: Tuple[int, int], goal: Tuple[int, int]) -> Path:
+        """运行固定步长、单树基础 RRT，按目标采样概率探索并检查新边碰撞。
+
+        找到可连接目标的节点后回溯路径；迭代预算耗尽时返回空列表。"""
         if not self.grid[start[0], start[1]] == 0 or not self.grid[goal[0], goal[1]] == 0:
             return []
         if start == goal:
@@ -107,6 +112,7 @@ class RRTPlanner(GlobalPlanner):
         return []   # 未找到路径
 
     def _extract_path(self, tree_nodes):
+        """沿父节点索引逆向回溯，再反转为起点到终点的路径。"""
         path = []
         idx = len(tree_nodes) - 1
         while idx != -1:

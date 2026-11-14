@@ -1,4 +1,4 @@
-"""Compatibility facade for the planner execution pipeline."""
+"""规划执行流程的兼容导出接口。"""
 
 from __future__ import annotations
 

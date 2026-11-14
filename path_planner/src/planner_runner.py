@@ -1,4 +1,4 @@
-"""Planner execution for single and research modes."""
+"""单算法与研究对照模式的规划执行。"""
 
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ def run_algorithm(
     run_id: str = "standalone",
     input_ref: str = "",
 ) -> dict:
-    """Run one registered planner and return a validated contract result."""
+    """运行一个注册算法并校验输出路径，返回统一契约结果及诊断信息。"""
     raw_parameters = parameters if isinstance(parameters, dict) else {}
     safe_start = safe_goal = None
     try:
@@ -141,6 +141,7 @@ def run_algorithm(
     )
 
 def _comparison_entry(result: dict) -> dict:
+    """从单算法结果提取对照条目，保留状态、指标和搜索诊断。"""
     return {
         "algorithm": result["parameters"]["algorithm"],
         "status": result["status"],
@@ -165,7 +166,7 @@ def run_planning(
     input_ref: str = "",
     mode: str = "research",
 ) -> dict:
-    """Run one or more planners and return a comparable experiment result."""
+    """执行一个或多个规划器，生成单算法结果或可比较的多算法实验结果。"""
     try:
         selected = list(algorithms)
     except TypeError as exc:

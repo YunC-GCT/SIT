@@ -1,4 +1,4 @@
-"""Stable preview interface for planner results."""
+"""规划结果的稳定预览接口。"""
 
 from .src.path_visualizer import draw_comparison, draw_path
 

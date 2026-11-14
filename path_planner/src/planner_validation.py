@@ -1,4 +1,4 @@
-"""Grid, start/goal, and planner path validation."""
+"""栅格、起终点及规划路径的边界校验。"""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from .planner_factory import PlannerParameterError
 from .grid_utils import line_of_sight
 
 def _point(value: Any, name: str) -> tuple[int, int]:
-    """Validate an untrusted coordinate before returning integer row/col."""
+    """校验不可信坐标为两个非布尔整数，返回 row,col 元组。"""
     if not isinstance(value, (tuple, list)) or len(value) != 2:
         raise PlannerParameterError(f"{name} 必须是 [row, col] 坐标")
     if any(
@@ -23,6 +23,7 @@ def _point(value: Any, name: str) -> tuple[int, int]:
     return int(value[0]), int(value[1])
 
 def _validate_grid(grid: Any) -> np.ndarray:
+    """把输入转成非空二维数组，并要求仅含 0（空闲）和 1（障碍）。"""
     normalized = np.asarray(grid)
     if normalized.ndim != 2:
         raise PlannerParameterError("grid 必须是二维栅格数组")
@@ -38,6 +39,7 @@ def _validate_inputs(
     goal: Iterable[int],
     grid_size_m: float,
 ) -> tuple[np.ndarray, tuple[int, int], tuple[int, int]]:
+    """校验二值地图、空闲起终点及有限正值米制尺度，返回规范化输入。"""
     normalized_grid = _validate_grid(grid)
     normalized_start = _point(start, "start")
     normalized_goal = _point(goal, "goal")
@@ -65,6 +67,9 @@ def _normalize_path(
     start: tuple[int, int],
     goal: tuple[int, int],
 ) -> list[tuple[int, int]]:
+    """规范化规划路径并检查整数坐标、边界、起终点和每条连线的碰撞。
+
+    None 按空路径处理；非法点或穿障线段抛出 ValueError，避免误记为规划成功。"""
     normalized = []
     rows, cols = grid.shape
     if path is None:

@@ -14,6 +14,7 @@ from core.map_selection import choose_map
 
 
 def _pair(value: str) -> tuple[int, int]:
+    """将命令行 row,col 文本解析为两个整数，格式错误时交由 argparse 报错。"""
     try:
         row, col = value.split(",", 1)
         return int(row), int(col)
@@ -22,6 +23,7 @@ def _pair(value: str) -> tuple[int, int]:
 
 
 def _json_object(value: str | None, option: str) -> dict | None:
+    """解析选项中的 JSON 对象；未提供时返回空字典，非对象输入抛出参数错误。"""
     if value is None:
         return None
     try:
@@ -34,6 +36,7 @@ def _json_object(value: str | None, option: str) -> dict | None:
 
 
 def _choose_image(requested: str | None, *, interactive: bool) -> str | None:
+    """调用统一地图选择器，返回选定的图片路径或取消标记 None。"""
     if requested:
         return requested
     if not interactive:
@@ -42,13 +45,14 @@ def _choose_image(requested: str | None, *, interactive: bool) -> str | None:
 
 
 def run_script(script_path: str) -> bool:
-    """Compatibility wrapper for callers that still launch one module script."""
+    """兼容旧调用方式，使用当前 Python 解释器执行指定模块脚本并返回退出码。"""
     from core.orchestrator import _subprocess_runner
 
     return _subprocess_runner([sys.executable, script_path]) == 0
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """解析顶层运行参数，选择地图及算法并调度模块，返回工作流退出码。"""
     parser = argparse.ArgumentParser(
         description="Run the modular path-planning and TurboPi workflow"
     )
@@ -189,6 +193,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 def _print_report(report: PipelineReport) -> None:
+    """向终端输出本次运行状态、结果位置和结构化故障信息。"""
     print(f"Workflow {report.status}: {report.manifest_path}")
     if report.preview_path:
         print(f"Path preview: {report.preview_path}")

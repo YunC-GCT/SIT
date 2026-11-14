@@ -1,4 +1,4 @@
-"""Atomic JSON persistence tolerant of brief Windows replacement locks."""
+"""支持 Windows 短暂文件锁重试的原子 JSON 持久化。"""
 
 from __future__ import annotations
 
@@ -9,20 +9,20 @@ import time
 
 
 class JsonSaveError(OSError):
-    """A complete candidate remains available when destination replacement fails."""
+    """目标文件替换失败时保留完整候选文件，便于恢复。"""
 
     def __init__(self, path: str, candidate: str, reason: OSError):
+        """记录目标路径、完整候选文件和底层错误，供保存失败后恢复。"""
         self.path = path
         self.candidate = candidate
         super().__init__(f"无法保存 JSON：{path}；待保存文件：{candidate}；原因：{reason}")
 
 
 def write_json_atomic(path: str, value: dict) -> None:
-    """Replace from a unique sibling file, retrying PermissionError for 1.25s.
+    """先写同目录的唯一临时文件，再原子替换目标 JSON。
 
-    Never truncate the destination. On replacement failure keep the complete
-    candidate for recovery; this does not serialize concurrent manifest edits.
-    """
+    遇到 PermissionError 共等待至多 1.25 秒重试；替换失败时保留完整候选文件。
+    不会先截断原文件，也不负责串行化多个进程对清单的并发修改。"""
     path = os.path.abspath(path)
     directory = os.path.dirname(path)
     os.makedirs(directory, exist_ok=True)

@@ -1,4 +1,4 @@
-"""Canonical JSON payload builders for map, path, segments, and metrics."""
+"""地图、路径、执行段和指标的标准 JSON 载荷构造。"""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from .contracts_types import (
 )
 
 def _point(row_col: Sequence[float]) -> dict:
+    """把二元素行列坐标转换为 JSON 的 row/col 对象。"""
     if len(row_col) != 2:
         raise ContractError("坐标必须包含 row 和 col")
     row, col = row_col
@@ -27,7 +28,7 @@ def array_payload(
     units: dict[str, str] | None = None,
     coordinate_system: dict[str, Any] | None = None,
 ) -> dict:
-    """Represent an array-like value with explicit JSON metadata."""
+    """将数组及其形状、数据类型、单位和坐标系封装为 JSON 可序列化载荷。"""
     json_values = _json_ready(values)
     return {
         "values": json_values,
@@ -47,7 +48,7 @@ def grid_map_payload(
     obstacle_value: int = 1,
     dtype: str = "uint8",
 ) -> dict:
-    """Build the canonical grid-map JSON output."""
+    """构造标准栅格地图载荷，记录空闲值、障碍值、米制尺度及可选起终点。"""
     payload = {
         "grid": array_payload(
             grid,
@@ -73,7 +74,7 @@ def path_payload(
     units: dict[str, str] | None = None,
     dtype: str = "int",
 ) -> dict:
-    """Build a canonical row/col path payload."""
+    """按 row/col 坐标系构造路径载荷，保留数组元信息及空路径的二维形状。"""
     if dtype.startswith("float"):
         normalized = [[float(row), float(col)] for row, col in points]
     else:
@@ -104,7 +105,7 @@ def path_segment_payload(
     estimated_time_s: float,
     motion_type: str = "turn",
 ) -> dict:
-    """Build one executable path segment for motion-control input."""
+    """构造一段可执行路径的载荷，包含端点、方向、距离与预计耗时。"""
     start_point = _point(start)
     end_point = _point(end)
     return {
@@ -132,7 +133,7 @@ def path_segment_payload(
     }
 
 def metric_payload(values: dict[str, Any], units: dict[str, str]) -> dict:
-    """Build canonical planning or execution metrics."""
+    """将指标数值与对应单位封装为标准指标载荷。"""
     return {"values": _json_ready(values), "units": units}
 
 def module_entry(
@@ -146,7 +147,7 @@ def module_entry(
     outputs: dict[str, Any] | None = None,
     parameters: dict[str, Any] | None = None,
 ) -> dict:
-    """Build one module-list entry for a run manifest or result."""
+    """构造清单或结果中的模块条目，并填入状态、时间及可选输入输出信息。"""
     if status not in STATUSES:
         raise ContractError(f"未知模块状态: {status}")
     entry = {

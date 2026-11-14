@@ -1,4 +1,4 @@
-"""ROS2 motion-control interface compatibility facade."""
+"""ROS2 运动控制接口的兼容导出层。"""
 
 from __future__ import annotations
 

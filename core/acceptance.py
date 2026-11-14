@@ -1,4 +1,4 @@
-"""Repeatable end-to-end simulation acceptance for the modular workflow."""
+"""模块化工作流的可重复端到端模拟验收。"""
 
 from __future__ import annotations
 
@@ -32,10 +32,12 @@ PIPELINE_STAGES = ("map_pipeline", "path_planner", "path_postprocess")
 
 
 def _check(name: str, passed: bool, details: dict[str, Any]) -> dict[str, Any]:
+    """将检查名称、通过标记及细节封装为验收记录。"""
     return {"name": name, "status": STATUS_SUCCESS if passed else STATUS_FAILED, **details}
 
 
 def _manual_record_template() -> dict[str, Any]:
+    """建立尚未填写的实车验收模板，保留硬件、动作和安全停车的实测项目。"""
     return {
         "status": "pending_manual",
         "environment": {
@@ -75,6 +77,7 @@ def _manual_record_template() -> dict[str, Any]:
 
 
 def _stage_checks(batch: RunBatch) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """检查各阶段成功状态、结果契约及日志存在性，返回检查项与阶段详情。"""
     checks = []
     stage_details: dict[str, Any] = {}
     for module in PIPELINE_STAGES:
@@ -110,6 +113,7 @@ def _stage_checks(batch: RunBatch) -> tuple[list[dict[str, Any]], dict[str, Any]
 
 
 def _simulation_checks(simulation: MotionSimulation) -> list[dict[str, Any]]:
+    """从模拟命令及报告检查话题预检、转向前进序列和结束停车。"""
     commands = simulation.commands
     moving = [command for command in commands if command != (0.0, 0.0, 0.0)]
     has_forward = any(linear_x > 0 and linear_y == 0 and angular_z == 0 for linear_x, linear_y, angular_z in moving)
@@ -157,6 +161,7 @@ def _simulation_checks(simulation: MotionSimulation) -> list[dict[str, Any]]:
 
 
 def _stop_path_check(name: str, simulation: StopPathSimulation, expected: str) -> dict[str, Any]:
+    """对比预期异常类型，检查模拟退出过程中是否先发零速再销毁节点。"""
     return _check(
         name,
         simulation.exception_type == expected
@@ -168,6 +173,7 @@ def _stop_path_check(name: str, simulation: StopPathSimulation, expected: str) -
 
 
 def _write_manual_record(batch: RunBatch) -> str:
+    """写入独立的实车验收模板并登记产物，返回模板路径。"""
     path = os.path.join(batch.path, "acceptance", "manual_record.json")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as handle:
@@ -191,7 +197,9 @@ def run_simulated_acceptance(
     planner_config: str | None = None,
     postprocess_config: str | None = None,
 ) -> dict:
-    """Run real map/planner/postprocess CLIs and simulated motion in one batch."""
+    """运行真实建图、规划、后处理 CLI，并在同一批次中使用模拟运动执行器验收。
+
+    结果验证软件链路与退出顺序，不能替代真实底盘、ROS2 通信和距离精度验收。"""
     image = image_path or os.path.join(
         PROJECT_ROOT,
         "tests",

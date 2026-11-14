@@ -1,4 +1,4 @@
-"""Public algorithm catalog used by CLI and terminal selection."""
+"""CLI 与终端选择器共用的公共算法目录。"""
 
 from pathlib import Path
 
@@ -18,11 +18,9 @@ LABELS = {
 
 
 def algorithm_catalog(config_path: str | None = None) -> tuple[list[dict[str, str]], str]:
-    """Return configured registered algorithms and the configured default.
+    """返回配置中可用的注册算法及默认算法。
 
-    Labels are descriptive only; canonical names remain the JSON/CLI contract.
-    Registry additions appear without modifying the terminal chooser.
-    """
+    展示标签只用于描述，JSON/CLI 继续使用规范算法名；新增注册项无需修改终端选择器。"""
     path = Path(config_path) if config_path else Path(__file__).with_name("config.yaml")
     with path.open(encoding="utf-8") as handle:
         raw = yaml.safe_load(handle) or {}

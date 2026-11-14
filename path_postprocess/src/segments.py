@@ -1,4 +1,4 @@
-"""Execution segment generation from validated paths or smoothed curves."""
+"""从已校验路径或平滑曲线生成可执行路径段。"""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ from .geometry import (
 from .smoothers import SmoothingError
 
 class SegmentationError(ValueError):
-    """Raised when the configured segment limit cannot be represented."""
+    """配置的分段长度限制无法用当前路径表示时抛出的异常。"""
 
 def _discretize_curve(
     curve: Sequence[Sequence[float]],
@@ -30,6 +30,7 @@ def _discretize_curve(
     start: tuple[int, int],
     goal: tuple[int, int],
 ) -> list[tuple[int, int]]:
+    """校验曲线坐标并取整为栅格路径，移除连续重复点并固定起终点。"""
     rows, cols = grid_shape
     try:
         curve_values = list(curve)
@@ -75,6 +76,7 @@ def _validate_sampled_curve(
     goal: tuple[int, int],
     sample_spacing_grid: float,
 ) -> None:
+    """校验曲线的有限坐标、端点保持、采样间距和采样连接的碰撞情况。"""
     rows, cols = grid.shape
     try:
         points = [tuple(point) for point in curve]
@@ -125,6 +127,7 @@ def _expand_segments(
     path: Sequence[tuple[int, int]],
     max_segment_length_grid: float,
 ) -> list[tuple[int, int]]:
+    """将超长整数路径边拆成符合段长限制的栅格连接点。"""
     expanded = [path[0]]
     for first, second in zip(path, path[1:]):
         distance = math.hypot(second[0] - first[0], second[1] - first[1])
@@ -158,13 +161,9 @@ def _compact_path(
     *,
     corner_tolerance_deg: float = 10.0,
 ) -> list[tuple[int, int]]:
-    """Merge collinear dense points into segments capped at the configured length.
+    """合并连续共线密集点，在转角处保留端点并限制执行段长度。
 
-    The planner output density (one point per grid cell for A*, sparse waypoints
-    for sampling planners) must not decide how many stop-and-go steps the
-    chassis performs.  Keeping length-capped, corner-split endpoints makes the
-    segment count a function of geometry instead.
-    """
+    使执行段数量由路径几何决定，避免 A* 密集点与采样算法稀疏点造成不同的停走频率。"""
     if len(expanded) < 3:
         return list(expanded)
     endpoints = [expanded[0]]
@@ -200,7 +199,7 @@ def _execution_endpoints(
     path: Sequence[tuple[int, int]],
     max_segment_length_grid: float,
 ) -> tuple[list[tuple[int, int]], bool]:
-    """Return normalized endpoints, falling back if a merged chord is blocked."""
+    """生成归一化执行端点；若合并后的直线穿障，则回退到安全连接。"""
     expanded = _expand_segments(path, max_segment_length_grid)
     compacted = _compact_path(expanded, max_segment_length_grid)
     if compacted == expanded:
@@ -215,12 +214,9 @@ def _resample_curve(
     curve: Sequence[Sequence[float]],
     max_segment_length_grid: float,
 ) -> list[tuple[float, float]]:
-    """Resample a smoothed curve by arc length into execution endpoints.
+    """按弧长对平滑曲线重新采样，返回浮点执行端点。
 
-    Endpoints stay on the continuous curve instead of the integer grid, so the
-    sum of segment lengths follows the smoothed path length rather than the
-    longer staircase produced by rounding every sample point.
-    """
+    端点保留在连续曲线上，避免每个采样点取整造成阶梯路径及距离高估。"""
     points = [(float(point[0]), float(point[1])) for point in curve]
     if len(points) < 2:
         return points
@@ -269,7 +265,7 @@ def _validate_curve_chords(
     grid: np.ndarray,
     endpoints: Sequence[tuple[float, float]],
 ) -> bool:
-    """Check that straight chords between resampled curve points stay free."""
+    """检查重采样端点之间的直线弦均在地图空闲区域内。"""
     rows, cols = grid.shape
     for first, second in zip(endpoints, endpoints[1:]):
         distance = math.hypot(second[0] - first[0], second[1] - first[1])
@@ -295,6 +291,7 @@ def _make_segments(
     turn_speed_rad_s: float,
     initial_heading: str | float,
 ) -> tuple[list[dict], bool]:
+    """将执行端点转换为含方向、转角、米制距离与预计时间的标准路径段。"""
     endpoints: Sequence[Sequence[float]]
     normalization_fallback = False
     if curve is not None:

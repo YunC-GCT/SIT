@@ -1,4 +1,4 @@
-"""Run the explicit adaptive RRT variant on the same 36 baseline tasks."""
+"""在基础实验相同的 36 个任务上运行独立的自适应 RRT 变体。"""
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 import json
@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main():
+    """独立复测 RRT 自适应变体，按与基础实验一致的任务形成对照报告。"""
     baseline = json.loads((ROOT / 'docs/verification/all-maps-latest-config.json').read_text(encoding='utf-8'))
     parameters = yaml.safe_load((ROOT / 'path_planner/config.yaml').read_text(encoding='utf-8'))['path_planner']['algorithm_params']['rrt_adaptive']
     cases = [row for row in baseline['results'] if row['algorithm'] == 'rrt']
@@ -19,6 +20,7 @@ def main():
                   baseline='all-maps-latest-config.json', expected=36, results=[])
     target = ROOT / 'docs/verification/rrt-adaptive-full-test.json'
     def run(row):
+        """限时执行一个自适应 RRT 任务，提取结果状态、参数与耗时。"""
         case = {key:row[key] for key in ['map', 'map_file', 'group', 'scenario_index',
                 'reference_length_octile', 'start', 'goal', 'seed']}
         case.update(algorithm='rrt_adaptive', parameters=parameters)

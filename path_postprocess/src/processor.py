@@ -1,4 +1,4 @@
-"""Top-level path post-processing flow and result construction."""
+"""路径后处理主流程与结果构造。"""
 
 from __future__ import annotations
 
@@ -46,6 +46,7 @@ def _failure_result(
     error: Exception,
     suggestion: str,
 ) -> dict:
+    """构造后处理失败结果，包含失败阶段、输入、参数及恢复建议。"""
     return make_result(
         MODULE,
         run_id,
@@ -78,7 +79,9 @@ def process_path(
     run_id: str = "standalone",
     input_ref: str = "",
 ) -> dict:
-    """Convert one planner path into a validated path-postprocess result."""
+    """校验规划路径，按配置平滑、碰撞检查并生成可执行路径段及统一结果。
+
+    平滑器通过 PathSmoother 接口替换；平滑失败或曲线穿障时回退到已校验的原路径。"""
     effective_parameters: dict[str, Any] = (
         dict(parameters) if isinstance(parameters, dict) else {}
     )

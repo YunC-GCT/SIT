@@ -1,4 +1,4 @@
-"""Shared helpers for map point and corner pickers."""
+"""地图起终点与四角选择器的公共辅助函数。"""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ def _display_geometry(
     max_width: int = 1000,
     max_height: int = 700,
 ) -> tuple[float, int, int]:
-    """Return a display scale and dimensions that use the available canvas."""
+    """根据图像和可用窗口尺寸返回显示缩放比例、显示宽度及高度。"""
     if width < 1 or height < 1:
         raise ValueError("显示图像尺寸必须为正数")
     if max_width < 1 or max_height < 1:
@@ -32,7 +32,7 @@ def _display_geometry(
     )
 
 def _normalize_key(key: Any) -> int:
-    """Normalize OpenCV backend key codes to the low-byte key value."""
+    """将 OpenCV 后端按键码归一到低八位，无法解析时返回 -1。"""
     try:
         value = int(key)
     except (TypeError, ValueError):
@@ -40,7 +40,7 @@ def _normalize_key(key: Any) -> int:
     return value if value < 0 else value & 0xFF
 
 def _is_confirm_key(key: Any) -> bool:
-    """Recognize Enter/Return codes emitted by common OpenCV backends."""
+    """识别常见 OpenCV 后端的 Enter/Return 键码。"""
     try:
         value = int(key)
     except (TypeError, ValueError):
@@ -53,6 +53,7 @@ def _is_confirm_key(key: Any) -> bool:
     }
 
 def _picker_image(image: np.ndarray) -> tuple[np.ndarray, float, int, int]:
+    """按窗口范围缩放选点图像，返回显示图、缩放比例及显示尺寸。"""
     height, width = image.shape[:2]
     scale, display_width, display_height = _display_geometry(width, height)
     interpolation = cv2.INTER_AREA if scale < 1.0 else cv2.INTER_NEAREST
@@ -68,6 +69,7 @@ def _picker_image(image: np.ndarray) -> tuple[np.ndarray, float, int, int]:
     )
 
 def _to_rgb(image: np.ndarray) -> np.ndarray:
+    """把灰度、BGR 或 BGRA 图像转换为 Tk 所需的 RGB 图像。"""
     if image.ndim == 2:
         return cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
     if image.shape[2] == 4:
@@ -75,6 +77,7 @@ def _to_rgb(image: np.ndarray) -> np.ndarray:
     return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 def _write_temp_ppm(rgb_image: np.ndarray) -> str:
+    """将 RGB 数组写为临时 PPM 文件并返回路径，供 Tk 加载显示。"""
     height, width = rgb_image.shape[:2]
     handle = tempfile.NamedTemporaryFile(delete=False, suffix=".ppm")
     try:
@@ -104,7 +107,7 @@ def _snap_to_grid_center(
     )
 
 def _marker_radius(scale: float, grid_map: GridMap | None) -> int:
-    """Return a small marker that does not visually cover a whole cell."""
+    """按栅格显示尺寸计算较小的标记半径，避免遮住整个格子。"""
     if grid_map is None:
         return max(1, min(4, int(round(2 * scale))))
     display_cell = min(grid_map.cell_width, grid_map.cell_height) * scale

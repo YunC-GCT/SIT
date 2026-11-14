@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Map processing entry point.
+"""地图处理的兼容入口。
 
-Use ``python -m map_pipeline.json_pipeline`` or ``python map_pipeline/json_pipeline.py``.
-The implementation lives in :mod:`map_pipeline.process`,
-:mod:`map_pipeline.interaction`, and :mod:`map_pipeline.cli`.
+支持 python -m map_pipeline.json_pipeline 或直接执行本文件。
+实现分别位于 map_pipeline.process、map_pipeline.interaction 和 map_pipeline.cli。
 """
 
 from __future__ import annotations

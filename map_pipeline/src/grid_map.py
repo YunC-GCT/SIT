@@ -26,6 +26,7 @@ class GridMap:
         self.rows, self.cols = grid.shape
 
     def is_free(self, row: int, col: int) -> bool:
+        """判断 row,col 是否在地图内且值为 0；越界位置视为不可通行。"""
         if 0 <= row < self.rows and 0 <= col < self.cols:
             return self.grid[row, col] == 0
         return False
@@ -61,6 +62,7 @@ class GridMap:
 
     @staticmethod
     def load(filepath: str) -> 'GridMap':
+        """从 npz 文件恢复栅格数组、像素尺寸及米制尺度，返回 GridMap。"""
         data = np.load(filepath)
         return GridMap(data['grid'],
                        float(data['cell_width']),

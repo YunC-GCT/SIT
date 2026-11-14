@@ -1,4 +1,4 @@
-"""Terminal and GUI point/corner selection helpers for map processing."""
+"""建图流程的终端与图形起终点、四角选择辅助函数。"""
 
 from __future__ import annotations
 
@@ -28,6 +28,7 @@ def _interactive_points(image, grid_map):
     return pick_points(image, grid_map=grid_map)
 
 def _parse_grid_point(value: str) -> tuple[int, int]:
+    """将终端 row,col 文本解析为栅格坐标，非法格式抛出 ValueError。"""
     text = str(value).strip().replace("，", ",")
     parts = text.split(",")
     if len(parts) != 2:
@@ -42,6 +43,7 @@ def _prompt_grid_point(
     output_fn=print,
     forbidden: tuple[int, int] | None = None,
 ) -> tuple[int, int]:
+    """循环读取并校验单个空闲栅格坐标，返回 row,col。"""
     while True:
         try:
             raw = input_fn(f"{name} row,col: ")
@@ -77,7 +79,7 @@ def _select_terminal_points(
     input_fn=input,
     output_fn=print,
 ) -> tuple[tuple[int, int], tuple[int, int]]:
-    """Print grid context and read start/goal coordinates from the terminal."""
+    """输出栅格尺寸等上下文，通过终端读取起终点，返回栅格坐标。"""
     save_grid_preview(grid_map.grid, None, None, preview_path)
     output_fn(
         f"栅格地图: {grid_map.rows} 行 x {grid_map.cols} 列，"
@@ -96,6 +98,7 @@ def _select_terminal_points(
     return start, goal
 
 def _parse_pixel_pair(value: str) -> tuple[int, int]:
+    """将 x,y 文本解析为一对像素数值。"""
     text = str(value).strip().replace("，", ",")
     parts = text.split(",")
     if len(parts) != 2:
@@ -108,6 +111,7 @@ def _prompt_corners_terminal(
     input_fn=input,
     output_fn=print,
 ) -> list[tuple[int, int]]:
+    """通过终端收集场地四角像素坐标，供透视校正使用。"""
     height, width = int(image_shape[0]), int(image_shape[1])
     output_fn(f"原图尺寸: {width} x {height}（x,y 像素坐标）")
     output_fn("按任意顺序输入四个场地角点，程序会自动排序")
@@ -135,6 +139,7 @@ def _prompt_corners_terminal(
     return corners
 
 def _resolve_corners(args, image) -> list[tuple[float, float]]:
+    """从命令行、终端或图形交互取得四角坐标，按当前运行环境选择入口。"""
     if args.corners:
         return validate_corners(parse_corners(args.corners), image.shape)
     if interactive_terminal() and display_available():

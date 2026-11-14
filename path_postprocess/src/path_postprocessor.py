@@ -1,4 +1,4 @@
-"""Compatibility facade for the path post-processing implementation."""
+"""路径后处理实现的兼容导出接口。"""
 
 from __future__ import annotations
 

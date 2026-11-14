@@ -1,4 +1,4 @@
-"""Command-line entry point for map processing."""
+"""地图处理的命令行入口。"""
 
 from __future__ import annotations
 
@@ -46,6 +46,7 @@ except ImportError:
     from src.rectify import rectify_image, transform_points
 
 def _pair(value: str) -> tuple[int, int]:
+    """解析以逗号分隔的两个整数，供栅格 row,col 或像素 x,y 参数使用。"""
     try:
         first, second = value.split(",", 1)
         return int(first), int(second)
@@ -53,11 +54,13 @@ def _pair(value: str) -> tuple[int, int]:
         raise argparse.ArgumentTypeError("坐标格式应为 row,col 或 x,y") from exc
 
 def _load_config(path: str) -> dict:
+    """读取 YAML 配置并返回字典，空文件按空配置处理。"""
     with open(path, encoding="utf-8") as handle:
         raw = yaml.safe_load(handle) or {}
     return raw.get("map_pipeline", raw)
 
 def _positive_float(value) -> float | None:
+    """将命令行数值解析为有限正浮点数，无效值抛出参数错误。"""
     if value is None:
         return None
     try:
@@ -67,6 +70,7 @@ def _positive_float(value) -> float | None:
     return number if number > 0 else None
 
 def _positive_int(value) -> int | None:
+    """将命令行数值解析为正整数，无效值抛出参数错误。"""
     if value is None:
         return None
     try:
@@ -86,7 +90,7 @@ def _record_failed_batch(
     code: str = "MAP_INTERACTION_ERROR",
     suggestion: str = "检查地图文件、配置和起终点交互后重试",
 ) -> dict:
-    """Persist a structured failure and close the map stage."""
+    """持久化带输入和恢复建议的建图失败结果，并结束对应阶段。"""
     result = make_result(
         "map_pipeline",
         batch.run_id,
@@ -123,6 +127,7 @@ def _record_failed_batch(
     return result
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """解析建图 CLI 参数，完成可选透视校正、栅格化及选点，保存 JSON 与预览。"""
     parser = argparse.ArgumentParser(description="生成统一 JSON 地图结果")
     parser.add_argument("image")
     parser.add_argument("--start", type=_pair, help="栅格坐标 row,col")

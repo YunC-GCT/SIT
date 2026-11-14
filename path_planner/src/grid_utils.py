@@ -11,6 +11,9 @@ def line_of_sight(grid: np.ndarray, rows: int, cols: int,
                   p1: Tuple[int, int], p2: Tuple[int, int]) -> bool:
     # A geometric edge must be safe in both traversal directions. Bresenham's
     # tie-breaking can otherwise visit different cells when endpoints reverse.
+    """双向检查两点连线经过的栅格，均无障碍且未越界时返回 True。
+
+    双向判定避免 Bresenham 栅格化在方向相反时覆盖不同格子造成碰撞漏检。"""
     return (_directional_line_of_sight(grid, rows, cols, p1, p2)
             and _directional_line_of_sight(grid, rows, cols, p2, p1))
 

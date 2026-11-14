@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run TurboPi turn-mode motion control from path_postprocess JSON."""
+"""读取后处理 JSON，执行 TurboPi 原地转向后前进的路径控制。"""
 
 from __future__ import annotations
 
@@ -36,12 +36,14 @@ MODULE = "motion_control"
 
 
 def _load_config(path: str) -> dict:
+    """读取运动控制 YAML 配置并返回字典。"""
     with open(path, encoding="utf-8") as handle:
         raw = yaml.safe_load(handle) or {}
     return raw.get("motion_control", raw)
 
 
 def _load_segments(path: str) -> tuple[list[dict], dict]:
+    """要求后处理结果成功，并提取其中可执行路径段及相关配置。"""
     result = require_success(path, module="path_postprocess")
     segments = result["outputs"].get("segments")
     if not isinstance(segments, list) or not segments:
@@ -50,6 +52,7 @@ def _load_segments(path: str) -> tuple[list[dict], dict]:
 
 
 def _positive_float(config: dict, name: str, default: float) -> float:
+    """读取配置值并转为浮点数，未提供时使用默认值；非正数抛出 ValueError。"""
     value = float(config.get(name, default))
     if value <= 0:
         raise ValueError(f"{name} must be positive")
@@ -57,6 +60,7 @@ def _positive_float(config: dict, name: str, default: float) -> float:
 
 
 def _build_executor(config: dict) -> Ros2PathExecutor:
+    """根据已解析配置构造 ROS2 路径执行器，并为缺省项提供默认值。"""
     return Ros2PathExecutor(
         turn_speed=_positive_float(config, "turn_speed", 1.0),
         move_speed=_positive_float(config, "move_speed", 0.5),
@@ -82,6 +86,7 @@ def _build_executor(config: dict) -> Ros2PathExecutor:
 
 
 def _confirm_start(*, assume_yes: bool, input_stream=sys.stdin) -> None:
+    """检查显式启动确认，或通过终端确认后才允许进入运动执行。"""
     if assume_yes:
         return
     if not input_stream.isatty():
@@ -92,6 +97,7 @@ def _confirm_start(*, assume_yes: bool, input_stream=sys.stdin) -> None:
 
 
 def _preflight_payload(preflight: CmdVelPreflight | None) -> dict:
+    """将 /cmd_vel 预检结果转换为 JSON 字典，未执行预检时返回空字典。"""
     if preflight is None:
         return {}
     return {
@@ -106,6 +112,7 @@ def _preflight_payload(preflight: CmdVelPreflight | None) -> dict:
 
 
 def _print_preflight(preflight: CmdVelPreflight) -> None:
+    """向终端输出预检话题、订阅者、发布者及警告信息。"""
     print(f"[Follower] /cmd_vel 预检话题: {preflight.topic}")
     print(f"[Follower] /cmd_vel 订阅者: {list(preflight.subscribers)}")
     print(f"[Follower] /cmd_vel 发布者: {list(preflight.publishers)}")
@@ -122,6 +129,7 @@ def _success_result(
     preflight: CmdVelPreflight,
     config: dict,
 ) -> dict:
+    """将完成状态、停车状态、执行指标及预检信息封装为成功结果。"""
     return make_result(
         MODULE,
         run_id,
@@ -164,6 +172,7 @@ def _failure_result(
     config: dict | None = None,
     preflight: CmdVelPreflight | None = None,
 ) -> dict:
+    """将异常或用户中断封装为带输入、阶段与恢复建议的运动失败结果。"""
     input_ref = os.path.abspath(postprocess_result) if postprocess_result else "<missing>"
     return make_result(
         MODULE,
@@ -187,6 +196,7 @@ def _failure_result(
 
 
 def _write_result_with_log(batch: RunBatch, result: dict, output_path: str) -> None:
+    """写入运动模块结果，并将对应日志路径纳入结果记录。"""
     log_path = batch.log_path(MODULE)
     with open(log_path, "a", encoding="utf-8") as log:
         log.write(
@@ -205,6 +215,9 @@ def _write_result_with_log(batch: RunBatch, result: dict, output_path: str) -> N
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """运行运动控制 CLI，完成输入校验、话题预检及启动确认后执行路径段。
+
+    结束、中断或异常时先执行停车，再销毁节点和幂等关闭 ROS2，保留本次结果与日志。"""
     parser = argparse.ArgumentParser(
         description="Drive TurboPi with turn -> zero -> forward path segments"
     )
@@ -253,6 +266,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     preflight: CmdVelPreflight | None = None
 
     def _raise_keyboard_interrupt(_sig, _frame):
+        """将信号处理转为 KeyboardInterrupt，交由统一退出流程先停车再清理。"""
         raise KeyboardInterrupt
 
     signal.signal(signal.SIGINT, _raise_keyboard_interrupt)

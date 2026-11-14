@@ -3,6 +3,7 @@ from ..planner_base import GlobalPlanner
 
 class DijkstraPlanner(GlobalPlanner):
     def plan(self, start, goal):
+        """在四邻接空闲栅格上按累计代价搜索，返回最短路径或空列表。"""
         rows, cols = self.grid.shape
         neighbors = [(1,0),(-1,0),(0,1),(0,-1)]
         open_heap = []

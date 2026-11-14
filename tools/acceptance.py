@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run repeatable full-pipeline and Fake ROS2 acceptance checks."""
+"""执行可重复的全流程及模拟 ROS2 验收。"""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ from core.acceptance import run_simulated_acceptance
 
 
 def _pair(value: str) -> tuple[int, int]:
+    """解析验收命令行中的 row,col 整数坐标。"""
     try:
         row, col = value.split(",", 1)
         return int(row), int(col)
@@ -24,6 +25,7 @@ def _pair(value: str) -> tuple[int, int]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """解析验收选项，运行模拟验收并根据检查结果返回退出码。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--image", default=os.path.join(ROOT, "tests", "fixtures", "01_scattered.png"))
     parser.add_argument("--start", type=_pair, default=(2, 2))

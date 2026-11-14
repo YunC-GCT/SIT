@@ -1,6 +1,6 @@
-"""Point and corner selection entry points.
+"""起终点与四角选择的公共入口。
 
-Implementation modules: picker_common, picker_opencv, picker_tk, picker_quad.
+具体实现位于 picker_common、picker_opencv、picker_tk 和 picker_quad。
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ def pick_points(
     grid_map: GridMap | None = None,
     backend: str = "auto",
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
-    """Select start and goal points using Tk on Windows when available."""
+    """交互选择起终点像素坐标；Windows 优先使用 Tk，必要时使用 OpenCV 后端。"""
     if backend not in {"auto", "tk", "opencv"}:
         raise ValueError("backend must be auto, tk, or opencv")
     if not isinstance(image, np.ndarray) or image.ndim < 2:

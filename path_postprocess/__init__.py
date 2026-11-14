@@ -1,4 +1,4 @@
-"""Path post-processing module."""
+"""路径后处理模块的公共 API。"""
 
 from .src.path_postprocessor import (
     DEFAULT_PARAMETERS,

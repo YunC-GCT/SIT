@@ -27,7 +27,7 @@ def validate_grid_point(
     point: Iterable[int],
     name: str = "point",
 ) -> Tuple[int, int]:
-    """Validate one row/col point without changing the requested location."""
+    """校验 row,col 在地图内且为空闲格，返回原请求位置，不自动移动到邻近格。"""
     try:
         row, col = point
     except (TypeError, ValueError) as exc:
@@ -53,7 +53,7 @@ def validate_grid_points(
     start: Iterable[int],
     goal: Iterable[int],
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
-    """Validate start and goal as free grid cells."""
+    """分别校验起点和终点为合法空闲栅格，返回规范化坐标对。"""
     return (
         validate_grid_point(grid_map, start, "start"),
         validate_grid_point(grid_map, goal, "goal"),

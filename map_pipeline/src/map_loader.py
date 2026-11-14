@@ -41,7 +41,7 @@ def clean_binary(
     min_area_px: int = 0,
     morphology_kernel: int = 0,
 ) -> np.ndarray:
-    """Remove small obstacle specks and optionally apply morphological cleanup."""
+    """去除小型障碍噪点，并按配置执行形态学清理，返回二值图。"""
     if not isinstance(binary, np.ndarray) or binary.ndim != 2:
         raise ValueError("binary 必须是二维 numpy 数组")
     if min_area_px < 0:

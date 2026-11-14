@@ -1,4 +1,4 @@
-"""OpenCV two-point picker."""
+"""基于 OpenCV 的起终点选择器。"""
 
 from __future__ import annotations
 
@@ -42,6 +42,7 @@ def _pick_points_opencv(
     message = "Select start, then goal (Enter=confirm, R=reset, Esc=cancel)"
 
     def point_info(point: Tuple[int, int]) -> Tuple[Tuple[int, int] | None, str]:
+        """把像素位置映射为栅格坐标及空闲/障碍状态，供选点提示使用。"""
         if grid_map is None:
             return None, "grid=unknown"
         grid_point = map_pixel_to_grid(point[0], point[1], grid_map)
@@ -49,6 +50,7 @@ def _pick_points_opencv(
         return grid_point, state
 
     def draw() -> None:
+        """重绘显示图、已选点和交互提示，并更新 OpenCV 窗口。"""
         output = base_display.copy()
 
         if grid_map is not None:
@@ -106,11 +108,13 @@ def _pick_points_opencv(
         cv2.imshow(window_name, output)
 
     def to_original_point(x: int, y: int) -> Tuple[int, int]:
+        """将显示窗口坐标还原为原图 x,y 像素坐标。"""
         original_x = max(0, min(width - 1, int(x / scale)))
         original_y = max(0, min(height - 1, int(y / scale)))
         return original_x, original_y
 
     def on_mouse(event: int, x: int, y: int, _flags: int, _param: object) -> None:
+        """处理鼠标选点或撤销事件，更新起终点选择状态。"""
         nonlocal message
         if event == cv2.EVENT_LBUTTONDOWN:
             if len(points) >= 2:

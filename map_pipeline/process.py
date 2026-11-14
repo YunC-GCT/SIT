@@ -1,4 +1,4 @@
-"""Map image binarization, gridding, and result construction."""
+"""地图图像二值化、栅格化及结果构造。"""
 
 from __future__ import annotations
 
@@ -45,6 +45,7 @@ def _validate_pixel_point(
     image_shape: tuple[int, ...],
     name: str,
 ) -> tuple[int, int]:
+    """校验像素坐标为图像范围内的整数 x,y，并返回标准整数元组。"""
     x, y = point
     if not isinstance(x, Integral) or not isinstance(y, Integral):
         raise ValueError(f"{name} 像素坐标必须是整数")
@@ -70,7 +71,9 @@ def process(
     image_override=None,
     rectification: dict | None = None,
 ) -> dict:
-    """处理地图并返回、可选写入一个完整的地图模块 JSON 结果。"""
+    """根据图片、起终点及配置生成完整建图结果，可选保存 JSON 和预览。
+
+    像素输入使用 x,y，栅格输出使用 row,col；处理失败时返回结构化错误供顶层恢复。"""
     cfg = dict(config or {})
     image_ref = os.path.abspath(image_path)
     try:

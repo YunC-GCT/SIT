@@ -1,4 +1,4 @@
-"""Shared terminal map chooser for startup, map changes and recovery."""
+"""启动、切换地图及故障恢复共用的终端地图选择器。"""
 
 from __future__ import annotations
 
@@ -20,12 +20,10 @@ def choose_map(
     input_fn: Callable[[str], str] | None = None,
     output_fn: Callable[[str], None] = print,
 ) -> str | None:
-    """Return a validated image path, or None on explicit cancellation.
+    """交互选择地图并返回有效文件路径，显式取消时返回 None。
 
-    Invalid input stays in the chooser. No caller state is changed until a
-    selection is returned. Empty input selects the current map or first image.
-    Image decoding remains the map module's responsibility.
-    """
+    非法输入继续提示；空输入使用当前地图或首张地图。选择完成前不修改调用方状态，
+    图片能否解码由建图模块负责。"""
     prompt = input_fn if input_fn is not None else input
     files = sorted(
         name for name in os.listdir(directory)
