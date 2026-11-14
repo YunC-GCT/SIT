@@ -1,123 +1,54 @@
-# motion_control — 运动控制
+# motion_control — TurboPi turn 运动控制
 
-> 加载路径 → 麦轮全向平移 → ROS2 `/cmd_vel`。odom 闭环段切换，安全停车。
-
----
+加载 `path_postprocess` 的统一路径段 JSON，按 “转向 -> 零速过渡 -> 前进 -> 停止”
+向 TurboPi 底盘发布 `geometry_msgs/msg/Twist`。速度话题使用绝对 `/cmd_vel`。
 
 ## 快速开始
 
 ```bash
-# 确保 data/input/ 下有 path_data.npy + grid_map.npz（main.py 自动复制）
-python run_follower.py
+python motion_control/run_follower.py \
+  --postprocess-result runs/<run-id>/path_postprocess/result.json
 ```
 
----
+在实车上运行前，先进入 `turbopi` 容器，再在容器内项目目录执行命令。不要把
+Windows 开发机路径当作实车运行路径。
 
-## 麦轮全向循迹
+## 执行语义
 
-**不转弯**。利用麦克纳姆轮全向平移，每段直接用 `(vx, vy)` 组合，`angular.z=0`。小车默认朝 **EAST**。
+- 初始车头默认是地图正北，地图上方为 north。
+- 每个路径段使用 `direction_deg` 计算最短转角。
+- 180 度掉头拆成两个 90 度原地转向，中间插入零速过渡。
+- 转向发布 `angular.z`，前进只发布 `linear.x`，不使用默认漂移或横移。
+- 当前执行器始终使用计时开环，没有 `/odom` 订阅；`odom_topic` 仅为保留参数。前进时长按 `distance_m / empirical_forward_speed_m_s` 估算，转向时长按转角与 `turn_speed` 估算。
+- 前进发布时长按控制周期量化，舍入余量在段间累计；不能据此保证每个短段都能精确到位。
 
-| 栅格方向 | 相对小车朝向 | 速度指令 | 含义 |
-|----------|:---------:|---------|------|
-| EAST | 同向 | `(+v, 0)` | 前进 |
-| SOUTH | 右侧 90° | `(0, -v)` | 右平移 |
-| WEST | 反向 | `(-v, 0)` | 后退 |
-| NORTH | 左侧 90° | `(0, +v)` | 左平移 |
+## 安全预检
 
-```
-        NORTH (0,+v) 左平移
-            ▲
-WEST (-v,0) ◄─── 小车朝 EAST ───► EAST (+v,0) 前进
-            ▼
-        SOUTH (0,-v) 右平移
-```
+启动运动前会检查 `/cmd_vel`：
 
-```python
-from src.ros2_interface import compute_vel_commands, delta_to_dir
+- 必须看到 `/mecanum_chassis_node` 订阅 `/cmd_vel`。
+- 如果存在其他 `/cmd_vel` 发布者，默认阻止启动。
+- 预检信息展示后，需要终端输入 `yes`，或显式传入 `--yes`，才会启动运动。
+- 确认其他发布者已安全隔离后，才使用 `--allow-other-publishers`。
 
-deltas = [(0,1), (1,0), (0,1)]                      # 东→南→东
-dirs   = [delta_to_dir(dr,dc) for dr,dc in deltas]   # [EAST, SOUTH, EAST]
-cmds   = compute_vel_commands(dirs, initial_heading='east', move_speed=0.3)
-# → [(0.0, -0.3), (-0.3, 0.0), (0.0, -0.3)]
-```
+调试假 ROS 图时可用 `--no-require-chassis-subscriber`，不要在实车默认流程里使用。
 
----
-
-## odom 闭环段切换
-
-| 条件 | 行为 |
-|------|------|
-| odom 正常 | 位移 ≥ `grid_size-0.01m` → 切段 |
-| odom 中断 | timer 累加兜底 → 1.5×超时强制切段 |
-| 连续 30 段无 odom | warn：检查 `/odom` 话题 |
-
-日志中 `实际 0.298m` = odom 闭环生效；`计时 0.05m` = 退化模式。
-
----
-
-## grid_size 校验
-
-启动时从 `grid_map.npz` 读取地图创建时的物理尺度 vs `config.yaml`：
-
-```
-[Follower] grid_size 校验通过: 0.3000m
-# 不一致时：
-[Follower] ⚠️ grid_size 不一致！地图: 0.2500m, config: 0.3000m。已自动使用地图值。
-```
-
----
+执行成功或失败都会写入 `motion_control` 的结构化 `result.json`。默认位置是
+`runs/<run-id>/motion_control/result.json`，也可用 `--output` 指定。
 
 ## 安全停车
 
-Ctrl+C → `_stop_robot()` → **10 次零速度 Twist**（间隔 20ms）→ 100ms DDS 缓冲 → destroy。确保零速度送达电机。
+完成、异常、`Ctrl+C` 和关闭流程都会先重复发布零速度 `Twist`，等待通信缓冲，
+再销毁节点并幂等关闭 ROS2。重复调用关闭逻辑仍会先发送停车命令。
 
----
+CLI 也处理 `SIGTERM` 和平台支持的 `SIGHUP`。强制结束进程或断电无法保证运行退出处理。代码中的 `stopped` 表示重复零速发布流程完成，实际车轮停止需要实车观察。
 
-## 依赖注入（仿真基础）
+只发布停车命令可在容器内项目根目录执行 `python -m motion_control.run_follower --stop-only`。该入口不写运动执行结果 JSON；命令返回成功也不能代替现场停车确认。
 
-```python
-executor = Ros2PathExecutor(move_speed=0.3, grid_size=0.3, ...)
+## 参数与预计时间
 
-# 正常模式：自动 setup_ros2()
-executor.execute_path(deltas, vel_commands)
+控制参数以 `config.yaml` 为准：当前 `move_speed=0.5` 是前进命令，`empirical_forward_speed_m_s=0.30` 是临时经验速度，两者含义不同。转向默认 `turn_speed=1.0 rad/s`，尚无实车旋转速度标定依据。
 
-# 高级模式：调用方管理 ROS2 生命周期
-node, pub = executor.setup_ros2()
-executor.execute_path(deltas, vel_commands, node=node, pub=pub)
+后处理默认 `turn_speed_rad_s=2.0`，预览时长使用后处理参数，执行器使用运动配置并重新计算转角和持续时间，且包含额外零速过渡。因此预览时长不是实际执行时间；比较实验时应记录两份配置，并保持初始朝向一致。
 
-# 仿真模式（未来）：注入 FakePublisher
-executor.pub = FakePublisher()
-executor.execute_path(deltas, vel_commands)
-```
-
----
-
-## config.yaml
-
-```yaml
-motion_control:
-  grid_size: 0.3          # m/格（启动校验 vs npz）
-  move_speed: 0.3         # 线速度 m/s
-  timer_period: 0.1       # 控制周期 s
-  odom_topic: "/odom"     # 里程计话题（BEST_EFFORT）
-  initial_heading: "east"# 小车初始朝向
-```
-
----
-
-## 调试
-
-```bash
-ros2 topic echo /cmd_vel                      # 看速度指令
-ros2 topic echo /odom --field pose.pose.position  # 看里程计
-ros2 topic hz /odom                           # 看频率
-```
-
-## 排障
-
-| 问题 | 解决 |
-|------|------|
-| 横移反了 | `compute_vel_commands()` 中 `rel==1`/`rel==3` 符号对调 |
-| grid_size warn | 同步 config.yaml 或重建地图 |
-| 无 odom | `ros2 topic hz /odom`；改 `config.yaml` 的 `odom_topic` |
-| Ctrl+C 不停 | 确认 `_stop_robot()` 发 10 次零速度（最新版） |
+多算法研究结果的路径段位于 `outputs.comparisons[*].outputs.segments`，控制器仅接受顶层 `outputs.segments`。需要实车运行时，应针对选定算法单独规划和后处理后再执行。

@@ -116,12 +116,3 @@ def draw_comparison(grid, results, start, goal):
                 (10, h - 12), cv2.FONT_HERSHEY_SIMPLEX,
                 0.5, (255, 255, 255), 1, cv2.LINE_AA)
     return vis
-
-
-def show(title, img):
-    """统一的 cv2 弹窗封装，WINDOW_NORMAL 兼容性最好。"""
-    cv2.namedWindow(title, cv2.WINDOW_NORMAL)
-    cv2.imshow(title, img)
-    print(f"[Preview] {title} — press any key in the window to continue...")
-    cv2.waitKey(0)
-    cv2.destroyWindow(title)

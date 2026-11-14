@@ -15,21 +15,34 @@ path_planner:
     - dijkstra
     - prm
     - rrt
+    - rrt_adaptive
     - rrt_star
 
   # 算法参数覆盖（可选）：此处的 key 会覆盖 planner_factory 中的出厂默认值
   # 不配置的算法使用出厂默认值，不配置的参数也使用出厂默认值
   algorithm_params:
     prm:
-      num_samples: 500      # 随机采样点数
-      k_neighbors: 10       # K 近邻连接数
-      max_edge_len: 30      # 单边最大长度（栅格单元）
+      num_samples: 20000      # 不重复自由采样点数（不含起终点，不超过可用自由格数）
+      k_neighbors: 15       # 每点主动选择的可通视近邻数，无向反向边可增加度数
+      retry_num_samples: 30000  # 首轮无路时重试；0 表示不重试
+      max_edge_len: 15      # 单边最大长度（栅格单元）
+    # 基础比较基线：固定步长单树 RRT，禁止混入自适应扩展
     rrt:
-      max_iter: 2000        # 最大迭代次数
-      step_size: 5          # 扩展步长（栅格单元）
-      goal_sample_rate: 0.1 # 直接采样目标的概率
-    rrt_star:
-      max_iter: 2000
+      max_iter: 200000
       step_size: 5
-      goal_sample_rate: 0.1
+      goal_sample_rate: 0.05
+    # 显式优化变体，独立名称、独立统计
+    rrt_adaptive:
+      adaptive_step: true
+      max_iter: 200000
+      step_size: 5
+      goal_sample_rate: 0.05
+    rrt_star:
+      adaptive_step: false  # Room 可显式启用；Random 实测有回退，不全局开启
+      search_time_s: 15.0   # 首解前时间上限
+      optimize_time_s: 2.0  # 首解后优化时间上限
+      optimize_iterations: 2000 # 首解后最多优化迭代数
+      max_iter: 200000
+      step_size: 5
+      goal_sample_rate: 0.05
       search_radius: 10.0   # 重布线搜索半径

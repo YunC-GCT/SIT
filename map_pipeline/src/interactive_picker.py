@@ -1,84 +1,55 @@
-"""
-在原图上交互点击选取起点和终点，返回像素坐标
+"""起终点与四角选择的公共入口。
+
+具体实现位于 picker_common、picker_opencv、picker_tk 和 picker_quad。
 """
 
-import cv2
+from __future__ import annotations
+
+from typing import Tuple
+
 import numpy as np
-from typing import Tuple, List, Optional
 
-def pick_points(image: np.ndarray, window_name: str = "Select Start & Goal") -> Tuple[Tuple[int, int], Tuple[int, int]]:
-    """
-    显示原图，用户依次点击起点(绿)和终点(红)，按任意键确认。
-    :returns: (start_pixel, goal_pixel) 每个像素坐标为 (x, y) 对应 (col, row)
-    """
-    img = image.copy()
-    h, w = img.shape[:2]
-    max_w, max_h = 1000, 700
-    scale = min(max_w / w, max_h / h, 1.0)
-    disp_w, disp_h = int(w * scale), int(h * scale)
-    display_img = cv2.resize(img, (disp_w, disp_h))
+from .grid_map import GridMap
+from .picker_common import (
+    PointSelectionCancelled,
+    _display_geometry,
+    _is_confirm_key,
+    _normalize_key,
+    _snap_to_grid_center,
+)
+from .picker_opencv import _pick_points_opencv
+from .picker_quad import pick_quad
+from .picker_tk import _pick_points_tk
 
-    clicks: List[Tuple[int, int]] = []  # 实际像素坐标
+def pick_points(
+    image: np.ndarray,
+    window_name: str = "Select Start & Goal",
+    grid_map: GridMap | None = None,
+    backend: str = "auto",
+) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    """交互选择起终点像素坐标；Windows 优先使用 Tk，必要时使用 OpenCV 后端。"""
+    if backend not in {"auto", "tk", "opencv"}:
+        raise ValueError("backend must be auto, tk, or opencv")
+    if not isinstance(image, np.ndarray) or image.ndim < 2:
+        raise ValueError("选点图像必须是至少二维的 numpy 数组")
 
-    def _draw():
-        out = display_img.copy()
-        for i, (px, py) in enumerate(clicks):
-            sx, sy = int(px * scale), int(py * scale)
-            r = max(6, int(10 * scale))
-            if i == 0:
-                cv2.circle(out, (sx, sy), r, (0, 255, 0), 3)
-                cv2.putText(out, "S", (sx + 15, sy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-            else:
-                cv2.circle(out, (sx, sy), r, (0, 0, 255), 3)
-                cv2.putText(out, "G", (sx + 15, sy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-        cv2.putText(out, "1st=START(Green) 2nd=GOAL(Red) | Any key to confirm | R=Reset",
-                    (10, disp_h - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        cv2.imshow(window_name, out)
-
-    def on_mouse(event, x, y, flags, param):
-        if event == cv2.EVENT_LBUTTONDOWN:
-            # 转换回原始尺寸坐标
-            orig_x = int(x / scale)
-            orig_y = int(y / scale)
-            orig_x = max(0, min(w - 1, orig_x))
-            orig_y = max(0, min(h - 1, orig_y))
-            clicks.append((orig_x, orig_y))
-            _draw()
-
-    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(window_name, disp_w, disp_h)
-    _draw()
-    cv2.setMouseCallback(window_name, on_mouse)
-
-    print("\n请点击起点，再点击终点，按任意键确认，或按 R 重置。")
-    closed_early = False
-    while True:
-        key = cv2.waitKey(50) & 0xFF
+    if backend in {"auto", "tk"}:
         try:
-            visible = cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE)
-        except cv2.error:
-            visible = -1
-        if visible < 1:  # 窗口被 X 关掉
-            closed_early = True
-            break
-        if key in (ord('r'), ord('R')):
-            clicks.clear()
-            _draw()
-        elif key != 255:
-            break
+            return _pick_points_tk(image.copy(), window_name, grid_map)
+        except PointSelectionCancelled:
+            raise
+        except (ImportError, OSError, RuntimeError):
+            if backend == "tk":
+                raise
+    return _pick_points_opencv(image.copy(), window_name, grid_map)
 
-    cv2.destroyWindow(window_name)
 
-    if closed_early:
-        raise RuntimeError(
-            "选点窗口被关闭，未选择起终点。请重新运行选点步骤。"
-        )
-    if len(clicks) < 2:
-        raise RuntimeError(
-            f"起终点未选全（已选 {len(clicks)} 个，需要 2 个）。请重新选点。"
-        )
-
-    start_pixel = clicks[0]
-    goal_pixel = clicks[1]
-    print(f"已选择起点像素: {start_pixel}, 终点像素: {goal_pixel}")
-    return start_pixel, goal_pixel
+__all__ = [
+    "PointSelectionCancelled",
+    "_display_geometry",
+    "_is_confirm_key",
+    "_normalize_key",
+    "_snap_to_grid_center",
+    "pick_points",
+    "pick_quad",
+]

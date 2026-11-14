@@ -34,6 +34,44 @@ def binarize(img: np.ndarray, threshold: int = 0, blur_ksize: int = 5,
         binary = cv2.bitwise_not(binary)
     return binary
 
+
+def clean_binary(
+    binary: np.ndarray,
+    *,
+    min_area_px: int = 0,
+    morphology_kernel: int = 0,
+) -> np.ndarray:
+    """去除小型障碍噪点，并按配置执行形态学清理，返回二值图。"""
+    if not isinstance(binary, np.ndarray) or binary.ndim != 2:
+        raise ValueError("binary 必须是二维 numpy 数组")
+    if min_area_px < 0:
+        raise ValueError("min_area_px 不能为负数")
+    if morphology_kernel < 0:
+        raise ValueError("morphology_kernel 不能为负数")
+    cleaned = binary
+    if morphology_kernel >= 3:
+        kernel_size = morphology_kernel
+        if kernel_size % 2 == 0:
+            kernel_size += 1
+        kernel = cv2.getStructuringElement(
+            cv2.MORPH_RECT,
+            (kernel_size, kernel_size),
+        )
+        cleaned = cv2.morphologyEx(cleaned, cv2.MORPH_OPEN, kernel)
+        cleaned = cv2.morphologyEx(cleaned, cv2.MORPH_CLOSE, kernel)
+    if min_area_px > 0:
+        obstacle_mask = cv2.bitwise_not(cleaned)
+        count, labels, stats, _ = cv2.connectedComponentsWithStats(
+            obstacle_mask,
+            connectivity=8,
+        )
+        filtered = obstacle_mask.copy()
+        for index in range(1, count):
+            if stats[index, cv2.CC_STAT_AREA] < min_area_px:
+                filtered[labels == index] = 0
+        cleaned = cv2.bitwise_not(filtered)
+    return cleaned
+
 def create_grid_map(binary: np.ndarray, target_width: int,
                     obstacle_ratio: float = 0.5,
                     grid_size: float = 0.3) -> Tuple[GridMap, float]:
@@ -41,7 +79,22 @@ def create_grid_map(binary: np.ndarray, target_width: int,
     根据目标栅格宽度（列数）自动计算行数（保持宽高比），生成栅格地图
     :returns: (GridMap, scale)  scale = 原图宽度 / 栅格列数
     """
+    if not isinstance(binary, np.ndarray) or binary.ndim != 2:
+        raise ValueError("binary 必须是二维 numpy 数组")
     img_h, img_w = binary.shape
+    if img_h < 1 or img_w < 1:
+        raise ValueError("binary 不能为空")
+    if not isinstance(target_width, int) or target_width < 1:
+        raise ValueError("target_width 必须是正整数")
+    if target_width > img_w:
+        raise ValueError(
+            f"target_width ({target_width}) 不能大于图片宽度 ({img_w})"
+        )
+    if not 0 <= obstacle_ratio <= 1:
+        raise ValueError("obstacle_ratio 必须在 [0, 1] 范围内")
+    if grid_size <= 0:
+        raise ValueError("grid_size 必须为正数")
+
     # 计算列数与行数
     grid_cols = target_width
     cell_w = img_w / grid_cols
@@ -60,5 +113,5 @@ def create_grid_map(binary: np.ndarray, target_width: int,
             black_ratio = np.sum(cell == 0) / cell.size
             if black_ratio > obstacle_ratio:
                 grid_map[i, j] = 1
-    return GridMap(grid_map, int(cell_w), int(cell_h), (used_h, used_w),
+    return GridMap(grid_map, cell_w, cell_h, (used_h, used_w),
                    grid_size=grid_size), cell_w

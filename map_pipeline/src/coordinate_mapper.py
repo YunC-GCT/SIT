@@ -2,7 +2,11 @@
 将原图像素坐标映射为栅格坐标
 """
 
+from numbers import Integral
+from typing import Iterable, Tuple
+
 from .grid_map import GridMap
+
 
 def map_pixel_to_grid(pixel_x: int, pixel_y: int, grid_map: GridMap):
     """
@@ -16,3 +20,41 @@ def map_pixel_to_grid(pixel_x: int, pixel_y: int, grid_map: GridMap):
     col = max(0, min(grid_map.cols - 1, col))
     row = max(0, min(grid_map.rows - 1, row))
     return row, col
+
+
+def validate_grid_point(
+    grid_map: GridMap,
+    point: Iterable[int],
+    name: str = "point",
+) -> Tuple[int, int]:
+    """校验 row,col 在地图内且为空闲格，返回原请求位置，不自动移动到邻近格。"""
+    try:
+        row, col = point
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} 必须是 (row, col) 坐标") from exc
+
+    if isinstance(row, bool) or isinstance(col, bool):
+        raise ValueError(f"{name} 必须是整数坐标")
+    if not isinstance(row, Integral) or not isinstance(col, Integral):
+        raise ValueError(f"{name} 必须是整数坐标")
+    row, col = int(row), int(col)
+    if not (0 <= row < grid_map.rows and 0 <= col < grid_map.cols):
+        raise ValueError(
+            f"{name} 超出地图范围: ({row}, {col}), "
+            f"shape=({grid_map.rows},{grid_map.cols})"
+        )
+    if not grid_map.is_free(row, col):
+        raise ValueError(f"{name} 落在障碍栅格 ({row}, {col})，请重新选择")
+    return row, col
+
+
+def validate_grid_points(
+    grid_map: GridMap,
+    start: Iterable[int],
+    goal: Iterable[int],
+) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    """分别校验起点和终点为合法空闲栅格，返回规范化坐标对。"""
+    return (
+        validate_grid_point(grid_map, start, "start"),
+        validate_grid_point(grid_map, goal, "goal"),
+    )

@@ -1,0 +1,8 @@
+{
+  "include": ["core", "map_pipeline", "motion_control", "path_planner", "path_postprocess", "tests", "tools", "main.py"],
+  "exclude": [".venv", "runs", "**/__pycache__"],
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.10",
+  "typeCheckingMode": "basic"
+}

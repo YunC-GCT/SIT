@@ -1,0 +1,8 @@
+# Defaults for the path-postprocessing module.
+path_postprocess:
+  smooth: true
+  sample_spacing_grid: 0.25
+  max_segment_length_grid: 2.0
+  move_speed_m_s: 0.30
+  turn_speed_rad_s: 2.0
+  initial_heading: north

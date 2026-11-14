@@ -1,0 +1,81 @@
+{
+  "map": "random512-10-0",
+  "scenario": 206,
+  "start": [
+    237,
+    225
+  ],
+  "goal": [
+    309,
+    245
+  ],
+  "algorithm": "prm",
+  "params": {
+    "num_samples": 3000
+  },
+  "seed": 42,
+  "found": true,
+  "valid": true,
+  "nodes": 11,
+  "elapsed_s": 2.6516,
+  "samples": 2668,
+  "start_degree": 12,
+  "goal_degree": 5,
+  "start_component": 2618,
+  "postprocess": {
+    "default": {
+      "status": "success",
+      "errors": []
+    },
+    "unsmoothed": {
+      "status": "success",
+      "errors": []
+    }
+  },
+  "path": [
+    [
+      237,
+      225
+    ],
+    [
+      252,
+      226
+    ],
+    [
+      266,
+      232
+    ],
+    [
+      271,
+      233
+    ],
+    [
+      273,
+      236
+    ],
+    [
+      269,
+      254
+    ],
+    [
+      283,
+      267
+    ],
+    [
+      288,
+      260
+    ],
+    [
+      290,
+      258
+    ],
+    [
+      307,
+      256
+    ],
+    [
+      309,
+      245
+    ]
+  ]
+}

@@ -1,0 +1,359 @@
+{
+  "dataset": "Moving AI 2D Grid Benchmarks",
+  "downloaded_at": "2026-11-14T09:28:31.499802+00:00",
+  "source": "https://movingai.com/benchmarks/grids.html",
+  "license": "https://opendatacommons.org/licenses/by/1-0/",
+  "citation": "Nathan Sturtevant, Benchmarks for Grid-Based Pathfinding, IEEE TCIAIG 4(2), 144-148, 2012.",
+  "coordinate_system": "row,col; scenario x,y is converted to y,x",
+  "scale": "No real-world metric calibration; grid_size is an experiment convention.",
+  "maps": [
+    {
+      "family": "room",
+      "name": "8room_000",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/room-8room_000.png",
+      "map": "datasets/movingai/room/8room_000.map",
+      "scenarios": "datasets/movingai/room/8room_000.scen",
+      "map_url": "https://movingai.com/benchmarks/room/8room_000.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/room/8room_000.map-scen.zip",
+      "sha256": {
+        "map": "a4bb11d357f47295a07f2f57cd40fca4853fbe87dd476b9a53e3430739e07b99",
+        "scenarios": "b77e458a339a9edc7077181465fd57a821814b33b2308f2d0ad0246374c4c69f",
+        "image": "56bb958b103144684e8ecf2befff0d78d83079f0eabe4be34ed5424aa5336f6b"
+      },
+      "task_count": 2140,
+      "example_task": {
+        "index": 0,
+        "start": [
+          484,
+          105
+        ],
+        "goal": [
+          485,
+          105
+        ],
+        "reference_length_octile": 1.0
+      }
+    },
+    {
+      "family": "room",
+      "name": "16room_000",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/room-16room_000.png",
+      "map": "datasets/movingai/room/16room_000.map",
+      "scenarios": "datasets/movingai/room/16room_000.scen",
+      "map_url": "https://movingai.com/benchmarks/room/16room_000.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/room/16room_000.map-scen.zip",
+      "sha256": {
+        "map": "efe1156993b2b96df1b23ce4f0f89d4c66b77051d9484efefa93899b141458af",
+        "scenarios": "b1a17994cacca6a5c15bd08f439c1027d942e227d3dd59cf1b05d4456a3c367c",
+        "image": "1fb89c3506f09fe0cadfc64f6e5d666ba3d4b90bb5d3b51516a77722edb2168f"
+      },
+      "task_count": 2010,
+      "example_task": {
+        "index": 0,
+        "start": [
+          313,
+          424
+        ],
+        "goal": [
+          311,
+          427
+        ],
+        "reference_length_octile": 3.82842712
+      }
+    },
+    {
+      "family": "room",
+      "name": "32room_000",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/room-32room_000.png",
+      "map": "datasets/movingai/room/32room_000.map",
+      "scenarios": "datasets/movingai/room/32room_000.scen",
+      "map_url": "https://movingai.com/benchmarks/room/32room_000.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/room/32room_000.map-scen.zip",
+      "sha256": {
+        "map": "57fe06dadf5caa09c45e823521fc548398a1ebcc1c7dd89ffcee049146b88db9",
+        "scenarios": "a0a7b77e0a3d4ae16c4de2ad46978da02fb3313e0cacbb0a6166b6a2f35e57e1",
+        "image": "49dadf28f1ebbfe47f1e3dcf97ed86d8b59fb356d3f20331134106242d5cc203"
+      },
+      "task_count": 2130,
+      "example_task": {
+        "index": 0,
+        "start": [
+          45,
+          50
+        ],
+        "goal": [
+          47,
+          52
+        ],
+        "reference_length_octile": 2.82842712
+      }
+    },
+    {
+      "family": "room",
+      "name": "64room_000",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/room-64room_000.png",
+      "map": "datasets/movingai/room/64room_000.map",
+      "scenarios": "datasets/movingai/room/64room_000.scen",
+      "map_url": "https://movingai.com/benchmarks/room/64room_000.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/room/64room_000.map-scen.zip",
+      "sha256": {
+        "map": "9056bd8ecaf89863a95e27de50a5081e4f119d8870c21360bc568f83baf4b783",
+        "scenarios": "8bef9ab81858335c9009981b89f8f60f0c9adcd191c35d8e29be32fdfe534a22",
+        "image": "f02e00c5991a6090e278fd42b0530a93451c796270692606d1a893314e92ce72"
+      },
+      "task_count": 2150,
+      "example_task": {
+        "index": 0,
+        "start": [
+          313,
+          420
+        ],
+        "goal": [
+          314,
+          418
+        ],
+        "reference_length_octile": 2.41421356
+      }
+    },
+    {
+      "family": "maze",
+      "name": "maze512-4-0",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/maze-maze512-4-0.png",
+      "map": "datasets/movingai/maze/maze512-4-0.map",
+      "scenarios": "datasets/movingai/maze/maze512-4-0.scen",
+      "map_url": "https://movingai.com/benchmarks/maze/maze512-4-0.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/maze/maze512-4-0.map-scen.zip",
+      "sha256": {
+        "map": "81a79c24f861caca0baed82d9569ffe1adf1a05bd326f4239dc3d6dc72d807b7",
+        "scenarios": "904dca83593f1fc8f6823c31febdbef00238112a9aed9f8a9378fd5e4638775c",
+        "image": "d9b735dd759fe4caaaefd1296f471556db725d0b734ca5c0f4d97a946b3b50f1"
+      },
+      "task_count": 10510,
+      "example_task": {
+        "index": 0,
+        "start": [
+          196,
+          377
+        ],
+        "goal": [
+          198,
+          378
+        ],
+        "reference_length_octile": 2.41421356
+      }
+    },
+    {
+      "family": "maze",
+      "name": "maze512-8-0",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/maze-maze512-8-0.png",
+      "map": "datasets/movingai/maze/maze512-8-0.map",
+      "scenarios": "datasets/movingai/maze/maze512-8-0.scen",
+      "map_url": "https://movingai.com/benchmarks/maze/maze512-8-0.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/maze/maze512-8-0.map-scen.zip",
+      "sha256": {
+        "map": "0acd62f4e854db729240f49896b6bdc6f5127ec32d2d3f14c43f56ad99a39ecc",
+        "scenarios": "ceaaa8af265e6a2635026220c8f205d08e369d40d64ed921604e02dd95101863",
+        "image": "0153876de4f13f435e46b49e1d7f42aca69ab90f5a0ceb032c9eaef1a22f0532"
+      },
+      "task_count": 6470,
+      "example_task": {
+        "index": 0,
+        "start": [
+          288,
+          491
+        ],
+        "goal": [
+          286,
+          494
+        ],
+        "reference_length_octile": 3.82842712
+      }
+    },
+    {
+      "family": "maze",
+      "name": "maze512-16-0",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/maze-maze512-16-0.png",
+      "map": "datasets/movingai/maze/maze512-16-0.map",
+      "scenarios": "datasets/movingai/maze/maze512-16-0.scen",
+      "map_url": "https://movingai.com/benchmarks/maze/maze512-16-0.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/maze/maze512-16-0.map-scen.zip",
+      "sha256": {
+        "map": "7fd1b43f296738c093cbd5f589b1414fbb8cc35f7d7462fd188c21fa3f99aac3",
+        "scenarios": "4a0d78bdcf46ddae03df806a28130ab867261844a5ca892b657aeb9f5b07f0f7",
+        "image": "b405612bb4396bc289cc4bacd6b76a5f896f546281242588925f35176b8f208c"
+      },
+      "task_count": 9130,
+      "example_task": {
+        "index": 0,
+        "start": [
+          495,
+          348
+        ],
+        "goal": [
+          496,
+          348
+        ],
+        "reference_length_octile": 1.0
+      }
+    },
+    {
+      "family": "maze",
+      "name": "maze512-32-0",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/maze-maze512-32-0.png",
+      "map": "datasets/movingai/maze/maze512-32-0.map",
+      "scenarios": "datasets/movingai/maze/maze512-32-0.scen",
+      "map_url": "https://movingai.com/benchmarks/maze/maze512-32-0.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/maze/maze512-32-0.map-scen.zip",
+      "sha256": {
+        "map": "b25a0b21f0366e973b603ab700e24de99570c0f8a2c61a78c44a0807057b37fc",
+        "scenarios": "c6624a27d975183d19813b91a017afe88e4cf5eda0fa2d39b9982e5b315cfc7f",
+        "image": "42c2651ec8be263f637fa9f3b3694e99a8ed6e33680476058304c419ba346db1"
+      },
+      "task_count": 6170,
+      "example_task": {
+        "index": 0,
+        "start": [
+          110,
+          2
+        ],
+        "goal": [
+          112,
+          4
+        ],
+        "reference_length_octile": 2.82842712
+      }
+    },
+    {
+      "family": "random",
+      "name": "random512-10-0",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/random-random512-10-0.png",
+      "map": "datasets/movingai/random/random512-10-0.map",
+      "scenarios": "datasets/movingai/random/random512-10-0.scen",
+      "map_url": "https://movingai.com/benchmarks/random/random512-10-0.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/random/random512-10-0.map-scen.zip",
+      "sha256": {
+        "map": "df47a4030f8967d8be60b33fecd1f6aa059132a2fe1e1b19e463dc52c0838654",
+        "scenarios": "4321aa42397455bafef06c8d50c0a0e343c48b270ac51cec0c10acb9db45f418",
+        "image": "e9061361599fafea97d38c1e09c0cf3c5fd3625b9004aacc83cd85b384999cd5"
+      },
+      "task_count": 1780,
+      "example_task": {
+        "index": 0,
+        "start": [
+          10,
+          174
+        ],
+        "goal": [
+          9,
+          172
+        ],
+        "reference_length_octile": 2.41421356
+      }
+    },
+    {
+      "family": "random",
+      "name": "random512-20-0",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/random-random512-20-0.png",
+      "map": "datasets/movingai/random/random512-20-0.map",
+      "scenarios": "datasets/movingai/random/random512-20-0.scen",
+      "map_url": "https://movingai.com/benchmarks/random/random512-20-0.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/random/random512-20-0.map-scen.zip",
+      "sha256": {
+        "map": "be06c419982ad8e722668dd60da8e3353f958be89056f3bb2f67b441e4b9c6ed",
+        "scenarios": "0699f5125346e8250f32cae2d308ffef3688b57372ec10f3b645f4620e2d4ba4",
+        "image": "e2b9c12f8a8f3f70f6e8e10ee888fbcb0f3b81d5e94ed7f5b47f9aa0f018528f"
+      },
+      "task_count": 1910,
+      "example_task": {
+        "index": 0,
+        "start": [
+          54,
+          339
+        ],
+        "goal": [
+          55,
+          338
+        ],
+        "reference_length_octile": 2.0
+      }
+    },
+    {
+      "family": "random",
+      "name": "random512-30-0",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/random-random512-30-0.png",
+      "map": "datasets/movingai/random/random512-30-0.map",
+      "scenarios": "datasets/movingai/random/random512-30-0.scen",
+      "map_url": "https://movingai.com/benchmarks/random/random512-30-0.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/random/random512-30-0.map-scen.zip",
+      "sha256": {
+        "map": "173962175c042ccac4e8137d1f86dff10bbabd8e0c32227b9070a2e6f39e242b",
+        "scenarios": "b11b87d3a1c6d4f3358220f84965cd5a82b050ac1c869d25c9663ea2e7744492",
+        "image": "98527cbdfe88c5e45772f296a8c4025b6e32e11675d9c89009443a64a6ac23c0"
+      },
+      "task_count": 2070,
+      "example_task": {
+        "index": 0,
+        "start": [
+          421,
+          275
+        ],
+        "goal": [
+          419,
+          275
+        ],
+        "reference_length_octile": 2.0
+      }
+    },
+    {
+      "family": "random",
+      "name": "random512-40-0",
+      "width": 512,
+      "height": 512,
+      "image": "map_pipeline/data/input/random-random512-40-0.png",
+      "map": "datasets/movingai/random/random512-40-0.map",
+      "scenarios": "datasets/movingai/random/random512-40-0.scen",
+      "map_url": "https://movingai.com/benchmarks/random/random512-40-0.map.zip",
+      "scenario_url": "https://movingai.com/benchmarks/random/random512-40-0.map-scen.zip",
+      "sha256": {
+        "map": "d62707cbef07f43ddc8db58bc4e22def6af8ebab3059dc96ceafcbe2c8af8241",
+        "scenarios": "4ca0797f0274e76440478b67bb24ca683c9b7cf6f661ec954046b7ae69e076cd",
+        "image": "00b2725f878f35021b4978941b88c1020e184afacb1f1fa79abaec69bdbd2baa"
+      },
+      "task_count": 3170,
+      "example_task": {
+        "index": 0,
+        "start": [
+          483,
+          270
+        ],
+        "goal": [
+          484,
+          270
+        ],
+        "reference_length_octile": 1.0
+      }
+    }
+  ]
+}

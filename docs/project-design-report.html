@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIT_LJGH_PROJECT 项目设计报告</title>
+<style>
+  :root {
+    --bg: #0a1120;
+    --panel: #101a2c;
+    --panel-2: #142238;
+    --line: #26364f;
+    --text: #e7eef9;
+    --muted: #94a5bf;
+    --cyan: #5eead4;
+    --blue: #7dd3fc;
+    --amber: #fbbf24;
+    --red: #fb7185;
+    --green: #86efac;
+    --violet: #c4b5fd;
+    --terminal: #070c15;
+    --terminal-line: #1b2940;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 520px at 88% -8%, rgba(94,234,212,.10), transparent 60%),
+      radial-gradient(900px 520px at 0% 8%, rgba(125,211,252,.08), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Segoe UI", sans-serif;
+    line-height: 1.72;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 50px 26px 90px; }
+  header { margin-bottom: 34px; }
+  .eyebrow {
+    display: inline-block; font-size: 12px; letter-spacing: .18em;
+    color: var(--cyan); text-transform: uppercase; margin-bottom: 12px;
+  }
+  h1 { font-size: clamp(30px, 4.4vw, 48px); line-height: 1.16; margin: 0 0 14px; letter-spacing: -.025em; }
+  h1 span { color: var(--cyan); }
+  .sub { color: var(--muted); max-width: 860px; font-size: 16px; margin: 0; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .badge {
+    font-size: 12px; padding: 5px 11px; border-radius: 999px;
+    border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--muted);
+  }
+  .badge.cyan { color: var(--cyan); border-color: rgba(94,234,212,.35); }
+  .badge.amber { color: var(--amber); border-color: rgba(251,191,36,.35); }
+  .badge.green { color: var(--green); border-color: rgba(134,239,172,.3); }
+  .badge.red { color: var(--red); border-color: rgba(251,113,133,.3); }
+  nav.toc {
+    display: flex; flex-wrap: wrap; gap: 8px 20px;
+    padding: 16px 18px; margin: 28px 0 36px;
+    border: 1px solid var(--line); border-radius: 14px;
+    background: rgba(16,26,44,.68);
+  }
+  nav.toc a { color: var(--muted); text-decoration: none; font-size: 13px; }
+  nav.toc a:hover { color: var(--cyan); }
+  section {
+    margin: 36px 0; padding: 28px 28px 30px;
+    border: 1px solid var(--line); border-radius: 18px;
+    background: linear-gradient(180deg, rgba(20,34,56,.84), rgba(12,20,35,.88));
+    box-shadow: 0 18px 50px rgba(0,0,0,.22);
+  }
+  h2 { font-size: 23px; margin: 0 0 8px; letter-spacing: -.01em; }
+  h2 .num {
+    display: inline-grid; place-items: center; width: 30px; height: 30px;
+    margin-right: 10px; border-radius: 9px; font-size: 13px;
+    background: rgba(94,234,212,.12); color: var(--cyan);
+    border: 1px solid rgba(94,234,212,.3); vertical-align: 2px;
+  }
+  .lead { color: var(--muted); margin: 0 0 18px; font-size: 14.5px; }
+  h3 { font-size: 15px; margin: 24px 0 10px; }
+  h4 { font-size: 13.5px; margin: 18px 0 8px; color: var(--blue); }
+  p { margin: 10px 0; }
+  .muted { color: var(--muted); }
+  code {
+    font-family: Consolas, "Cascadia Mono", "SFMono-Regular", monospace;
+    font-size: .92em; color: var(--blue);
+    background: rgba(125,211,252,.08); padding: 1px 6px; border-radius: 5px;
+  }
+  pre {
+    margin: 12px 0 16px; padding: 16px 18px; overflow-x: auto;
+    border: 1px solid var(--terminal-line); border-radius: 12px;
+    background: var(--terminal);
+    font-family: Consolas, "Cascadia Mono", "SFMono-Regular", monospace;
+    font-size: 12.6px; line-height: 1.6; color: #cbd5e1;
+  }
+  pre .k { color: var(--cyan); }
+  pre .s { color: #fcd34d; }
+  pre .c { color: #64748b; }
+  pre .n { color: #f9a8d4; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 10px; font-size: 13.4px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+  tr:last-child td { border-bottom: none; }
+  .callout {
+    margin: 16px 0; padding: 14px 16px; border-radius: 12px;
+    border-left: 3px solid var(--amber); background: rgba(251,191,36,.06);
+    color: #e9d8a6; font-size: 13.5px;
+  }
+  .callout.info { border-left-color: var(--cyan); background: rgba(94,234,212,.06); color: #b8f3e8; }
+  .callout.danger { border-left-color: var(--red); background: rgba(251,113,133,.07); color: #fecdd3; }
+  .pill {
+    display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px;
+    margin-right: 6px; border: 1px solid var(--line); color: var(--muted);
+  }
+  .pill.term { color: var(--green); border-color: rgba(134,239,172,.3); }
+  .pill.gui { color: var(--blue); border-color: rgba(125,211,252,.3); }
+  .pill.safe { color: var(--amber); border-color: rgba(251,191,36,.3); }
+  .pill.core { color: var(--violet); border-color: rgba(196,181,253,.3); }
+
+  .flow-strip {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    margin: 16px 0 4px; font-size: 12px; color: var(--muted);
+  }
+  .flow-strip span {
+    padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px;
+    background: rgba(255,255,255,.025);
+  }
+  .flow-strip i { color: var(--cyan); font-style: normal; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+  @media (max-width: 800px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line);
+    background: rgba(255,255,255,.025);
+  }
+  .stat b { display: block; font-size: 24px; color: var(--cyan); line-height: 1.2; }
+  .stat span { font-size: 11.5px; color: var(--muted); }
+  .tree {
+    font-family: Consolas, "Cascadia Mono", monospace; font-size: 12.5px;
+    color: #cbd5e1; line-height: 1.65;
+  }
+  .tree .dir { color: var(--blue); }
+  .tree .file { color: var(--muted); }
+  .tree .note { color: #64748b; }
+  footer { margin-top: 44px; color: var(--muted); font-size: 12.5px; text-align: center; }
+  a { color: var(--blue); }
+  @media print {
+    body { background: #0a1120; }
+    section { break-inside: avoid; box-shadow: none; }
+    nav.toc { display: none; }
+  }
+</style>
+<link rel="stylesheet" href="report-diagrams.css">
+</head>
+<body>
+<aside style="margin:16px;padding:16px;border:1px solid #fbbf24;border-radius:8px;color:#e7eef9;background:#142238">
+  <strong>2026-11-14 核对说明：</strong>本文为设计与历史质量报告，使用方式以
+  <a href="程序介绍与使用手册.md">当前使用手册</a>为准。当前执行器始终使用计时开环；多算法结果不能直接交给运动 CLI。
+  默认地图尺度未经现场标定，碰撞检查未建模车体轮廓。后处理与运动配置默认转向速度不同，预览时间并非实测执行时间。
+</aside>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">SIT_LJGH_PROJECT · Design Report</div>
+    <h1>机器人路径规划与循迹系统<span> 设计报告</span></h1>
+    <p class="sub">
+      从地图图片到 TurboPi 实车运动：模块化流水线、统一 JSON 契约、ROS2 传输协议、
+      终端/GUI 交互、安全停车与实验指标。本报告区分历史验证数据、本轮交互改进和下一阶段优化路线。
+    </p>
+    <div class="badges">
+      <span class="badge cyan">模块化 JSON 流水线</span>
+      <span class="badge">ROS2 Humble</span>
+      <span class="badge">TurboPi 麦轮底盘</span>
+      <span class="badge amber">历史记录：136 个软件测试通过</span>
+      <span class="badge amber">实车验收待完成</span>
+      <span class="badge">报告日期：2026-11-14</span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <a href="#position">1 项目定位</a>
+    <a href="#architecture">2 系统架构</a>
+    <a href="#modules">3 模块职责</a>
+    <a href="#map-arch">map_pipeline</a>
+    <a href="#planner-arch">path_planner</a>
+    <a href="#post-arch">path_postprocess</a>
+    <a href="#motion-arch">motion_control</a>
+    <a href="#link-json">链路 JSON</a>
+    <a href="#contract">4 JSON 契约</a>
+    <a href="#protocol">5 传输协议</a>
+    <a href="#ros">6 ROS2 运动协议</a>
+    <a href="#interaction">7 交互设计</a>
+    <a href="#recovery">8 错误与安全</a>
+    <a href="#quality">9 验证记录</a>
+    <a href="#roadmap">10 优化路线</a>
+    <a href="#run">11 运行与部署</a>
+  </nav>
+
+  <section id="position">
+    <h2><span class="num">01</span>项目定位与目标</h2>
+    <p class="lead">大创项目：以路径规划算法研究为核心，同时让 TurboPi 小车完成稳定、可观察的基本循迹。</p>
+    <div class="grid2">
+      <div>
+        <h3>核心链路</h3>
+        <p>地图图片 → 栅格地图 → 路径规划 → 平滑/复核/分段 → ROS2 循迹。</p>
+        <div class="flow-strip">
+          <span>图片</span><i>→</i><span>栅格 JSON</span><i>→</i><span>原始路径</span>
+          <i>→</i><span>执行段</span><i>→</i><span>Twist</span>
+        </div>
+      </div>
+      <div>
+        <h3>设计目标</h3>
+        <ul class="muted">
+          <li>五种规划算法可替换、可比较、可复现实验</li>
+          <li>模块独立运行，同时提供 Python API 和 CLI</li>
+          <li>所有阶段通过版本化 JSON 契约连接</li>
+          <li>普通模式少交互，研究模式多算法、多指标</li>
+          <li>任何退出路径先停车，再关闭 ROS2</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout info">
+      当前阶段：软件链路和自动化验收已完成，处于“实车验收前”。剩余工作集中在树莓派实车的方向、转向、路径跟随和停车验证。
+    </div>
+  </section>
+
+  <section id="architecture">
+    <h2><span class="num">02</span>系统架构</h2>
+    <p class="lead">顶层负责调度和错误反馈，四个能力模块通过 JSON 文件解耦；运动控制只读取已验证路径段。</p>
+
+<figure class="figure"><div class="figure-head"><strong>系统总览 / 控制、数据与执行分层</strong><span>虚线：调度 · 实线：数据 / 消息</span></div>
+<div class="diagram-scroll" tabindex="0" aria-label="系统架构图，窄屏可横向滚动"><svg viewBox="0 0 1040 690" role="img" aria-labelledby="system-title system-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="system-title">系统架构：交互调度、JSON 流水线与实车控制</title>
+<desc id="system-desc">用户交互进入调度器，调度器调用独立模块 CLI 并记录 RunBatch。地图、规划和后处理通过 JSON 文件传递；无驱动进入完成菜单，实车分支经门禁进入运动控制，再通过 ROS2 Twist 驱动底盘。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" fill="#5eead4"/></marker></defs>
+<rect x="10" y="10" width="1020" height="184" rx="14" fill="#101c2e" stroke="#26344f"/>
+<text x="28" y="37" fill="#7dd3fc" font-size="12">01 交互与调度 · 控制流</text>
+<g><rect x="28" y="62" width="268" height="88" rx="12" fill="#132337" stroke="#7dd3fc" stroke-opacity=".5"/>
+<text x="44" y="90" fill="#e6edf7" font-size="15" font-weight="600">main.py / 用户交互</text>
+<text x="44" y="114" fill="#a5b7ce" font-size="12">统一选图 · GUI / 终端选点</text></g><g><rect x="350" y="62" width="310" height="88" rx="12" fill="#132337" stroke="#5eead4" stroke-opacity=".5"/>
+<text x="366" y="90" fill="#e6edf7" font-size="15" font-weight="600">PipelineOrchestrator</text>
+<text x="366" y="114" fill="#a5b7ce" font-size="12">调度 · 恢复菜单 · 预览 · 驱动门禁</text></g><g><rect x="714" y="62" width="296" height="88" rx="12" fill="#132337" stroke="#c4b5fd" stroke-opacity=".5"/>
+<text x="730" y="90" fill="#e6edf7" font-size="15" font-weight="600">RunBatch</text>
+<text x="730" y="114" fill="#a5b7ce" font-size="12">manifest · 日志 · 重试 attempts</text></g><g fill="none" stroke="#5eead4" stroke-width="1.5" marker-end="url(#arrow)">
+<path d="M296 106H344"/><path d="M660 106H708"/>
+<path d="M505 150V207H172V253" stroke-dasharray="5 5"/>
+</g><text x="520" y="201" fill="#93a3bd" font-size="12">按阶段启动独立 CLI，统一记录每次尝试</text>
+<rect x="10" y="229" width="1020" height="166" rx="14" fill="#101c2e" stroke="#26344f"/>
+<text x="28" y="251" fill="#5eead4" font-size="12">02 离线能力 · 文件数据流</text><g><rect x="28" y="272" width="288" height="88" rx="12" fill="#132337" stroke="#5eead4" stroke-opacity=".5"/>
+<text x="44" y="300" fill="#e6edf7" font-size="15" font-weight="600">map_pipeline</text>
+<text x="44" y="324" fill="#a5b7ce" font-size="12">图片 → 栅格 / 尺度 / 起终点</text></g><g><rect x="376" y="272" width="288" height="88" rx="12" fill="#132337" stroke="#5eead4" stroke-opacity=".5"/>
+<text x="392" y="300" fill="#e6edf7" font-size="15" font-weight="600">path_planner</text>
+<text x="392" y="324" fill="#a5b7ce" font-size="12">地图 → 原始路径 / 算法指标</text></g><g><rect x="724" y="272" width="286" height="88" rx="12" fill="#132337" stroke="#5eead4" stroke-opacity=".5"/>
+<text x="740" y="300" fill="#e6edf7" font-size="15" font-weight="600">path_postprocess</text>
+<text x="740" y="324" fill="#a5b7ce" font-size="12">原始路径 → 平滑 / 复核 / 执行段</text></g><g fill="none" stroke="#5eead4" stroke-width="1.5" marker-end="url(#arrow)">
+<path d="M316 316H370"/><path d="M664 316H718"/>
+<path d="M867 360V429H510V494"/>
+<path d="M867 429H173V494"/>
+</g><g fill="#93a3bd" font-size="11"><text x="325" y="300">JSON</text><text x="673" y="300">JSON</text>
+<text x="450" y="420">保存路径预览后，按 drive 配置选择执行分支</text></g>
+<rect x="10" y="459" width="326" height="144" rx="14" fill="#101c2e" stroke="#26344f"/>
+<text x="28" y="481" fill="#7dd3fc" font-size="12">03A 本地 · --no-drive</text><g><rect x="28" y="500" width="288" height="78" rx="12" fill="#132337" stroke="#7dd3fc" stroke-opacity=".5"/>
+<text x="44" y="528" fill="#e6edf7" font-size="15" font-weight="600">完成菜单</text>
+<text x="44" y="552" fill="#a5b7ce" font-size="12">r / a / p / s / m · 继续同一会话</text></g><rect x="356" y="459" width="674" height="144" rx="14" fill="#101c2e" stroke="#26344f"/>
+<text x="376" y="481" fill="#fbbf24" font-size="12">03B 真机 · 接受路径 + /cmd_vel 预检 + yes</text><g><rect x="376" y="500" width="268" height="78" rx="12" fill="#132337" stroke="#fbbf24" stroke-opacity=".5"/>
+<text x="392" y="528" fill="#e6edf7" font-size="15" font-weight="600">motion_control</text>
+<text x="392" y="552" fill="#a5b7ce" font-size="12">转向 → 零速 → 前进 → 停车</text></g><g><rect x="724" y="500" width="286" height="78" rx="12" fill="#132337" stroke="#fbbf24" stroke-opacity=".5"/>
+<text x="740" y="528" fill="#e6edf7" font-size="15" font-weight="600">TurboPi 底盘节点</text>
+<text x="740" y="552" fill="#a5b7ce" font-size="12">/mecanum_chassis_node</text></g><path d="M644 539H718" fill="none" stroke="#5eead4" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="654" y="526" fill="#fbbf24" font-size="11">Twist</text>
+<text x="28" y="640" fill="#c4b5fd" font-size="13">共享契约：schema_version · module · run_id · status · inputs / outputs · errors</text>
+<text x="28" y="666" fill="#93a3bd" font-size="12">下游只读取 success；普通失败留在恢复菜单，日志与历史结果保存在 runs/&lt;run-id&gt;/。</text>
+</svg></div>
+<figcaption>前三个模块可在 Windows 本地运行；真机分支运行于树莓派上的 Ubuntu 22.04 / ROS2 Humble Docker 容器。JSON 是模块间文件契约，Twist 是 ROS2 消息。</figcaption></figure>
+    <h3>数据流</h3>
+    <table>
+      <tr><th>阶段</th><th>输入</th><th>输出</th><th>关键约束</th></tr>
+      <tr><td>map_pipeline</td><td>图片、栅格配置、起终点/四角</td><td>地图 JSON、预览、矫正图</td><td>row/col 坐标；障碍格拒绝；无显示器可终端输入</td></tr>
+      <tr><td>path_planner</td><td>地图 JSON、算法、参数、种子</td><td>原始路径 JSON、指标、比较结果</td><td>五种算法统一输出；随机算法记录 seed</td></tr>
+      <tr><td>path_postprocess</td><td>地图 JSON、原始路径 JSON</td><td>平滑路径、执行段 JSON、指标</td><td>平滑失败回退；碰撞复核；段长上限</td></tr>
+      <tr><td>motion_control</td><td>执行段 JSON</td><td>/cmd_vel Twist、执行报告</td><td>只读 success 结果；预检；先停车再退出</td></tr>
+    </table>
+  </section>
+
+  <section id="modules">
+    <h2><span class="num">03</span>模块职责与代码结构</h2>
+    <p class="lead">交互、命令构建、执行调度和文件契约分别维护；统一选图由 core/map_selection.py 复用，算法列表由规划模块公开目录提供，避免不同入口采用不同规则。</p>
+    <div class="grid2">
+      <div>
+        <h3>核心模块</h3>
+        <table>
+          <tr><th>模块</th><th>内部拆分</th><th>职责</th></tr>
+          <tr><td>map_pipeline</td><td>process / interaction / cli / rectify / picker_*</td><td>图片 → 栅格 → 起终点 JSON</td></tr>
+          <tr><td>path_planner</td><td>planner_validation / results / runner / planners</td><td>五算法统一执行与指标</td></tr>
+          <tr><td>path_postprocess</td><td>parameters / geometry / segments / processor</td><td>平滑、复核、执行段</td></tr>
+          <tr><td>motion_control</td><td>ros2_compat / types / twist / geometry / executor</td><td>turn 模式与安全停车</td></tr>
+          <tr><td>core</td><td>contracts_* / orchestrator / commands / interaction / map_selection / preview / process_runner</td><td>契约、调度、交互、子进程</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>目录快照</h3>
+        <pre class="tree"><span class="dir">SIT_LJGH_PROJECT/</span>
+├── <span class="file">main.py</span>                  <span class="note">普通/研究模式 CLI</span>
+├── <span class="dir">core/</span>
+│   ├── orchestrator.py       <span class="note">阶段调度</span>
+│   ├── commands.py           <span class="note">模块命令构建</span>
+│   ├── interaction.py        <span class="note">菜单/确认</span>
+│   ├── map_selection.py      <span class="note">编号/路径/取消/重选</span>
+│   ├── algorithm_selection.py <span class="note">算法编号/名称选择</span>
+│   ├── preview.py            <span class="note">路径预览</span>
+│   ├── process_runner.py     <span class="note">子进程/停车兜底</span>
+│   └── contracts*.py         <span class="note">JSON 契约</span>
+├── <span class="dir">map_pipeline/</span>
+│   ├── process.py / interaction.py / cli.py
+│   ├── src/rectify.py        <span class="note">透视矫正</span>
+│   └── src/picker_*.py       <span class="note">选点/四角</span>
+├── <span class="dir">path_planner/</span>
+│   ├── src/planner_runner.py
+│   └── src/planners/         <span class="note">astar/dijkstra/prm/rrt/rrt_star</span>
+├── <span class="dir">path_postprocess/</span>
+│   └── src/processor.py · segments.py
+├── <span class="dir">motion_control/</span>
+│   └── src/ros2_executor.py
+└── <span class="dir">runs/&lt;run-id&gt;/</span>      <span class="note">每次实验的完整产物</span></pre>
+      </div>
+    </div>
+    <h3 id="map-arch">3.1 map_pipeline 内部架构</h3>
+    <p class="muted">图片按需先做四点透视矫正，再二值化、清理和栅格化。顶层统一选图，地图交互层负责起终点和四角，处理层接收已确认坐标。</p>
+<figure class="figure"><div class="figure-head"><strong>建图 / 从图片到有尺度的栅格</strong><span>从上到下 · 输入 → 校验 → 处理 → 输出</span></div><ol class="sequence"><li><b>图片读取</b><span>支持中文路径；输入 JPG / PNG / BMP。</span></li><li><b>四角透视矫正（可选）</b><span>在栅格准备之前执行：单应变换、裁剪、场地宽高与尺度。</span></li><li><b>二值化与清理</b><span>固定阈值或 OTSU，按配置模糊、去除噪点、形态学处理。</span></li><li><b>栅格化与起终点</b><span>生成占用栅格；GUI / 终端 / 显式坐标，拒绝障碍格。</span></li><li><b>地图 JSON</b><span>grid · grid_size_m · start · goal；附带预览和矫正元数据。</span></li></ol><figcaption>独立 API / CLI；阶段结果与错误均遵循统一 JSON 契约。</figcaption></figure>
+    <p class="muted">交互分支：显式坐标 / <code>--select-terminal</code> / Tk/OpenCV 两点选点 / 四角窗口。输出可附带 <code>preview</code>、<code>rectified_image</code> 和 <code>rectification</code>。</p>
+    <pre>{
+  <span class="s">"module"</span>: <span class="s">"map_pipeline"</span>,
+  <span class="s">"status"</span>: <span class="s">"success"</span>,
+  <span class="s">"outputs"</span>: {
+    <span class="s">"map"</span>: {
+      <span class="s">"grid"</span>: {
+        <span class="s">"values"</span>: [[0,0,1],[0,0,1],[0,0,0]],
+        <span class="s">"shape"</span>: [3,3],
+        <span class="s">"dtype"</span>: <span class="s">"uint8"</span>,
+        <span class="s">"units"</span>: {<span class="s">"values"</span>:<span class="s">"occupancy"</span>,<span class="s">"grid_size"</span>:<span class="s">"m/cell"</span>},
+        <span class="s">"coordinate_system"</span>: {<span class="s">"axes"</span>:[<span class="s">"row"</span>,<span class="s">"col"</span>],<span class="s">"row"</span>:<span class="s">"increases_south"</span>,<span class="s">"col"</span>:<span class="s">"increases_east"</span>}
+      },
+      <span class="s">"grid_size_m"</span>: 0.05,
+      <span class="s">"free_value"</span>: 0,
+      <span class="s">"obstacle_value"</span>: 1,
+      <span class="s">"start"</span>: {<span class="s">"row"</span>:0,<span class="s">"col"</span>:0},
+      <span class="s">"goal"</span>: {<span class="s">"row"</span>:2,<span class="s">"col"</span>:2}
+    }
+  }
+}</pre>
+
+    <h3 id="planner-arch">3.2 path_planner 内部架构</h3>
+    <p class="muted">地图 JSON 先经过输入校验，再由注册表创建算法；规划结果统一归一化后输出路径和指标。研究模式复用同一入口跑多个算法。</p>
+<figure class="figure"><div class="figure-head"><strong>规划 / 算法共享同一输入输出</strong><span>从上到下 · 输入 → 校验 → 处理 → 输出</span></div><ol class="sequence"><li><b>读取并校验地图</b><span>require_success → 栅格、起终点和地图尺度校验。</span></li><li><b>创建规划器</b><span>planner_factory 注册表 → 参数校验、默认值、随机种子。</span></li><li><b>执行选定算法</b><span>A* / Dijkstra / PRM / RRT / RRT*；研究模式记录 comparisons。</span></li><li><b>结果校验与归一化</b><span>检查起终点、边界和障碍约束，生成统一路径表达。</span></li><li><b>路径 JSON</b><span>raw_path · metrics · parameters；无路时返回结构化 failed。</span></li></ol><figcaption>独立 API / CLI；阶段结果与错误均遵循统一 JSON 契约。</figcaption></figure>
+    <p class="muted">研究模式输出 <code>outputs.comparisons[]</code>；随机算法必须记录 <code>seed</code>。</p>
+    <pre>{
+  <span class="s">"module"</span>: <span class="s">"path_planner"</span>,
+  <span class="s">"status"</span>: <span class="s">"success"</span>,
+  <span class="s">"inputs"</span>: {<span class="s">"map_result"</span>:<span class="s">"runs/.../map_pipeline/result.json"</span>},
+  <span class="s">"outputs"</span>: {
+    <span class="s">"raw_path"</span>: {
+      <span class="s">"points"</span>: {<span class="s">"values"</span>: [[0,0],[0,1],[1,1],[2,2]],<span class="s">"shape"</span>:[4,2],<span class="s">"dtype"</span>:<span class="s">"int"</span>}
+    },
+    <span class="s">"metrics"</span>: {
+      <span class="s">"values"</span>: {<span class="s">"found_path"</span>:true,<span class="s">"planning_time_s"</span>:0.004,<span class="s">"raw_node_count"</span>:4,<span class="s">"raw_path_length_m"</span>:0.17}
+    }
+  },
+  <span class="s">"parameters"</span>: {<span class="s">"algorithm"</span>:<span class="s">"astar"</span>,<span class="s">"algorithm_parameters"</span>:{},<span class="s">"seed"</span>:null,<span class="s">"grid_size_m"</span>:0.05}
+}</pre>
+
+    <h3 id="post-arch">3.3 path_postprocess 内部架构</h3>
+    <p class="muted">原始路径先平滑，再离散采样和碰撞复核；最后按固定弧长归一化执行段，使 A* 与采样算法的停车次数趋同。</p>
+<figure class="figure"><div class="figure-head"><strong>后处理 / 保留可替换平滑器接口</strong><span>从上到下 · 输入 → 校验 → 处理 → 输出</span></div><ol class="sequence"><li><b>地图与原始路径</b><span>只读取成功结果，核对尺度与坐标约定。</span></li><li><b>参数校验</b><span>采样间距、最大段长、速度与初始车头朝向。</span></li><li><b>平滑器</b><span>当前使用自然边界分段三次样条；通过稳定接口可替换。</span></li><li><b>采样、复核与回退</b><span>弧长采样、障碍复核；失败回退已验证路径并记录原因。</span></li><li><b>执行段归一化</b><span>合并共线、固定弧长重采样、弦碰撞复核。</span></li><li><b>执行段 JSON</b><span>segments · smoothing · metrics；供预览和运动控制读取。</span></li></ol><figcaption>独立 API / CLI；阶段结果与错误均遵循统一 JSON 契约。</figcaption></figure>
+    <div class="callout info">
+      平滑失败、点数不足、数值异常、曲线越界或弦穿过障碍时，回退到已验证路径并记录 <code>fallback</code> / <code>fallback_reason</code>，不把失败伪装成平滑成功。
+    </div>
+    <pre>{
+  <span class="s">"module"</span>: <span class="s">"path_postprocess"</span>,
+  <span class="s">"status"</span>: <span class="s">"success"</span>,
+  <span class="s">"inputs"</span>: {<span class="s">"planner_result"</span>:<span class="s">"runs/.../path_planner/result.json"</span>},
+  <span class="s">"outputs"</span>: {
+    <span class="s">"segments"</span>: [{
+      <span class="s">"index"</span>: 0,
+      <span class="s">"start"</span>: {<span class="s">"row"</span>:0,<span class="s">"col"</span>:0},
+      <span class="s">"end"</span>: {<span class="s">"row"</span>:0,<span class="s">"col"</span>:2},
+      <span class="s">"delta"</span>: {<span class="s">"d_row"</span>:0,<span class="s">"d_col"</span>:2},
+      <span class="s">"direction_deg"</span>: 90.0,
+      <span class="s">"turn_angle_deg"</span>: 90.0,
+      <span class="s">"grid_distance"</span>: 2.0,
+      <span class="s">"distance_m"</span>: 0.1,
+      <span class="s">"estimated_time_s"</span>: 1.12,
+      <span class="s">"motion_type"</span>: <span class="s">"turn"</span>
+    }],
+    <span class="s">"smoothing"</span>: {<span class="s">"method"</span>:<span class="s">"NaturalCubicSplineSmoother"</span>,<span class="s">"applied"</span>:true,<span class="s">"fallback"</span>:false},
+    <span class="s">"metrics"</span>: {<span class="s">"values"</span>:{<span class="s">"segment_count"</span>:1,<span class="s">"estimated_time_s"</span>:1.12,<span class="s">"smoothing_fallback"</span>:false}}
+  },
+  <span class="s">"parameters"</span>: {<span class="s">"grid_size_m"</span>:0.05,<span class="s">"initial_heading"</span>:<span class="s">"north"</span>,<span class="s">"max_segment_length_grid"</span>:2.0}
+}</pre>
+
+    <h3 id="motion-arch">3.4 motion_control 内部架构</h3>
+    <p class="muted">运动控制只读取执行段，不重新规划。启动前检查 ROS 图，执行时按“转向 → 零速 → 前进 → 零速”推进。</p>
+<figure class="figure"><div class="figure-head"><strong>运动 / turn 状态机与停车顺序</strong><span>从上到下 · 输入 → 校验 → 处理 → 输出</span></div><ol class="sequence"><li><b>读取 segments JSON</b><span>direction_deg / distance_m；拒绝失败或不完整结果。</span></li><li><b>驱动前门禁</b><span>检查 /cmd_vel 底盘订阅者与其他发布者，用户输入 yes。</span></li><li><b>转向 → 零速 → 前进</b><span>最短转角，180° 拆分；按经验速度和累计周期估算前进。</span></li><li><b>发布 /cmd_vel</b><span>geometry_msgs/msg/Twist；底盘驱动负责麦轮逆解。</span></li><li><b>先停车再关闭</b><span>完成 / 异常 / Ctrl+C 等退出路径：重复零速 → 缓冲 → destroy → 幂等 shutdown。</span></li><li><b>运动结果 JSON</b><span>preflight · execution · metrics；stopped 记录停车发送流程状态。</span></li></ol><figcaption>独立 API / CLI；阶段结果与错误均遵循统一 JSON 契约。</figcaption></figure>
+    <pre>{
+  <span class="s">"module"</span>: <span class="s">"motion_control"</span>,
+  <span class="s">"status"</span>: <span class="s">"success"</span>,
+  <span class="s">"inputs"</span>: {<span class="s">"postprocess_result"</span>:<span class="s">"runs/.../path_postprocess/result.json"</span>},
+  <span class="s">"outputs"</span>: {
+    <span class="s">"preflight"</span>: {
+      <span class="s">"topic"</span>: <span class="s">"/cmd_vel"</span>,
+      <span class="s">"subscribers"</span>: [<span class="s">"/mecanum_chassis_node"</span>],
+      <span class="s">"publishers"</span>: [<span class="s">"/path_follower"</span>],
+      <span class="s">"confirmed"</span>: true
+    },
+    <span class="s">"execution"</span>: {
+      <span class="s">"segment_count"</span>: 1,
+      <span class="s">"command_count"</span>: 22,
+      <span class="s">"open_loop"</span>: true,
+      <span class="s">"completed"</span>: true,
+      <span class="s">"stopped"</span>: true
+    }
+  }
+}</pre>
+    <p class="muted">实际发到 <code>/cmd_vel</code> 的是 ROS2 消息，不是 JSON 文件；为便于阅读，按 JSON 形状表示：</p>
+    <pre>{<span class="s">"linear"</span>:{<span class="s">"x"</span>:0.5,<span class="s">"y"</span>:0.0,<span class="s">"z"</span>:0.0},<span class="s">"angular"</span>:{<span class="s">"x"</span>:0.0,<span class="s">"y"</span>:0.0,<span class="s">"z"</span>:-1.0}}</pre>
+
+    <h3 id="link-json">3.5 模块之间实际传递的 JSON</h3>
+    <table>
+      <tr><th>链路</th><th>传递方式</th><th>下游读取的字段</th><th>上游写入</th></tr>
+      <tr>
+        <td>map_pipeline → path_planner</td>
+        <td><code>--map-result &lt;path&gt;</code></td>
+        <td><code>outputs.map.grid.values</code>、<code>grid_size_m</code>、<code>start</code>、<code>goal</code></td>
+        <td>地图 JSON + 预览 / 矫正产物</td>
+      </tr>
+      <tr>
+        <td>path_planner → path_postprocess</td>
+        <td><code>--planner-result &lt;path&gt;</code></td>
+        <td><code>outputs.raw_path.points.values</code> 或 <code>outputs.comparisons[].raw_path</code></td>
+        <td>原始路径、指标、算法参数、seed</td>
+      </tr>
+      <tr>
+        <td>path_postprocess → motion_control</td>
+        <td><code>--postprocess-result &lt;path&gt;</code></td>
+        <td><code>outputs.segments</code>、<code>parameters.grid_size_m</code>、<code>parameters.initial_heading</code></td>
+        <td>执行段、平滑信息、指标</td>
+      </tr>
+      <tr>
+        <td>motion_control → ROS2</td>
+        <td><code>/cmd_vel</code> 绝对话题</td>
+        <td><code>Twist.linear.x/y</code>、<code>Twist.angular.z</code></td>
+        <td>ROS2 消息（不是 JSON 文件）</td>
+      </tr>
+      <tr>
+        <td>orchestrator → 模块 CLI</td>
+        <td>子进程 + <code>--output</code> / <code>--run-id</code></td>
+        <td><code>status</code>、<code>module</code>、<code>run_id</code>、<code>errors</code></td>
+        <td>manifest 阶段状态与版本化 result 路径</td>
+      </tr>
+    </table>
+    <div class="callout info">
+      模块 CLI 之间通过文件路径和 JSON 通信。<code>require_success()</code> 校验契约、成功状态和可选模块名；顶层调度器另外校验结果的 run_id。失败结果不会覆盖已有成功结果。
+    </div>
+
+    <div class="callout info">
+      模块边界不是永久清单。新增定位、避障、里程计等能力时，增加独立模块并通过 JSON 契约接入，不改已有模块内部实现。
+    </div>
+  </section>
+
+  <section id="contract">
+    <h2><span class="num">04</span>运行批次与 JSON 契约</h2>
+    <p class="lead">每次执行使用独立 run_id，所有模块共享同一外层结构；失败结果不会覆盖已有成功结果。</p>
+
+    <h3>统一结果信封</h3>
+    <pre>{
+  <span class="s">"schema_version"</span>: <span class="s">"1.0"</span>,
+  <span class="s">"status"</span>: <span class="s">"success"</span>,          <span class="c">// pending / running / success / failed</span>
+  <span class="s">"module"</span>: <span class="s">"path_postprocess"</span>,
+  <span class="s">"run_id"</span>: <span class="s">"20261103T041403Z-1566c1ec"</span>,
+  <span class="s">"created_at"</span>: <span class="s">"2026-11-14T04:14:03+00:00"</span>,
+  <span class="s">"inputs"</span>: { ... },               <span class="c">// 上游结果路径、起终点等</span>
+  <span class="s">"outputs"</span>: { ... },              <span class="c">// 地图、路径、执行段、指标</span>
+  <span class="s">"parameters"</span>: { ... },           <span class="c">// 本次实际生效参数</span>
+  <span class="s">"logs"</span>: [<span class="s">"runs/.../module.log"</span>],
+  <span class="s">"errors"</span>: [],                    <span class="c">// failed 时至少一条结构化错误</span>
+  <span class="s">"metadata"</span>: { ... }
+}</pre>
+
+    <div class="grid2">
+      <div>
+        <h3>状态规则</h3>
+        <table>
+          <tr><th>规则</th><th>行为</th></tr>
+          <tr><td>下游读取</td><td>只接受 <code>status=success</code> 且模块匹配的结果</td></tr>
+          <tr><td>失败写入</td><td>failed 结果必须包含结构化 errors</td></tr>
+          <tr><td>覆盖保护</td><td>failed 不能覆盖已有 success；重试使用版本化输出路径</td></tr>
+          <tr><td>原子写入</td><td>临时文件 + <code>os.replace</code>，避免截断</td></tr>
+          <tr><td>日志</td><td>每个阶段独立 module.log，并写入结果 logs</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>结构化错误</h3>
+        <pre>{
+  <span class="s">"code"</span>: <span class="s">"INVALID_PARAMETERS"</span>,
+  <span class="s">"module"</span>: <span class="s">"path_postprocess"</span>,
+  <span class="s">"stage"</span>: <span class="s">"validate_parameters"</span>,
+  <span class="s">"error_type"</span>: <span class="s">"PathPostprocessParameterError"</span>,
+  <span class="s">"reason"</span>: <span class="s">"max_segment_length_grid 必须至少一格"</span>,
+  <span class="s">"input"</span>: <span class="s">"runs/.../planner/result.json"</span>,
+  <span class="s">"suggestion"</span>: <span class="s">"调大段长或检查参数后重试"</span>
+}</pre>
+      </div>
+    </div>
+
+    <h3>核心 payload</h3>
+    <div class="grid3">
+      <div>
+        <h4>地图</h4>
+        <pre>{
+  <span class="s">"grid"</span>: {
+    <span class="s">"values"</span>: [[0,1],...],
+    <span class="s">"shape"</span>: [rows, cols],
+    <span class="s">"dtype"</span>: <span class="s">"uint8"</span>,
+    <span class="s">"units"</span>: {...},
+    <span class="s">"coordinate_system"</span>: {...}
+  },
+  <span class="s">"grid_size_m"</span>: 0.05,
+  <span class="s">"free_value"</span>: 0,
+  <span class="s">"obstacle_value"</span>: 1,
+  <span class="s">"start"</span>: {<span class="s">"row"</span>:5,<span class="s">"col"</span>:5},
+  <span class="s">"goal"</span>: {<span class="s">"row"</span>:25,<span class="s">"col"</span>:25}
+}</pre>
+      </div>
+      <div>
+        <h4>路径</h4>
+        <pre>{
+  <span class="s">"points"</span>: {
+    <span class="s">"values"</span>: [[0,0],[0,1],...],
+    <span class="s">"shape"</span>: [N,2],
+    <span class="s">"dtype"</span>: <span class="s">"int"</span>,
+    <span class="s">"coordinate_system"</span>: {...}
+  },
+  <span class="s">"coordinate_system"</span>: {
+    <span class="s">"axes"</span>: [<span class="s">"row"</span>,<span class="s">"col"</span>],
+    <span class="s">"row"</span>: <span class="s">"increases_south"</span>,
+    <span class="s">"col"</span>: <span class="s">"increases_east"</span>
+  }
+}</pre>
+      </div>
+      <div>
+        <h4>执行段</h4>
+        <pre>{
+  <span class="s">"index"</span>: 0,
+  <span class="s">"start"</span>: {<span class="s">"row"</span>:0,<span class="s">"col"</span>:0},
+  <span class="s">"end"</span>:   {<span class="s">"row"</span>:0,<span class="s">"col"</span>:2},
+  <span class="s">"delta"</span>: {<span class="s">"d_row"</span>:0,<span class="s">"d_col"</span>:2},
+  <span class="s">"direction_deg"</span>: 90.0,
+  <span class="s">"turn_angle_deg"</span>: 90.0,
+  <span class="s">"grid_distance"</span>: 2.0,
+  <span class="s">"distance_m"</span>: 0.6,
+  <span class="s">"estimated_time_s"</span>: 2.0,
+  <span class="s">"motion_type"</span>: <span class="s">"turn"</span>
+}</pre>
+      </div>
+    </div>
+
+    <h3>运行目录</h3>
+    <pre class="tree"><span class="dir">runs/&lt;run-id&gt;/</span>
+├── <span class="file">manifest.json</span>              <span class="note">批次状态、阶段、尝试、事件、产物</span>
+├── <span class="dir">map_pipeline/</span>
+│   ├── <span class="file">result.json</span>
+│   ├── <span class="file">result_preview.png</span>
+│   ├── <span class="file">result_rectified.png</span>  <span class="note">启用矫正时</span>
+│   └── <span class="file">module.log</span>
+├── <span class="dir">path_planner/</span> result.json · module.log
+├── <span class="dir">path_postprocess/</span> result.json · module.log
+├── <span class="dir">motion_control/</span> result.json · module.log  <span class="note">仅驱动时</span>
+├── <span class="dir">preview/</span> path_preview.png
+└── <span class="dir">acceptance/</span> result.json · manual_record.json</pre>
+
+    <div class="callout">
+      坐标统一使用 <code>row/col</code>：row 增大表示向南，col 增大表示向东。物理单位：米、m/s、rad/s、度、秒。像素坐标只在地图模块内部使用。
+    </div>
+  </section>
+
+  <section id="protocol">
+    <h2><span class="num">05</span>模块间传输协议</h2>
+    <p class="lead">模块之间不共享内存对象，只通过文件路径和 JSON 契约传递数据；顶层通过子进程调用模块 CLI。</p>
+    <table>
+      <tr><th>连接</th><th>传递方式</th><th>关键字段</th><th>失败处理</th></tr>
+      <tr><td>map → planner</td><td><code>--map-result result.json</code></td><td>grid、grid_size_m、start、goal</td><td>planner 返回 PLANNER_INPUT_ERROR</td></tr>
+      <tr><td>planner → postprocess</td><td><code>--planner-result result.json</code></td><td>raw_path 或 comparisons</td><td>postprocess 返回 PLANNER 输入错误</td></tr>
+      <tr><td>postprocess → motion</td><td><code>--postprocess-result result.json</code></td><td>segments、parameters、metrics</td><td>motion 拒绝非 success 结果</td></tr>
+      <tr><td>orchestrator → 模块</td><td>子进程 CLI + <code>--output</code> / <code>--run-id</code></td><td>统一 output 路径、日志</td><td>读取 result.json 并记录失败阶段</td></tr>
+      <tr><td>motion → 底盘</td><td>ROS2 绝对话题 <code>/cmd_vel</code></td><td><code>geometry_msgs/msg/Twist</code></td><td>预检失败不启动；异常先停车</td></tr>
+    </table>
+    <p class="muted">子进程使用参数列表，不经过 shell；YAML 使用 <code>safe_load</code>；所有路径在执行目录下解析。</p>
+  </section>
+
+  <section id="ros">
+    <h2><span class="num">06</span>ROS2 运动控制协议</h2>
+    <p class="lead">当前没有 <code>/odom</code>，采用 turn 模式 + timer 开环估算；控制目标是稳定、可观察，不宣称厘米级精度。</p>
+
+    <div class="grid2">
+      <div>
+        <h3>Twist 字段</h3>
+        <table>
+          <tr><th>字段</th><th>含义</th><th>本项目用法</th></tr>
+          <tr><td><code>linear.x</code></td><td>底盘 X 前方速度</td><td>前进命令值 0.5</td></tr>
+          <tr><td><code>linear.y</code></td><td>底盘 Y 左方速度</td><td>当前 turn 模式不使用</td></tr>
+          <tr><td><code>angular.z</code></td><td>绕 Z 轴角速度</td><td>原地转向，符号按底盘坐标系</td></tr>
+        </table>
+        <p class="muted">话题：绝对 <code>/cmd_vel</code>；类型：<code>geometry_msgs/msg/Twist</code>；底盘订阅者：<code>/mecanum_chassis_node</code>。</p>
+      </div>
+      <div>
+        <h3>每段执行顺序</h3>
+        <pre><span class="k">turn</span>      原地旋转到段方向（180° 拆成两个 90°）
+<span class="k">zero</span>      发布一个周期的零速 Twist
+<span class="k">forward</span>   沿车头方向前进 distance_m
+<span class="k">zero</span>      段结束零速过渡
+<span class="k">stop</span>      任务/异常/退出时重复零速并等待通信缓冲</pre>
+      </div>
+    </div>
+
+    <h3>开环距离估算</h3>
+    <pre><span class="c">// 当前经验值：linear.x=0.5 持续约 1 s 前进约 0.30 m</span>
+empirical_forward_speed ≈ 0.30 m/s
+target_ticks = cumulative_distance / empirical_forward_speed / timer_period
+published_distance ≈ published_ticks × timer_period × empirical_forward_speed</pre>
+    <p class="muted">控制周期 0.1 s；整段控制周期跨段累计，避免“每段各自取整”导致总距离随段数变化。没有里程计闭环，实际距离会受负载、电量、地面和启动延迟影响。</p>
+
+    <div class="callout danger">
+      <strong>安全门禁：</strong>启动前检查 <code>/cmd_vel</code> 订阅者和其他发布者；发现其他速度发布者时默认阻止启动。必须停用商家的 gesture_control、object_tracking、line_following、avoidance、qrcode 等功能。
+    </div>
+    <div class="callout info">
+      <strong>退出：</strong>Ctrl+C、SIGTERM、SIGHUP、异常、完成和节点销毁都先重复发布零速度并等待通信缓冲，再销毁节点、幂等 shutdown。停车发布失败会记录警告并保持 <code>stopped=False</code>，不会误报已安全停车。
+    </div>
+  </section>
+
+  <section id="interaction">
+    <h2><span class="num">07</span>交互设计</h2>
+    <p class="lead">普通模式只保留必要确认；研究模式开放多算法与指标；无显示器时退化为终端输入。</p>
+
+<figure class="figure"><div class="figure-head"><strong>交互 / 完成后仍可切换任务</strong><span>与交互报告及实现保持一致</span></div><ol class="sequence"><li><b>统一选地图</b><span>编号 / 自定义图片路径；输错原地重选，b 取消。</span></li><li><b>矫正与起终点</b><span>按需先选四角矫正，再用 GUI 或终端选择起点、终点。</span></li><li><b>规划与后处理</b><span>读取地图 JSON → 搜索路径 → 平滑与碰撞复核 → 执行段。</span></li><li><b>保存路径预览</b><span>生成原始路径、平滑路径和执行段；驱动模式下还需接受路径。</span></li><li><b>按运行模式分支</b><span>--no-drive：直接进入完成菜单；驱动模式：/cmd_vel 预检 + yes → 执行。</span></li><li><b>任务完成菜单</b><span>r 重跑 / a 换算法 / p 后处理 / s 起终点 / m 换地图 / q 退出。</span></li></ol><div class="branch-grid">
+<div class="branch"><b>m → 地图选择</b><span>合法输入才提交新地图，清空旧起终点；b 回完成菜单，不启动任何模块。</span></div>
+<div class="branch warn"><b>模块失败 → 恢复菜单</b><span>地图失败用 m / b 重选地图；规划失败用 a / b 重选算法。取消后回恢复菜单。</span></div>
+<div class="branch blue"><b>r / a / p / s → 对应阶段</b><span>换算法列出编号与说明；取消不重跑。JSON 参数输错重输，--no-drive 持续有效。</span></div>
+</div><div class="return-path">↩ 同一会话循环：完成菜单 → 选择操作 → 对应阶段 → 完成菜单。只有 q 主动退出；无效菜单输入会重新提示。</div><figcaption>换图成功后清空起终点与旧图四角坐标；取消不修改当前地图和已有结果。</figcaption></figure>
+    <div class="grid3">
+      <div>
+        <h4>普通模式</h4>
+        <p class="muted">GUI 选点、路径预览确认、驱动前 <code>yes</code>；任务完成后可重跑、换算法、重新后处理、重新选点、换图或退出。</p>
+      </div>
+      <div>
+        <h4>无显示器</h4>
+        <p class="muted">显式提供 <code>--start/--goal</code>，或 <code>--select-terminal</code> 在终端输入；路径预览用 <code>yes</code> 确认；无人值守加 <code>--accept-path</code>。</p>
+      </div>
+      <div>
+        <h4>研究模式</h4>
+        <p class="muted">一次运行多个算法，记录参数、随机种子和统一指标；默认不驱动车。当前运动 CLI 只接受单算法顶层路径段，需针对选定算法单独规划、后处理并确认后执行。</p>
+      </div>
+    </div>
+
+    <p class="muted">换算法展示编号、说明与名称，支持单选或逗号多选；回车 / b 取消。规划失败用 a / b 回算法列表，保留地图；换算法时清除旧临时参数。规划/后处理参数只接受 JSON 对象，错误输入原地重输；取消不触发重试。Windows 路径预览通过字节读取与 imdecode 支持中文目录。</p>
+    <div class="callout info">
+      完整终端提示、窗口按键和纯终端流程见 <a href="interaction-report.html">交互形式说明</a>。
+    </div>
+  </section>
+
+  <section id="recovery">
+    <h2><span class="num">08</span>错误恢复与安全退出</h2>
+    <div class="grid2">
+      <div>
+        <h3>模块失败</h3>
+        <ul class="muted">
+          <li>返回模块、阶段、输入、原因、建议动作</li>
+          <li>交互模式暂停并提供重试、改参数、返回、退出；地图失败支持重新选图，b 回到地图选择；规划失败用 a / b 回算法列表</li>
+          <li>批处理/headless 返回非零状态，不启动后续阶段</li>
+          <li>已成功阶段不被失败重试覆盖，使用版本化输出</li>
+        </ul>
+      </div>
+      <div>
+        <h3>安全退出</h3>
+        <pre><span class="k">Ctrl+C / SIGTERM / SIGHUP / 异常 / 完成</span>
+→ 发布零速度 Twist（重复 N 次）
+→ 等待通信缓冲
+→ 销毁节点
+→ 幂等 rclpy.shutdown()</pre>
+      </div>
+    </div>
+    <div class="callout">
+      硬杀进程、断电和容器被强制销毁无法执行停车。实车运行建议放在 tmux/screen 中，并保留人工急停；不要用 Ctrl+Z 挂起控制进程。
+    </div>
+  </section>
+
+  <div class="callout info"><strong>Windows 文件保存与取消：</strong>运行记录和模块结果使用独立临时文件后原子替换；遇到短暂 PermissionError 时最多等待 1.25 秒重试。持续失败时保留原 JSON 和待保存文件并报告实际保存路径，不把错误归咎于地图输入。此机制不支持多个进程并发修改同一批次。在启动选图时 Ctrl+C 简短退出（130），尚未运行运动模块；运动中仍沿用先停车再退出。重新选择当前默认算法会保留临时参数。</div>
+
+  <section id="quality">
+    <h2><span class="num">09</span>验证记录</h2>
+    <div class="stats">
+      <div class="stat"><b>184 通过</b><span>本轮软件回归 · 2026-11-14</span></div>
+      <div class="stat"><b>85.98%</b><span>历史语句覆盖率 · 本轮未重测</span></div>
+      <div class="stat"><b>0 警告</b><span>pyflakes 静态检查</span></div>
+      <div class="stat"><b>历史 success</b><span>Fake ROS2 软件验收记录</span></div>
+    </div>
+    <table>
+      <tr><th>范围</th><th>状态</th><th>说明</th></tr>
+      <tr><td>JSON 契约 / 模块 CLI</td><td>已覆盖</td><td>成功、失败、无路、参数错误、原子写入、覆盖保护</td></tr>
+      <tr><td>路径规划 / 后处理</td><td>已覆盖</td><td>五算法统一输出、随机种子复现、平滑回退、分段归一化</td></tr>
+      <tr><td>运动控制</td><td>已覆盖</td><td>Fake ROS2、Twist 顺序、预检、累计控制周期、安全停车、停车失败</td></tr>
+      <tr><td>交互</td><td>已覆盖</td><td>终端选点/四角、菜单、Tk/OpenCV 选点的模拟行为</td></tr>
+      <tr><td>实车</td><td>待完成</td><td>方向、90° 转向、路径跟随、经验速度、Ctrl+C 停车记录</td></tr>
+    </table>
+    <p class="muted">本轮交互改进已通过全部 184 项 unittest、pyflakes 和 pyright（0 错误）。回归覆盖地图编号/路径、无效输入重输、取消换图不重跑、地图失败重新选择、配置路径校验、算法编号/多选/取消、规划失败重选、JSON 对象校验、中文路径预览与 --no-drive 保持。两份 HTML 在 Edge 的 1440px 与 390px 视口检查通过，无页面横向溢出、失效页内链接或脚本错误。此前公开地图验收、136 项测试和 85.98% 覆盖率属于<a href="verification/2026-11-14-offline.md">历史记录</a>；本轮未重跑全量地图实验、覆盖率或实车验收。</p>
+  </section>
+
+  <section id="roadmap">
+    <h2><span class="num">10</span>可选优化与路线图</h2>
+    <p class="lead">按“实车安全 → 使用体验 → 工程质量 → 研究扩展”排序。</p>
+    <table>
+      <tr><th>优先级</th><th>优化项</th><th>为什么</th><th>建议动作</th></tr>
+      <tr>
+        <td><span class="pill safe">P0</span></td>
+        <td>完成实车验收</td>
+        <td>软件验收不能替代真实方向、转向和停车验证</td>
+        <td>隔离其他 /cmd_vel 发布者；低速前进/后退/左右转/90°；记录 manual_record.json</td>
+      </tr>
+      <tr>
+        <td><span class="pill safe">P0</span></td>
+        <td>标定经验速度与转向速度</td>
+        <td>0.30 m/s 只来自一次前进测量，横移/转向未标定</td>
+        <td>相同电量、地面、负载下重复 3 次；分别记录 linear.x/y、angular.z</td>
+      </tr>
+      <tr>
+        <td><span class="pill safe">P0</span></td>
+        <td>完善实车运行手册</td>
+        <td>SSH 断线、Ctrl+Z、容器销毁都可能绕过停车</td>
+        <td>固定 tmux 流程、启动前检查、人工急停、停止其他商家节点</td>
+      </tr>
+      <tr>
+        <td><span class="pill">P1</span></td>
+        <td>统一 GUI 选点后端</td>
+        <td>两点选点优先 Tk，四角选点仍用 OpenCV，Windows DPI 下可能偏移</td>
+        <td>补 Tk 四角窗口或统一窗口后端；保留 --corners 作为可靠后备</td>
+      </tr>
+      <tr>
+        <td><span class="pill">P1</span></td>
+        <td>统一地图选择与菜单恢复（已完成）</td>
+        <td>启动与换图支持相同编号/路径规则，无效输入不退出</td>
+        <td>取消保留原结果；地图失败可重选；--no-drive 在换算法后继续有效</td>
+      </tr>
+      <tr>
+        <td><span class="pill">P1</span></td>
+        <td>运动中显示紧凑进度</td>
+        <td>当前只有逐段 ROS 日志，长路径缺少整体进度</td>
+        <td>输出“段 i/N、已走距离、预计剩余、open-loop”单行进度</td>
+      </tr>
+      <tr>
+        <td><span class="pill">P1</span></td>
+        <td>依赖锁定与 CI</td>
+        <td>已有 requirements.txt / requirements-dev.txt；版本范围仍可能产生环境差异</td>
+        <td>记录验证环境并按需锁定依赖；CI 运行 unittest、pyflakes、pyright 与覆盖率检查</td>
+      </tr>
+      <tr>
+        <td><span class="pill">P1</span></td>
+        <td>栅格化性能</td>
+        <td>create_grid_map 为 Python 双循环，高分辨率地图会变慢</td>
+        <td>用积分图或 cv2.resize 向量化；增加图像尺寸上限</td>
+      </tr>
+      <tr>
+        <td><span class="pill">P2</span></td>
+        <td>接入 /odom 闭环</td>
+        <td>timer 开环距离受负载和地面影响</td>
+        <td>只替换“段完成判断”能力，不改 JSON 契约和规划/后处理</td>
+      </tr>
+      <tr>
+        <td><span class="pill">P2</span></td>
+        <td>自动四角检测</td>
+        <td>人工点四角可靠但慢；当前照片自动检测会退化成整图</td>
+        <td>先做白纸/场地边界检测，再让人工确认；失败时回退手动角点</td>
+      </tr>
+      <tr>
+        <td><span class="pill">P2</span></td>
+        <td>研究指标与对比</td>
+        <td>目前有耗时、节点数、路径长度、预计时间</td>
+        <td>增加转弯次数、最小障碍距离、平滑度、成功率；生成算法对比报告</td>
+      </tr>
+      <tr>
+        <td><span class="pill">P2</span></td>
+        <td>平滑器适配库</td>
+        <td>当前为自研自然边界三次样条</td>
+        <td>保留 PathSmoother 接口，后续接成熟样条库，不改后处理流程</td>
+      </tr>
+      <tr>
+        <td><span class="pill">P2</span></td>
+        <td>清理遗留入口</td>
+        <td>run_pipeline.py / MapPipeline 与新主流程并存</td>
+        <td>明确弃用或只保留文档入口，减少重复交互和测试面</td>
+      </tr>
+    </table>
+  </section>
+
+  <section id="run">
+    <h2><span class="num">11</span>运行方式与部署</h2>
+    <div class="grid2">
+      <div>
+        <h3>常用命令</h3>
+        <pre><span class="c"># 普通模式：显式坐标，无显示器</span>
+python main.py map.png --headless \
+  --start 313,424 --goal 311,427 --no-drive
+
+<span class="c"># 终端交互选点</span>
+python main.py map.png --headless --select-terminal
+
+<span class="c"># 现场照片矫正</span>
+python main.py photo.jpg --headless --no-drive \
+  --rectify --corners <span class="s">"35,15;1225,15;1225,1420;35,1420"</span> \
+  --arena-width-m 2.0 --grid-size-m 0.05 \
+  --start 5,5 --goal 25,25
+
+<span class="c"># 研究模式</span>
+python main.py map.png --mode research --headless \
+  --start 313,424 --goal 311,427 --algorithms astar,rrt --seed 42
+
+<span class="c"># 软件验收</span>
+python tools/acceptance.py</pre>
+      </div>
+      <div>
+        <h3>实车部署</h3>
+        <table>
+          <tr><th>项</th><th>值</th></tr>
+          <tr><td>宿主机</td><td>Raspberry Pi Debian 12 / aarch64</td></tr>
+          <tr><td>容器</td><td><code>turbopi:new</code></td></tr>
+          <tr><td>容器内系统</td><td>Ubuntu 22.04.4 LTS</td></tr>
+          <tr><td>ROS2</td><td>Humble</td></tr>
+          <tr><td>Python</td><td>3.10.12</td></tr>
+          <tr><td>项目路径</td><td><code>/home/ubuntu/SIT_LJGH_PROJECT</code></td></tr>
+          <tr><td>底盘节点</td><td><code>/mecanum_chassis_node</code></td></tr>
+        </table>
+        <pre><span class="c"># 树莓派宿主机</span>
+docker cp /home/pi/SIT_LJGH_PROJECT turbopi:/home/ubuntu/
+docker exec -it turbopi bash
+
+<span class="c"># 容器内</span>
+cd /home/ubuntu/SIT_LJGH_PROJECT
+ros2 topic list
+ros2 topic info /cmd_vel</pre>
+      </div>
+    </div>
+    <div class="callout">
+      驱动前必须确认 <code>/cmd_vel</code> 只有一个控制发布者，底盘订阅者存在；无显示器驱动需要 <code>--drive --accept-path --yes</code>，且不应在未检查预检信息时使用。
+    </div>
+  </section>
+
+  <footer>
+    SIT_LJGH_PROJECT · 项目设计报告 · 更新于 2026-11-14<br>
+    相关文档：<a href="interaction-report.html">交互形式说明</a> ·
+    <a href="程序介绍与使用手册.md">程序介绍与使用手册</a> ·
+    <a href="../CONTEXT.md">领域上下文</a> ·
+    <a href="../docs/adr">ADR</a>
+  </footer>
+</div>
+</body>
+</html>

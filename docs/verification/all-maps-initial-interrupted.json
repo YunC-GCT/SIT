@@ -1,0 +1,152 @@
+{
+  "selection_seed": 20261114,
+  "selection": "three uniform official scenario indices per map, no distance filter",
+  "timeout_s": 60,
+  "expected": 180,
+  "results": [
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 1,
+      "scenario_index": 262,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        393,
+        165
+      ],
+      "goal": [
+        442,
+        97
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.0045261999912327155,
+      "nodes": 124,
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 1,
+      "scenario_index": 262,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        393,
+        165
+      ],
+      "goal": [
+        442,
+        97
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.05982310000399593,
+      "nodes": 124,
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 1,
+      "scenario_index": 262,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        393,
+        165
+      ],
+      "goal": [
+        442,
+        97
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 150,
+        "max_edge_len": 30
+      },
+      "seed": 43,
+      "outcome": "invalid_path",
+      "planning_s": 18.541163300003973,
+      "nodes": 16
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 2,
+      "scenario_index": 986,
+      "reference_length_octile": 394.76450195,
+      "start": [
+        285,
+        138
+      ],
+      "goal": [
+        15,
+        297
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.060902199998963624,
+      "nodes": 450,
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 2,
+      "scenario_index": 986,
+      "reference_length_octile": 394.76450195,
+      "start": [
+        285,
+        138
+      ],
+      "goal": [
+        15,
+        297
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.49399930000072345,
+      "nodes": 450,
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 2,
+      "scenario_index": 986,
+      "reference_length_octile": 394.76450195,
+      "start": [
+        285,
+        138
+      ],
+      "goal": [
+        15,
+        297
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 150,
+        "max_edge_len": 30
+      },
+      "seed": 44,
+      "outcome": "invalid_path",
+      "planning_s": 16.97610359999817,
+      "nodes": 60
+    }
+  ],
+  "complete": false,
+  "all_passed": false
+}

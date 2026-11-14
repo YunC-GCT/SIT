@@ -1,0 +1,5528 @@
+{
+  "selection_seed": 20261114,
+  "selection": "three uniform official scenario indices per map, no distance filter",
+  "timeout_s": 30,
+  "planner_config": {
+    "path_planner": {
+      "interactive": true,
+      "default_algorithm": "astar",
+      "available_algorithms": [
+        "astar",
+        "dijkstra",
+        "prm",
+        "rrt",
+        "rrt_star"
+      ],
+      "algorithm_params": {
+        "prm": {
+          "num_samples": 20000,
+          "k_neighbors": 15,
+          "retry_num_samples": 30000,
+          "max_edge_len": 15
+        },
+        "rrt": {
+          "adaptive_step": false,
+          "max_iter": 200000,
+          "step_size": 5,
+          "goal_sample_rate": 0.05
+        },
+        "rrt_star": {
+          "adaptive_step": false,
+          "search_time_s": 15.0,
+          "optimize_time_s": 2.0,
+          "optimize_iterations": 2000,
+          "max_iter": 200000,
+          "step_size": 5,
+          "goal_sample_rate": 0.05,
+          "search_radius": 10.0
+        }
+      }
+    }
+  },
+  "expected": 180,
+  "results": [
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 1,
+      "scenario_index": 262,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        393,
+        165
+      ],
+      "goal": [
+        442,
+        97
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.004236100008711219,
+      "nodes": 124,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 1,
+      "scenario_index": 262,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        393,
+        165
+      ],
+      "goal": [
+        442,
+        97
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.05089279999083374,
+      "nodes": 124,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 1,
+      "scenario_index": 262,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        393,
+        165
+      ],
+      "goal": [
+        442,
+        97
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 4.070270200012601,
+      "nodes": 18,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 1,
+      "scenario_index": 262,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        393,
+        165
+      ],
+      "goal": [
+        442,
+        97
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 3.962020400009351,
+      "nodes": 30,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 2,
+      "scenario_index": 986,
+      "reference_length_octile": 394.76450195,
+      "start": [
+        285,
+        138
+      ],
+      "goal": [
+        15,
+        297
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.05677819999982603,
+      "nodes": 450,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 1,
+      "scenario_index": 262,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        393,
+        165
+      ],
+      "goal": [
+        442,
+        97
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 4.618510999993305,
+      "nodes": 20,
+      "search_diagnostics": {
+        "iterations": 85930,
+        "stop_reason": "optimize_iterations",
+        "first_solution_iteration": 83930,
+        "first_solution_s": 4.2108605000103125,
+        "total_s": 4.618305399999372,
+        "unique_nodes": 634
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 2,
+      "scenario_index": 986,
+      "reference_length_octile": 394.76450195,
+      "start": [
+        285,
+        138
+      ],
+      "goal": [
+        15,
+        297
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.4955487999977777,
+      "nodes": 450,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 2,
+      "scenario_index": 986,
+      "reference_length_octile": 394.76450195,
+      "start": [
+        285,
+        138
+      ],
+      "goal": [
+        15,
+        297
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 4.072409000000334,
+      "nodes": 72,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 3,
+      "scenario_index": 1983,
+      "reference_length_octile": 795.95541076,
+      "start": [
+        460,
+        506
+      ],
+      "goal": [
+        6,
+        52
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.2230357000080403,
+      "nodes": 927,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 3,
+      "scenario_index": 1983,
+      "reference_length_octile": 795.95541076,
+      "start": [
+        460,
+        506
+      ],
+      "goal": [
+        6,
+        52
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.5807589000032749,
+      "nodes": 927,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 3,
+      "scenario_index": 1983,
+      "reference_length_octile": 795.95541076,
+      "start": [
+        460,
+        506
+      ],
+      "goal": [
+        6,
+        52
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 3.791883700003382,
+      "nodes": 139,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 2,
+      "scenario_index": 986,
+      "reference_length_octile": 394.76450195,
+      "start": [
+        285,
+        138
+      ],
+      "goal": [
+        15,
+        297
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 15.00046929999371,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 109213,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000231600002735,
+        "unique_nodes": 1094
+      }
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 2,
+      "scenario_index": 986,
+      "reference_length_octile": 394.76450195,
+      "start": [
+        285,
+        138
+      ],
+      "goal": [
+        15,
+        297
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "timeout"
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 1,
+      "scenario_index": 1035,
+      "reference_length_octile": 414.60512237,
+      "start": [
+        254,
+        6
+      ],
+      "goal": [
+        21,
+        234
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.09115119998750743,
+      "nodes": 488,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 3,
+      "scenario_index": 1983,
+      "reference_length_octile": 795.95541076,
+      "start": [
+        460,
+        506
+      ],
+      "goal": [
+        6,
+        52
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000893200005521,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 151775,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000598499987973,
+        "unique_nodes": 1226
+      }
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 1,
+      "scenario_index": 1035,
+      "reference_length_octile": 414.60512237,
+      "start": [
+        254,
+        6
+      ],
+      "goal": [
+        21,
+        234
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.41922040001372807,
+      "nodes": 488,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 1,
+      "scenario_index": 1035,
+      "reference_length_octile": 414.60512237,
+      "start": [
+        254,
+        6
+      ],
+      "goal": [
+        21,
+        234
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 3.6588779000012437,
+      "nodes": 63,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "8room_000",
+      "map_file": "datasets/movingai/room/8room_000.map",
+      "group": 3,
+      "scenario_index": 1983,
+      "reference_length_octile": 795.95541076,
+      "start": [
+        460,
+        506
+      ],
+      "goal": [
+        6,
+        52
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "timeout"
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 2,
+      "scenario_index": 1565,
+      "reference_length_octile": 625.11479034,
+      "start": [
+        476,
+        495
+      ],
+      "goal": [
+        1,
+        261
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.16912340000271797,
+      "nodes": 732,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 2,
+      "scenario_index": 1565,
+      "reference_length_octile": 625.11479034,
+      "start": [
+        476,
+        495
+      ],
+      "goal": [
+        1,
+        261
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.6587066000065533,
+      "nodes": 732,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 2,
+      "scenario_index": 1565,
+      "reference_length_octile": 625.11479034,
+      "start": [
+        476,
+        495
+      ],
+      "goal": [
+        1,
+        261
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 3.330914300007862,
+      "nodes": 90,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 1,
+      "scenario_index": 1035,
+      "reference_length_octile": 414.60512237,
+      "start": [
+        254,
+        6
+      ],
+      "goal": [
+        21,
+        234
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000421199991251,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 108301,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000203499992494,
+        "unique_nodes": 1038
+      }
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 1,
+      "scenario_index": 1035,
+      "reference_length_octile": 414.60512237,
+      "start": [
+        254,
+        6
+      ],
+      "goal": [
+        21,
+        234
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "timeout"
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 3,
+      "scenario_index": 264,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        184,
+        411
+      ],
+      "goal": [
+        129,
+        473
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.0034626999986357987,
+      "nodes": 124,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 3,
+      "scenario_index": 264,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        184,
+        411
+      ],
+      "goal": [
+        129,
+        473
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.050018300011288375,
+      "nodes": 124,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 2,
+      "scenario_index": 1565,
+      "reference_length_octile": 625.11479034,
+      "start": [
+        476,
+        495
+      ],
+      "goal": [
+        1,
+        261
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000726500002202,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 77691,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000455900008092,
+        "unique_nodes": 1988
+      }
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 3,
+      "scenario_index": 264,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        184,
+        411
+      ],
+      "goal": [
+        129,
+        473
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 4.419478399999207,
+      "nodes": 21,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 2,
+      "scenario_index": 1565,
+      "reference_length_octile": 625.11479034,
+      "start": [
+        476,
+        495
+      ],
+      "goal": [
+        1,
+        261
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "timeout"
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 1,
+      "scenario_index": 2036,
+      "reference_length_octile": 814.33513641,
+      "start": [
+        63,
+        482
+      ],
+      "goal": [
+        505,
+        29
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.527066399998148,
+      "nodes": 990,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 3,
+      "scenario_index": 264,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        184,
+        411
+      ],
+      "goal": [
+        129,
+        473
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 12.183867699990515,
+      "nodes": 28,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 1,
+      "scenario_index": 2036,
+      "reference_length_octile": 814.33513641,
+      "start": [
+        63,
+        482
+      ],
+      "goal": [
+        505,
+        29
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.9191443999879993,
+      "nodes": 990,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "16room_000",
+      "map_file": "datasets/movingai/room/16room_000.map",
+      "group": 3,
+      "scenario_index": 264,
+      "reference_length_octile": 105.42640686,
+      "start": [
+        184,
+        411
+      ],
+      "goal": [
+        129,
+        473
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 14.365715100007947,
+      "nodes": 19,
+      "search_diagnostics": {
+        "iterations": 72231,
+        "stop_reason": "optimize_iterations",
+        "first_solution_iteration": 70231,
+        "first_solution_s": 13.308230399998138,
+        "total_s": 14.365332899993518,
+        "unique_nodes": 2327
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 1,
+      "scenario_index": 2036,
+      "reference_length_octile": 814.33513641,
+      "start": [
+        63,
+        482
+      ],
+      "goal": [
+        505,
+        29
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 9.134174799997709,
+      "nodes": 145,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          },
+          {
+            "requested_samples": 30000,
+            "actual_points": 30002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 2,
+      "scenario_index": 100,
+      "reference_length_octile": 43.14213562,
+      "start": [
+        11,
+        276
+      ],
+      "goal": [
+        5,
+        315
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.0012090999953215942,
+      "nodes": 50,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 2,
+      "scenario_index": 100,
+      "reference_length_octile": 43.14213562,
+      "start": [
+        11,
+        276
+      ],
+      "goal": [
+        5,
+        315
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.006672100003925152,
+      "nodes": 50,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 2,
+      "scenario_index": 100,
+      "reference_length_octile": 43.14213562,
+      "start": [
+        11,
+        276
+      ],
+      "goal": [
+        5,
+        315
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 3.0780817000049865,
+      "nodes": 7,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 1,
+      "scenario_index": 2036,
+      "reference_length_octile": 814.33513641,
+      "start": [
+        63,
+        482
+      ],
+      "goal": [
+        505,
+        29
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000641500009806,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 144271,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000327799993102,
+        "unique_nodes": 1543
+      }
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 2,
+      "scenario_index": 100,
+      "reference_length_octile": 43.14213562,
+      "start": [
+        11,
+        276
+      ],
+      "goal": [
+        5,
+        315
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 15.88577819999773,
+      "nodes": 12,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 1,
+      "scenario_index": 2036,
+      "reference_length_octile": 814.33513641,
+      "start": [
+        63,
+        482
+      ],
+      "goal": [
+        505,
+        29
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "timeout"
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 3,
+      "scenario_index": 1792,
+      "reference_length_octile": 718.62445831,
+      "start": [
+        449,
+        59
+      ],
+      "goal": [
+        158,
+        454
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.5832780000055209,
+      "nodes": 867,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 3,
+      "scenario_index": 1792,
+      "reference_length_octile": 718.62445831,
+      "start": [
+        449,
+        59
+      ],
+      "goal": [
+        158,
+        454
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.8089326000044821,
+      "nodes": 867,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 2,
+      "scenario_index": 100,
+      "reference_length_octile": 43.14213562,
+      "start": [
+        11,
+        276
+      ],
+      "goal": [
+        5,
+        315
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000903100008145,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 93383,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000502000009874,
+        "unique_nodes": 1428
+      }
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 3,
+      "scenario_index": 1792,
+      "reference_length_octile": 718.62445831,
+      "start": [
+        449,
+        59
+      ],
+      "goal": [
+        158,
+        454
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 3.3967852000059793,
+      "nodes": 124,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 1,
+      "scenario_index": 968,
+      "reference_length_octile": 384.58073578,
+      "start": [
+        179,
+        383
+      ],
+      "goal": [
+        507,
+        374
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.05626270000357181,
+      "nodes": 426,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 1,
+      "scenario_index": 968,
+      "reference_length_octile": 384.58073578,
+      "start": [
+        179,
+        383
+      ],
+      "goal": [
+        507,
+        374
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.4976786000042921,
+      "nodes": 426,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 1,
+      "scenario_index": 968,
+      "reference_length_octile": 384.58073578,
+      "start": [
+        179,
+        383
+      ],
+      "goal": [
+        507,
+        374
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 2.5879023000015877,
+      "nodes": 58,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 3,
+      "scenario_index": 1792,
+      "reference_length_octile": 718.62445831,
+      "start": [
+        449,
+        59
+      ],
+      "goal": [
+        158,
+        454
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000431200009189,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 94798,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000096199990367,
+        "unique_nodes": 1377
+      }
+    },
+    {
+      "map": "32room_000",
+      "map_file": "datasets/movingai/room/32room_000.map",
+      "group": 3,
+      "scenario_index": 1792,
+      "reference_length_octile": 718.62445831,
+      "start": [
+        449,
+        59
+      ],
+      "goal": [
+        158,
+        454
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "timeout"
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 2,
+      "scenario_index": 1760,
+      "reference_length_octile": 704.64170227,
+      "start": [
+        445,
+        111
+      ],
+      "goal": [
+        36,
+        504
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.18478910000703763,
+      "nodes": 831,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 2,
+      "scenario_index": 1760,
+      "reference_length_octile": 704.64170227,
+      "start": [
+        445,
+        111
+      ],
+      "goal": [
+        36,
+        504
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.8074422999925446,
+      "nodes": 831,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 1,
+      "scenario_index": 968,
+      "reference_length_octile": 384.58073578,
+      "start": [
+        179,
+        383
+      ],
+      "goal": [
+        507,
+        374
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000805399991805,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 46302,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000337899997248,
+        "unique_nodes": 1931
+      }
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 2,
+      "scenario_index": 1760,
+      "reference_length_octile": 704.64170227,
+      "start": [
+        445,
+        111
+      ],
+      "goal": [
+        36,
+        504
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 2.974159500008682,
+      "nodes": 124,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 1,
+      "scenario_index": 968,
+      "reference_length_octile": 384.58073578,
+      "start": [
+        179,
+        383
+      ],
+      "goal": [
+        507,
+        374
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "timeout"
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 3,
+      "scenario_index": 629,
+      "reference_length_octile": 250.52186127,
+      "start": [
+        52,
+        311
+      ],
+      "goal": [
+        149,
+        103
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.022722699999576434,
+      "nodes": 306,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 3,
+      "scenario_index": 629,
+      "reference_length_octile": 250.52186127,
+      "start": [
+        52,
+        311
+      ],
+      "goal": [
+        149,
+        103
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.21301219999440946,
+      "nodes": 306,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 3,
+      "scenario_index": 629,
+      "reference_length_octile": 250.52186127,
+      "start": [
+        52,
+        311
+      ],
+      "goal": [
+        149,
+        103
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 2.708275800003321,
+      "nodes": 39,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 3,
+      "scenario_index": 629,
+      "reference_length_octile": 250.52186127,
+      "start": [
+        52,
+        311
+      ],
+      "goal": [
+        149,
+        103
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 2.943501000001561,
+      "nodes": 76,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 3,
+      "scenario_index": 629,
+      "reference_length_octile": 250.52186127,
+      "start": [
+        52,
+        311
+      ],
+      "goal": [
+        149,
+        103
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 4.841511500009801,
+      "nodes": 41,
+      "search_diagnostics": {
+        "iterations": 33223,
+        "stop_reason": "optimize_iterations",
+        "first_solution_iteration": 31223,
+        "first_solution_s": 3.5884831000003032,
+        "total_s": 4.841155499991146,
+        "unique_nodes": 1646
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 2,
+      "scenario_index": 1760,
+      "reference_length_octile": 704.64170227,
+      "start": [
+        445,
+        111
+      ],
+      "goal": [
+        36,
+        504
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 15.00120450000395,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 41801,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000547999996343,
+        "unique_nodes": 2821
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 1,
+      "scenario_index": 434,
+      "reference_length_octile": 172.66904755,
+      "start": [
+        294,
+        490
+      ],
+      "goal": [
+        323,
+        487
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.008847600009175949,
+      "nodes": 193,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 1,
+      "scenario_index": 434,
+      "reference_length_octile": 172.66904755,
+      "start": [
+        294,
+        490
+      ],
+      "goal": [
+        323,
+        487
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.011382500000763685,
+      "nodes": 193,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "64room_000",
+      "map_file": "datasets/movingai/room/64room_000.map",
+      "group": 2,
+      "scenario_index": 1760,
+      "reference_length_octile": 704.64170227,
+      "start": [
+        445,
+        111
+      ],
+      "goal": [
+        36,
+        504
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 1,
+      "scenario_index": 434,
+      "reference_length_octile": 172.66904755,
+      "start": [
+        294,
+        490
+      ],
+      "goal": [
+        323,
+        487
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 13.076012499994249,
+      "nodes": 0,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          },
+          {
+            "requested_samples": 30000,
+            "actual_points": 30002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 1,
+      "scenario_index": 434,
+      "reference_length_octile": 172.66904755,
+      "start": [
+        294,
+        490
+      ],
+      "goal": [
+        323,
+        487
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 13.429758900005254,
+      "nodes": 0,
+      "search_diagnostics": {}
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 2,
+      "scenario_index": 6892,
+      "reference_length_octile": 2756.32207641,
+      "start": [
+        171,
+        130
+      ],
+      "goal": [
+        13,
+        165
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.5455812000000151,
+      "nodes": 3158,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 2,
+      "scenario_index": 6892,
+      "reference_length_octile": 2756.32207641,
+      "start": [
+        171,
+        130
+      ],
+      "goal": [
+        13,
+        165
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.5613720999972429,
+      "nodes": 3158,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 1,
+      "scenario_index": 434,
+      "reference_length_octile": 172.66904755,
+      "start": [
+        294,
+        490
+      ],
+      "goal": [
+        323,
+        487
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 12.823881200005417,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 200000,
+        "stop_reason": "max_iter",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 12.823714500002097,
+        "unique_nodes": 692
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 2,
+      "scenario_index": 6892,
+      "reference_length_octile": 2756.32207641,
+      "start": [
+        171,
+        130
+      ],
+      "goal": [
+        13,
+        165
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 7.587378700001864,
+      "nodes": 0,
+      "search_diagnostics": {}
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 2,
+      "scenario_index": 6892,
+      "reference_length_octile": 2756.32207641,
+      "start": [
+        171,
+        130
+      ],
+      "goal": [
+        13,
+        165
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 12.103578200010816,
+      "nodes": 0,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          },
+          {
+            "requested_samples": 30000,
+            "actual_points": 30002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 2,
+      "scenario_index": 6892,
+      "reference_length_octile": 2756.32207641,
+      "start": [
+        171,
+        130
+      ],
+      "goal": [
+        13,
+        165
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 7.5798815000016475,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 200000,
+        "stop_reason": "max_iter",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 7.579758899999433,
+        "unique_nodes": 327
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 3,
+      "scenario_index": 10055,
+      "reference_length_octile": 4020.10086364,
+      "start": [
+        197,
+        384
+      ],
+      "goal": [
+        478,
+        206
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.5985381000064081,
+      "nodes": 4594,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 3,
+      "scenario_index": 10055,
+      "reference_length_octile": 4020.10086364,
+      "start": [
+        197,
+        384
+      ],
+      "goal": [
+        478,
+        206
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.6181369999976596,
+      "nodes": 4594,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 3,
+      "scenario_index": 10055,
+      "reference_length_octile": 4020.10086364,
+      "start": [
+        197,
+        384
+      ],
+      "goal": [
+        478,
+        206
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 15.022818800003733,
+      "nodes": 0,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          },
+          {
+            "requested_samples": 30000,
+            "actual_points": 30002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      }
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 3,
+      "scenario_index": 10055,
+      "reference_length_octile": 4020.10086364,
+      "start": [
+        197,
+        384
+      ],
+      "goal": [
+        478,
+        206
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 11.34745390000171,
+      "nodes": 0,
+      "search_diagnostics": {}
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 1,
+      "scenario_index": 5353,
+      "reference_length_octile": 2141.01846923,
+      "start": [
+        469,
+        7
+      ],
+      "goal": [
+        450,
+        431
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.46439039999677334,
+      "nodes": 2456,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 1,
+      "scenario_index": 5353,
+      "reference_length_octile": 2141.01846923,
+      "start": [
+        469,
+        7
+      ],
+      "goal": [
+        450,
+        431
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.5658355000050506,
+      "nodes": 2456,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-4-0",
+      "map_file": "datasets/movingai/maze/maze512-4-0.map",
+      "group": 3,
+      "scenario_index": 10055,
+      "reference_length_octile": 4020.10086364,
+      "start": [
+        197,
+        384
+      ],
+      "goal": [
+        478,
+        206
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 10.60227259999374,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 200000,
+        "stop_reason": "max_iter",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 10.602136699992116,
+        "unique_nodes": 343
+      }
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 1,
+      "scenario_index": 5353,
+      "reference_length_octile": 2141.01846923,
+      "start": [
+        469,
+        7
+      ],
+      "goal": [
+        450,
+        431
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 4.098849300004076,
+      "nodes": 287,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 2,
+      "scenario_index": 6311,
+      "reference_length_octile": 2526.69465942,
+      "start": [
+        405,
+        112
+      ],
+      "goal": [
+        486,
+        149
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.49525849999918137,
+      "nodes": 2919,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 2,
+      "scenario_index": 6311,
+      "reference_length_octile": 2526.69465942,
+      "start": [
+        405,
+        112
+      ],
+      "goal": [
+        486,
+        149
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.5526659000024665,
+      "nodes": 2919,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 1,
+      "scenario_index": 5353,
+      "reference_length_octile": 2141.01846923,
+      "start": [
+        469,
+        7
+      ],
+      "goal": [
+        450,
+        431
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000299899998936,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 95478,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.00000290000753,
+        "unique_nodes": 1254
+      }
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 2,
+      "scenario_index": 6311,
+      "reference_length_octile": 2526.69465942,
+      "start": [
+        405,
+        112
+      ],
+      "goal": [
+        486,
+        149
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 4.093324700006633,
+      "nodes": 329,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 1,
+      "scenario_index": 5353,
+      "reference_length_octile": 2141.01846923,
+      "start": [
+        469,
+        7
+      ],
+      "goal": [
+        450,
+        431
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 3,
+      "scenario_index": 4424,
+      "reference_length_octile": 1768.91587219,
+      "start": [
+        490,
+        218
+      ],
+      "goal": [
+        94,
+        26
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.2694612000050256,
+      "nodes": 1989,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 3,
+      "scenario_index": 4424,
+      "reference_length_octile": 1768.91587219,
+      "start": [
+        490,
+        218
+      ],
+      "goal": [
+        94,
+        26
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.41474860000016633,
+      "nodes": 1989,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 2,
+      "scenario_index": 6311,
+      "reference_length_octile": 2526.69465942,
+      "start": [
+        405,
+        112
+      ],
+      "goal": [
+        486,
+        149
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000251699995715,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 148229,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000031700008549,
+        "unique_nodes": 842
+      }
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 3,
+      "scenario_index": 4424,
+      "reference_length_octile": 1768.91587219,
+      "start": [
+        490,
+        218
+      ],
+      "goal": [
+        94,
+        26
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 3.8089737000118475,
+      "nodes": 224,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 2,
+      "scenario_index": 6311,
+      "reference_length_octile": 2526.69465942,
+      "start": [
+        405,
+        112
+      ],
+      "goal": [
+        486,
+        149
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 1,
+      "scenario_index": 6208,
+      "reference_length_octile": 2483.02351989,
+      "start": [
+        35,
+        195
+      ],
+      "goal": [
+        263,
+        329
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.47260860000096727,
+      "nodes": 2757,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 3,
+      "scenario_index": 4424,
+      "reference_length_octile": 1768.91587219,
+      "start": [
+        490,
+        218
+      ],
+      "goal": [
+        94,
+        26
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000270400007139,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 165244,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000087399996119,
+        "unique_nodes": 601
+      }
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 1,
+      "scenario_index": 6208,
+      "reference_length_octile": 2483.02351989,
+      "start": [
+        35,
+        195
+      ],
+      "goal": [
+        263,
+        329
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.46224870000150986,
+      "nodes": 2757,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 1,
+      "scenario_index": 6208,
+      "reference_length_octile": 2483.02351989,
+      "start": [
+        35,
+        195
+      ],
+      "goal": [
+        263,
+        329
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 2.798847600002773,
+      "nodes": 363,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-8-0",
+      "map_file": "datasets/movingai/maze/maze512-8-0.map",
+      "group": 3,
+      "scenario_index": 4424,
+      "reference_length_octile": 1768.91587219,
+      "start": [
+        490,
+        218
+      ],
+      "goal": [
+        94,
+        26
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 23.971676799992565,
+      "nodes": 0,
+      "search_diagnostics": {}
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 2,
+      "scenario_index": 6505,
+      "reference_length_octile": 2601.98398132,
+      "start": [
+        452,
+        487
+      ],
+      "goal": [
+        108,
+        449
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.6457864999974845,
+      "nodes": 2965,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 2,
+      "scenario_index": 6505,
+      "reference_length_octile": 2601.98398132,
+      "start": [
+        452,
+        487
+      ],
+      "goal": [
+        108,
+        449
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.554223400002229,
+      "nodes": 2965,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 1,
+      "scenario_index": 6208,
+      "reference_length_octile": 2483.02351989,
+      "start": [
+        35,
+        195
+      ],
+      "goal": [
+        263,
+        329
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000448399994639,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 61252,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000078199998825,
+        "unique_nodes": 1583
+      }
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 2,
+      "scenario_index": 6505,
+      "reference_length_octile": 2601.98398132,
+      "start": [
+        452,
+        487
+      ],
+      "goal": [
+        108,
+        449
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 8.109864400001243,
+      "nodes": 0,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          },
+          {
+            "requested_samples": 30000,
+            "actual_points": 30002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      }
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 1,
+      "scenario_index": 6208,
+      "reference_length_octile": 2483.02351989,
+      "start": [
+        35,
+        195
+      ],
+      "goal": [
+        263,
+        329
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 3,
+      "scenario_index": 4442,
+      "reference_length_octile": 1777.19509277,
+      "start": [
+        471,
+        262
+      ],
+      "goal": [
+        73,
+        411
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.6535447999922326,
+      "nodes": 2050,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 3,
+      "scenario_index": 4442,
+      "reference_length_octile": 1777.19509277,
+      "start": [
+        471,
+        262
+      ],
+      "goal": [
+        73,
+        411
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.6849650999938603,
+      "nodes": 2050,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 2,
+      "scenario_index": 6505,
+      "reference_length_octile": 2601.98398132,
+      "start": [
+        452,
+        487
+      ],
+      "goal": [
+        108,
+        449
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 15.02433870000823,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 62522,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.023902700006147,
+        "unique_nodes": 1590
+      }
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 3,
+      "scenario_index": 4442,
+      "reference_length_octile": 1777.19509277,
+      "start": [
+        471,
+        262
+      ],
+      "goal": [
+        73,
+        411
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 3.899491799995303,
+      "nodes": 265,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 2,
+      "scenario_index": 6505,
+      "reference_length_octile": 2601.98398132,
+      "start": [
+        452,
+        487
+      ],
+      "goal": [
+        108,
+        449
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 1,
+      "scenario_index": 1804,
+      "reference_length_octile": 722.85995636,
+      "start": [
+        29,
+        323
+      ],
+      "goal": [
+        8,
+        74
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.20356439999886788,
+      "nodes": 817,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 1,
+      "scenario_index": 1804,
+      "reference_length_octile": 722.85995636,
+      "start": [
+        29,
+        323
+      ],
+      "goal": [
+        8,
+        74
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.3377376999997068,
+      "nodes": 817,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 1,
+      "scenario_index": 1804,
+      "reference_length_octile": 722.85995636,
+      "start": [
+        29,
+        323
+      ],
+      "goal": [
+        8,
+        74
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 2.7572960999968927,
+      "nodes": 100,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 3,
+      "scenario_index": 4442,
+      "reference_length_octile": 1777.19509277,
+      "start": [
+        471,
+        262
+      ],
+      "goal": [
+        73,
+        411
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 15.00694609999482,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 57833,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.006566700001713,
+        "unique_nodes": 1956
+      }
+    },
+    {
+      "map": "maze512-16-0",
+      "map_file": "datasets/movingai/maze/maze512-16-0.map",
+      "group": 3,
+      "scenario_index": 4442,
+      "reference_length_octile": 1777.19509277,
+      "start": [
+        471,
+        262
+      ],
+      "goal": [
+        73,
+        411
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "timeout"
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 2,
+      "scenario_index": 1956,
+      "reference_length_octile": 781.64170227,
+      "start": [
+        220,
+        304
+      ],
+      "goal": [
+        230,
+        393
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.18324139999458566,
+      "nodes": 908,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 2,
+      "scenario_index": 1956,
+      "reference_length_octile": 781.64170227,
+      "start": [
+        220,
+        304
+      ],
+      "goal": [
+        230,
+        393
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.3126797000004444,
+      "nodes": 908,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 1,
+      "scenario_index": 1804,
+      "reference_length_octile": 722.85995636,
+      "start": [
+        29,
+        323
+      ],
+      "goal": [
+        8,
+        74
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 15.00076560000889,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 26189,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000029300004826,
+        "unique_nodes": 3311
+      }
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 2,
+      "scenario_index": 1956,
+      "reference_length_octile": 781.64170227,
+      "start": [
+        220,
+        304
+      ],
+      "goal": [
+        230,
+        393
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 3.328709200010053,
+      "nodes": 121,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 1,
+      "scenario_index": 1804,
+      "reference_length_octile": 722.85995636,
+      "start": [
+        29,
+        323
+      ],
+      "goal": [
+        8,
+        74
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 24.409078099997714,
+      "nodes": 202,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 3,
+      "scenario_index": 3728,
+      "reference_length_octile": 1491.26616058,
+      "start": [
+        160,
+        213
+      ],
+      "goal": [
+        361,
+        260
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.573374600004172,
+      "nodes": 1767,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 3,
+      "scenario_index": 3728,
+      "reference_length_octile": 1491.26616058,
+      "start": [
+        160,
+        213
+      ],
+      "goal": [
+        361,
+        260
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.5667207999940729,
+      "nodes": 1767,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 3,
+      "scenario_index": 3728,
+      "reference_length_octile": 1491.26616058,
+      "start": [
+        160,
+        213
+      ],
+      "goal": [
+        361,
+        260
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 2.63302009999461,
+      "nodes": 225,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 2,
+      "scenario_index": 1956,
+      "reference_length_octile": 781.64170227,
+      "start": [
+        220,
+        304
+      ],
+      "goal": [
+        230,
+        393
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 15.003728499999852,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 18761,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.003088400000706,
+        "unique_nodes": 3462
+      }
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 2,
+      "scenario_index": 1956,
+      "reference_length_octile": 781.64170227,
+      "start": [
+        220,
+        304
+      ],
+      "goal": [
+        230,
+        393
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 1,
+      "scenario_index": 306,
+      "reference_length_octile": 123.33809509,
+      "start": [
+        100,
+        14
+      ],
+      "goal": [
+        180,
+        96
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.016053500003181398,
+      "nodes": 163,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 1,
+      "scenario_index": 306,
+      "reference_length_octile": 123.33809509,
+      "start": [
+        100,
+        14
+      ],
+      "goal": [
+        180,
+        96
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.07019309999304824,
+      "nodes": 163,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 3,
+      "scenario_index": 3728,
+      "reference_length_octile": 1491.26616058,
+      "start": [
+        160,
+        213
+      ],
+      "goal": [
+        361,
+        260
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 15.011322099991958,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 18861,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.010606499999994,
+        "unique_nodes": 3448
+      }
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 1,
+      "scenario_index": 306,
+      "reference_length_octile": 123.33809509,
+      "start": [
+        100,
+        14
+      ],
+      "goal": [
+        180,
+        96
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.0011573999945539981,
+      "nodes": 30,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 1,
+      "scenario_index": 306,
+      "reference_length_octile": 123.33809509,
+      "start": [
+        100,
+        14
+      ],
+      "goal": [
+        180,
+        96
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.30324239999754354,
+      "nodes": 24,
+      "search_diagnostics": {
+        "iterations": 2081,
+        "stop_reason": "optimize_iterations",
+        "first_solution_iteration": 81,
+        "first_solution_s": 0.0013572000025305897,
+        "total_s": 0.3030460000009043,
+        "unique_nodes": 982
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 2,
+      "scenario_index": 1340,
+      "reference_length_octile": 537.38181762,
+      "start": [
+        251,
+        460
+      ],
+      "goal": [
+        507,
+        31
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.27817650001088623,
+      "nodes": 686,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 1,
+      "scenario_index": 306,
+      "reference_length_octile": 123.33809509,
+      "start": [
+        100,
+        14
+      ],
+      "goal": [
+        180,
+        96
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 3.975305899992236,
+      "nodes": 15,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 2,
+      "scenario_index": 1340,
+      "reference_length_octile": 537.38181762,
+      "start": [
+        251,
+        460
+      ],
+      "goal": [
+        507,
+        31
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.8095901999913622,
+      "nodes": 686,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 2,
+      "scenario_index": 1340,
+      "reference_length_octile": 537.38181762,
+      "start": [
+        251,
+        460
+      ],
+      "goal": [
+        507,
+        31
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.41657809999014717,
+      "nodes": 131,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 2,
+      "scenario_index": 1340,
+      "reference_length_octile": 537.38181762,
+      "start": [
+        251,
+        460
+      ],
+      "goal": [
+        507,
+        31
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 1.8844303999940166,
+      "nodes": 96,
+      "search_diagnostics": {
+        "iterations": 4863,
+        "stop_reason": "optimize_iterations",
+        "first_solution_iteration": 2863,
+        "first_solution_s": 0.6145859000098426,
+        "total_s": 1.8840545999992173,
+        "unique_nodes": 2476
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 2,
+      "scenario_index": 1340,
+      "reference_length_octile": 537.38181762,
+      "start": [
+        251,
+        460
+      ],
+      "goal": [
+        507,
+        31
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 4.270898100003251,
+      "nodes": 62,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 3,
+      "scenario_index": 1070,
+      "reference_length_octile": 428.76955261,
+      "start": [
+        265,
+        459
+      ],
+      "goal": [
+        269,
+        41
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.021628899994539097,
+      "nodes": 445,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 3,
+      "scenario_index": 1070,
+      "reference_length_octile": 428.76955261,
+      "start": [
+        265,
+        459
+      ],
+      "goal": [
+        269,
+        41
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.5165712999878451,
+      "nodes": 445,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 3,
+      "scenario_index": 1070,
+      "reference_length_octile": 428.76955261,
+      "start": [
+        265,
+        459
+      ],
+      "goal": [
+        269,
+        41
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.09731830000237096,
+      "nodes": 123,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 3,
+      "scenario_index": 1070,
+      "reference_length_octile": 428.76955261,
+      "start": [
+        265,
+        459
+      ],
+      "goal": [
+        269,
+        41
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.909584699998959,
+      "nodes": 91,
+      "search_diagnostics": {
+        "iterations": 3379,
+        "stop_reason": "optimize_iterations",
+        "first_solution_iteration": 1379,
+        "first_solution_s": 0.15287330000137445,
+        "total_s": 0.9092550000059418,
+        "unique_nodes": 1660
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "maze512-32-0",
+      "map_file": "datasets/movingai/maze/maze512-32-0.map",
+      "group": 3,
+      "scenario_index": 3728,
+      "reference_length_octile": 1491.26616058,
+      "start": [
+        160,
+        213
+      ],
+      "goal": [
+        361,
+        260
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 1,
+      "scenario_index": 1157,
+      "reference_length_octile": 462.01428528,
+      "start": [
+        368,
+        464
+      ],
+      "goal": [
+        83,
+        177
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.12900169999920763,
+      "nodes": 575,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 1,
+      "scenario_index": 1157,
+      "reference_length_octile": 462.01428528,
+      "start": [
+        368,
+        464
+      ],
+      "goal": [
+        83,
+        177
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.5772346000012476,
+      "nodes": 575,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-10-0",
+      "map_file": "datasets/movingai/random/random512-10-0.map",
+      "group": 3,
+      "scenario_index": 1070,
+      "reference_length_octile": 428.76955261,
+      "start": [
+        265,
+        459
+      ],
+      "goal": [
+        269,
+        41
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 4.772811900009401,
+      "nodes": 54,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 1,
+      "scenario_index": 1157,
+      "reference_length_octile": 462.01428528,
+      "start": [
+        368,
+        464
+      ],
+      "goal": [
+        83,
+        177
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 4.986204600005294,
+      "nodes": 53,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 2,
+      "scenario_index": 432,
+      "reference_length_octile": 172.09545441,
+      "start": [
+        411,
+        3
+      ],
+      "goal": [
+        485,
+        138
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.01306270000350196,
+      "nodes": 210,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 2,
+      "scenario_index": 432,
+      "reference_length_octile": 172.09545441,
+      "start": [
+        411,
+        3
+      ],
+      "goal": [
+        485,
+        138
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.08046199999807868,
+      "nodes": 210,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 1,
+      "scenario_index": 1157,
+      "reference_length_octile": 462.01428528,
+      "start": [
+        368,
+        464
+      ],
+      "goal": [
+        83,
+        177
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 9.097928500006674,
+      "nodes": 122,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 2,
+      "scenario_index": 432,
+      "reference_length_octile": 172.09545441,
+      "start": [
+        411,
+        3
+      ],
+      "goal": [
+        485,
+        138
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 3.8905605000036303,
+      "nodes": 20,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 1,
+      "scenario_index": 1157,
+      "reference_length_octile": 462.01428528,
+      "start": [
+        368,
+        464
+      ],
+      "goal": [
+        83,
+        177
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 15.907870800001547,
+      "nodes": 97,
+      "search_diagnostics": {
+        "iterations": 19745,
+        "stop_reason": "optimize_time",
+        "first_solution_iteration": 19024,
+        "first_solution_s": 13.906500899989624,
+        "total_s": 15.906940599990776,
+        "unique_nodes": 4422
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 3,
+      "scenario_index": 1812,
+      "reference_length_octile": 727.30569915,
+      "start": [
+        465,
+        471
+      ],
+      "goal": [
+        23,
+        0
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.3675109000032535,
+      "nodes": 914,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 3,
+      "scenario_index": 1812,
+      "reference_length_octile": 727.30569915,
+      "start": [
+        465,
+        471
+      ],
+      "goal": [
+        23,
+        0
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.6141377000021748,
+      "nodes": 914,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 3,
+      "scenario_index": 1812,
+      "reference_length_octile": 727.30569915,
+      "start": [
+        465,
+        471
+      ],
+      "goal": [
+        23,
+        0
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 4.214931199996499,
+      "nodes": 84,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 2,
+      "scenario_index": 432,
+      "reference_length_octile": 172.09545441,
+      "start": [
+        411,
+        3
+      ],
+      "goal": [
+        485,
+        138
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 15.00232369999867,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 15867,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.001369100005832,
+        "unique_nodes": 4344
+      }
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 2,
+      "scenario_index": 432,
+      "reference_length_octile": 172.09545441,
+      "start": [
+        411,
+        3
+      ],
+      "goal": [
+        485,
+        138
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 18.23645349999424,
+      "nodes": 44,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 1,
+      "scenario_index": 1504,
+      "reference_length_octile": 603.97770538,
+      "start": [
+        265,
+        511
+      ],
+      "goal": [
+        214,
+        1
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.09446849999949336,
+      "nodes": 660,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 1,
+      "scenario_index": 1504,
+      "reference_length_octile": 603.97770538,
+      "start": [
+        265,
+        511
+      ],
+      "goal": [
+        214,
+        1
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.47308999999950174,
+      "nodes": 660,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 1,
+      "scenario_index": 1504,
+      "reference_length_octile": 603.97770538,
+      "start": [
+        265,
+        511
+      ],
+      "goal": [
+        214,
+        1
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 3.457764999999199,
+      "nodes": 95,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 3,
+      "scenario_index": 1812,
+      "reference_length_octile": 727.30569915,
+      "start": [
+        465,
+        471
+      ],
+      "goal": [
+        23,
+        0
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 15.002309999996214,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 16594,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.001520899997558,
+        "unique_nodes": 4320
+      }
+    },
+    {
+      "map": "random512-20-0",
+      "map_file": "datasets/movingai/random/random512-20-0.map",
+      "group": 3,
+      "scenario_index": 1812,
+      "reference_length_octile": 727.30569915,
+      "start": [
+        465,
+        471
+      ],
+      "goal": [
+        23,
+        0
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 2,
+      "scenario_index": 791,
+      "reference_length_octile": 318.16652222,
+      "start": [
+        250,
+        67
+      ],
+      "goal": [
+        4,
+        141
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.030917299998691306,
+      "nodes": 353,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 2,
+      "scenario_index": 791,
+      "reference_length_octile": 318.16652222,
+      "start": [
+        250,
+        67
+      ],
+      "goal": [
+        4,
+        141
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.24329020000004675,
+      "nodes": 353,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 1,
+      "scenario_index": 1504,
+      "reference_length_octile": 603.97770538,
+      "start": [
+        265,
+        511
+      ],
+      "goal": [
+        214,
+        1
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 15.001796299999114,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 73744,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.001065400007064,
+        "unique_nodes": 2200
+      }
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 2,
+      "scenario_index": 791,
+      "reference_length_octile": 318.16652222,
+      "start": [
+        250,
+        67
+      ],
+      "goal": [
+        4,
+        141
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 4.006169700005557,
+      "nodes": 48,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 1,
+      "scenario_index": 1504,
+      "reference_length_octile": 603.97770538,
+      "start": [
+        265,
+        511
+      ],
+      "goal": [
+        214,
+        1
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 3,
+      "scenario_index": 1616,
+      "reference_length_octile": 645.37467499,
+      "start": [
+        314,
+        487
+      ],
+      "goal": [
+        92,
+        4
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.1307991000066977,
+      "nodes": 734,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 3,
+      "scenario_index": 1616,
+      "reference_length_octile": 645.37467499,
+      "start": [
+        314,
+        487
+      ],
+      "goal": [
+        92,
+        4
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.5418051000015112,
+      "nodes": 734,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 3,
+      "scenario_index": 1616,
+      "reference_length_octile": 645.37467499,
+      "start": [
+        314,
+        487
+      ],
+      "goal": [
+        92,
+        4
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 3.710505600000033,
+      "nodes": 84,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 2,
+      "scenario_index": 791,
+      "reference_length_octile": 318.16652222,
+      "start": [
+        250,
+        67
+      ],
+      "goal": [
+        4,
+        141
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000835599988932,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 71383,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.00049890000082,
+        "unique_nodes": 1628
+      }
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 2,
+      "scenario_index": 791,
+      "reference_length_octile": 318.16652222,
+      "start": [
+        250,
+        67
+      ],
+      "goal": [
+        4,
+        141
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 1,
+      "scenario_index": 1969,
+      "reference_length_octile": 784.119841,
+      "start": [
+        123,
+        359
+      ],
+      "goal": [
+        402,
+        347
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.1068502999987686,
+      "nodes": 854,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 1,
+      "scenario_index": 1969,
+      "reference_length_octile": 784.119841,
+      "start": [
+        123,
+        359
+      ],
+      "goal": [
+        402,
+        347
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 0.1836273000080837,
+      "nodes": 854,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 3,
+      "scenario_index": 1616,
+      "reference_length_octile": 645.37467499,
+      "start": [
+        314,
+        487
+      ],
+      "goal": [
+        92,
+        4
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000818899992737,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 66046,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.00028399999428,
+        "unique_nodes": 2241
+      }
+    },
+    {
+      "map": "random512-30-0",
+      "map_file": "datasets/movingai/random/random512-30-0.map",
+      "group": 3,
+      "scenario_index": 1616,
+      "reference_length_octile": 645.37467499,
+      "start": [
+        314,
+        487
+      ],
+      "goal": [
+        92,
+        4
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 1,
+      "scenario_index": 1969,
+      "reference_length_octile": 784.119841,
+      "start": [
+        123,
+        359
+      ],
+      "goal": [
+        402,
+        347
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 43,
+      "outcome": "success",
+      "planning_s": 13.488456799997948,
+      "nodes": 82,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          },
+          {
+            "requested_samples": 30000,
+            "actual_points": 30002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 2,
+      "scenario_index": 1192,
+      "reference_length_octile": 476.99494934,
+      "start": [
+        187,
+        239
+      ],
+      "goal": [
+        375,
+        369
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.045206499999039806,
+      "nodes": 517,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 2,
+      "scenario_index": 1192,
+      "reference_length_octile": 476.99494934,
+      "start": [
+        187,
+        239
+      ],
+      "goal": [
+        375,
+        369
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 0.19666090000828262,
+      "nodes": 517,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 1,
+      "scenario_index": 1969,
+      "reference_length_octile": 784.119841,
+      "start": [
+        123,
+        359
+      ],
+      "goal": [
+        402,
+        347
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 43,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000539200002095,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 134526,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000271800003247,
+        "unique_nodes": 1589
+      }
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 2,
+      "scenario_index": 1192,
+      "reference_length_octile": 476.99494934,
+      "start": [
+        187,
+        239
+      ],
+      "goal": [
+        375,
+        369
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 44,
+      "outcome": "success",
+      "planning_s": 13.236288900006912,
+      "nodes": 62,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": false,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          },
+          {
+            "requested_samples": 30000,
+            "actual_points": 30002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 1,
+      "scenario_index": 1969,
+      "reference_length_octile": 784.119841,
+      "start": [
+        123,
+        359
+      ],
+      "goal": [
+        402,
+        347
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 43,
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 3,
+      "scenario_index": 3005,
+      "reference_length_octile": 1200.73001404,
+      "start": [
+        494,
+        320
+      ],
+      "goal": [
+        9,
+        454
+      ],
+      "algorithm": "astar",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.2889619000052335,
+      "nodes": 1306,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 3,
+      "scenario_index": 3005,
+      "reference_length_octile": 1200.73001404,
+      "start": [
+        494,
+        320
+      ],
+      "goal": [
+        9,
+        454
+      ],
+      "algorithm": "dijkstra",
+      "parameters": {},
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 0.2945577000064077,
+      "nodes": 1306,
+      "search_diagnostics": {},
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 3,
+      "scenario_index": 3005,
+      "reference_length_octile": 1200.73001404,
+      "start": [
+        494,
+        320
+      ],
+      "goal": [
+        9,
+        454
+      ],
+      "algorithm": "prm",
+      "parameters": {
+        "num_samples": 20000,
+        "k_neighbors": 15,
+        "max_edge_len": 15,
+        "retry_num_samples": 30000
+      },
+      "seed": 45,
+      "outcome": "success",
+      "planning_s": 3.896262599999318,
+      "nodes": 167,
+      "search_diagnostics": {
+        "attempts": [
+          {
+            "requested_samples": 20000,
+            "actual_points": 20002,
+            "found": true,
+            "k_neighbors": 15,
+            "max_edge_len": 15
+          }
+        ]
+      },
+      "postprocess": "success",
+      "errors": []
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 2,
+      "scenario_index": 1192,
+      "reference_length_octile": 476.99494934,
+      "start": [
+        187,
+        239
+      ],
+      "goal": [
+        375,
+        369
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 44,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000397000010707,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 122092,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000049199996283,
+        "unique_nodes": 1443
+      }
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 2,
+      "scenario_index": 1192,
+      "reference_length_octile": 476.99494934,
+      "start": [
+        187,
+        239
+      ],
+      "goal": [
+        375,
+        369
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 44,
+      "outcome": "timeout"
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 3,
+      "scenario_index": 3005,
+      "reference_length_octile": 1200.73001404,
+      "start": [
+        494,
+        320
+      ],
+      "goal": [
+        9,
+        454
+      ],
+      "algorithm": "rrt_star",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "search_radius": 10.0,
+        "adaptive_step": false,
+        "optimize_iterations": 2000,
+        "search_time_s": 15.0,
+        "optimize_time_s": 2.0
+      },
+      "seed": 45,
+      "outcome": "NO_PATH",
+      "planning_s": 15.000494899999467,
+      "nodes": 0,
+      "search_diagnostics": {
+        "iterations": 168550,
+        "stop_reason": "search_time",
+        "first_solution_iteration": null,
+        "first_solution_s": null,
+        "total_s": 15.000126300001284,
+        "unique_nodes": 1482
+      }
+    },
+    {
+      "map": "random512-40-0",
+      "map_file": "datasets/movingai/random/random512-40-0.map",
+      "group": 3,
+      "scenario_index": 3005,
+      "reference_length_octile": 1200.73001404,
+      "start": [
+        494,
+        320
+      ],
+      "goal": [
+        9,
+        454
+      ],
+      "algorithm": "rrt",
+      "parameters": {
+        "max_iter": 200000,
+        "step_size": 5,
+        "goal_sample_rate": 0.05,
+        "adaptive_step": false
+      },
+      "seed": 45,
+      "outcome": "timeout"
+    }
+  ],
+  "complete": true,
+  "all_passed": false
+}

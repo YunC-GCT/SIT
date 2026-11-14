@@ -1,0 +1,90 @@
+{
+  "map": "8room_000",
+  "scenario": 199,
+  "start": [
+    197,
+    315
+  ],
+  "goal": [
+    171,
+    260
+  ],
+  "algorithm": "prm",
+  "params": {
+    "num_samples": 20000,
+    "k_neighbors": 150
+  },
+  "seed": 42,
+  "found": true,
+  "valid": true,
+  "nodes": 13,
+  "elapsed_s": 132.2845,
+  "samples": 15097,
+  "start_degree": 5,
+  "goal_degree": 5,
+  "start_component": 14173,
+  "postprocess": {
+    "default": {
+      "status": "success",
+      "errors": []
+    },
+    "unsmoothed": {
+      "status": "success",
+      "errors": []
+    }
+  },
+  "path": [
+    [
+      197,
+      315
+    ],
+    [
+      179,
+      317
+    ],
+    [
+      179,
+      307
+    ],
+    [
+      176,
+      303
+    ],
+    [
+      156,
+      298
+    ],
+    [
+      157,
+      289
+    ],
+    [
+      159,
+      268
+    ],
+    [
+      154,
+      265
+    ],
+    [
+      163,
+      265
+    ],
+    [
+      166,
+      269
+    ],
+    [
+      175,
+      266
+    ],
+    [
+      175,
+      257
+    ],
+    [
+      171,
+      260
+    ]
+  ]
+}
