@@ -1,5 +1,5 @@
 import heapq
-from ..planner_base import GlobalPlanner, Path
+from ..planner_base import GlobalPlanner
 
 def manhattan_distance(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])

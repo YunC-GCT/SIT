@@ -1,0 +1,2018 @@
+{
+  "schema_version": "1.0",
+  "status": "success",
+  "module": "path_postprocess",
+  "run_id": "diag-rrt-nosmooth",
+  "created_at": "2026-11-03T03:43:31.667115+00:00",
+  "inputs": {
+    "map_result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-rrt-nosmooth\\map_pipeline\\result.json",
+    "planner_result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-rrt-nosmooth\\path_planner\\result.json"
+  },
+  "outputs": {
+    "raw_path": {
+      "points": {
+        "values": [
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            7,
+            6
+          ],
+          [
+            10,
+            10
+          ],
+          [
+            12,
+            15
+          ],
+          [
+            11,
+            20
+          ],
+          [
+            15,
+            22
+          ],
+          [
+            14,
+            27
+          ],
+          [
+            16,
+            32
+          ],
+          [
+            18,
+            35
+          ],
+          [
+            23,
+            37
+          ],
+          [
+            26,
+            36
+          ],
+          [
+            31,
+            36
+          ],
+          [
+            36,
+            37
+          ],
+          [
+            37,
+            37
+          ]
+        ],
+        "shape": [
+          15,
+          2
+        ],
+        "dtype": "int",
+        "units": {
+          "coordinates": "grid_cell"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      "coordinate_system": {
+        "axes": [
+          "row",
+          "col"
+        ],
+        "row": "increases_south",
+        "col": "increases_east",
+        "unit": "grid_cell"
+      }
+    },
+    "smoothed_path": {
+      "points": {
+        "values": [
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            7,
+            6
+          ],
+          [
+            10,
+            10
+          ],
+          [
+            12,
+            15
+          ],
+          [
+            11,
+            20
+          ],
+          [
+            15,
+            22
+          ],
+          [
+            14,
+            27
+          ],
+          [
+            16,
+            32
+          ],
+          [
+            18,
+            35
+          ],
+          [
+            23,
+            37
+          ],
+          [
+            26,
+            36
+          ],
+          [
+            31,
+            36
+          ],
+          [
+            36,
+            37
+          ],
+          [
+            37,
+            37
+          ]
+        ],
+        "shape": [
+          15,
+          2
+        ],
+        "dtype": "int",
+        "units": {
+          "coordinates": "grid_cell"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      "coordinate_system": {
+        "axes": [
+          "row",
+          "col"
+        ],
+        "row": "increases_south",
+        "col": "increases_east",
+        "unit": "grid_cell"
+      }
+    },
+    "segments": [
+      {
+        "index": 0,
+        "start": {
+          "row": 2,
+          "col": 2
+        },
+        "end": {
+          "row": 2,
+          "col": 4
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 2
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": 90.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.7853981633974483,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 1,
+        "start": {
+          "row": 2,
+          "col": 4
+        },
+        "end": {
+          "row": 2,
+          "col": 6
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 2
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.0,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 2,
+        "start": {
+          "row": 2,
+          "col": 6
+        },
+        "end": {
+          "row": 2,
+          "col": 7
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 1
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.0,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 3,
+        "start": {
+          "row": 2,
+          "col": 7
+        },
+        "end": {
+          "row": 4,
+          "col": 7
+        },
+        "delta": {
+          "d_row": 2,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 90.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.7853981633974483,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 4,
+        "start": {
+          "row": 4,
+          "col": 7
+        },
+        "end": {
+          "row": 5,
+          "col": 6
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": -1
+        },
+        "direction_deg": 225.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 5,
+        "start": {
+          "row": 5,
+          "col": 6
+        },
+        "end": {
+          "row": 7,
+          "col": 6
+        },
+        "delta": {
+          "d_row": 2,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.392699081698724,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 6,
+        "start": {
+          "row": 7,
+          "col": 6
+        },
+        "end": {
+          "row": 8,
+          "col": 7
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 7,
+        "start": {
+          "row": 8,
+          "col": 7
+        },
+        "end": {
+          "row": 8,
+          "col": 8
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 1
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 8,
+        "start": {
+          "row": 8,
+          "col": 8
+        },
+        "end": {
+          "row": 9,
+          "col": 9
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 9,
+        "start": {
+          "row": 9,
+          "col": 9
+        },
+        "end": {
+          "row": 10,
+          "col": 10
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.4142135623730951,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 10,
+        "start": {
+          "row": 10,
+          "col": 10
+        },
+        "end": {
+          "row": 10,
+          "col": 11
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 1
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 11,
+        "start": {
+          "row": 10,
+          "col": 11
+        },
+        "end": {
+          "row": 11,
+          "col": 12
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 12,
+        "start": {
+          "row": 11,
+          "col": 12
+        },
+        "end": {
+          "row": 11,
+          "col": 13
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 1
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 13,
+        "start": {
+          "row": 11,
+          "col": 13
+        },
+        "end": {
+          "row": 12,
+          "col": 14
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 14,
+        "start": {
+          "row": 12,
+          "col": 14
+        },
+        "end": {
+          "row": 12,
+          "col": 15
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 1
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 15,
+        "start": {
+          "row": 12,
+          "col": 15
+        },
+        "end": {
+          "row": 12,
+          "col": 17
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 2
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.0,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 16,
+        "start": {
+          "row": 12,
+          "col": 17
+        },
+        "end": {
+          "row": 11,
+          "col": 18
+        },
+        "delta": {
+          "d_row": -1,
+          "d_col": 1
+        },
+        "direction_deg": 45.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 17,
+        "start": {
+          "row": 11,
+          "col": 18
+        },
+        "end": {
+          "row": 11,
+          "col": 20
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 2
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.392699081698724,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 18,
+        "start": {
+          "row": 11,
+          "col": 20
+        },
+        "end": {
+          "row": 12,
+          "col": 20
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 90.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.7853981633974483,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 19,
+        "start": {
+          "row": 12,
+          "col": 20
+        },
+        "end": {
+          "row": 13,
+          "col": 21
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 20,
+        "start": {
+          "row": 13,
+          "col": 21
+        },
+        "end": {
+          "row": 14,
+          "col": 21
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 21,
+        "start": {
+          "row": 14,
+          "col": 21
+        },
+        "end": {
+          "row": 15,
+          "col": 22
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 22,
+        "start": {
+          "row": 15,
+          "col": 22
+        },
+        "end": {
+          "row": 15,
+          "col": 24
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 2
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.392699081698724,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 23,
+        "start": {
+          "row": 15,
+          "col": 24
+        },
+        "end": {
+          "row": 14,
+          "col": 25
+        },
+        "delta": {
+          "d_row": -1,
+          "d_col": 1
+        },
+        "direction_deg": 45.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 24,
+        "start": {
+          "row": 14,
+          "col": 25
+        },
+        "end": {
+          "row": 14,
+          "col": 27
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 2
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.392699081698724,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 25,
+        "start": {
+          "row": 14,
+          "col": 27
+        },
+        "end": {
+          "row": 14,
+          "col": 28
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 1
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.0,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 26,
+        "start": {
+          "row": 14,
+          "col": 28
+        },
+        "end": {
+          "row": 15,
+          "col": 29
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 27,
+        "start": {
+          "row": 15,
+          "col": 29
+        },
+        "end": {
+          "row": 15,
+          "col": 30
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 1
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 28,
+        "start": {
+          "row": 15,
+          "col": 30
+        },
+        "end": {
+          "row": 16,
+          "col": 31
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 29,
+        "start": {
+          "row": 16,
+          "col": 31
+        },
+        "end": {
+          "row": 16,
+          "col": 32
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 1
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 30,
+        "start": {
+          "row": 16,
+          "col": 32
+        },
+        "end": {
+          "row": 17,
+          "col": 33
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 31,
+        "start": {
+          "row": 17,
+          "col": 33
+        },
+        "end": {
+          "row": 17,
+          "col": 34
+        },
+        "delta": {
+          "d_row": 0,
+          "d_col": 1
+        },
+        "direction_deg": 90.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 32,
+        "start": {
+          "row": 17,
+          "col": 34
+        },
+        "end": {
+          "row": 18,
+          "col": 35
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 33,
+        "start": {
+          "row": 18,
+          "col": 35
+        },
+        "end": {
+          "row": 19,
+          "col": 35
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 34,
+        "start": {
+          "row": 19,
+          "col": 35
+        },
+        "end": {
+          "row": 20,
+          "col": 36
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 35,
+        "start": {
+          "row": 20,
+          "col": 36
+        },
+        "end": {
+          "row": 21,
+          "col": 36
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 36,
+        "start": {
+          "row": 21,
+          "col": 36
+        },
+        "end": {
+          "row": 22,
+          "col": 37
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 37,
+        "start": {
+          "row": 22,
+          "col": 37
+        },
+        "end": {
+          "row": 23,
+          "col": 37
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 38,
+        "start": {
+          "row": 23,
+          "col": 37
+        },
+        "end": {
+          "row": 24,
+          "col": 37
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.0,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 39,
+        "start": {
+          "row": 24,
+          "col": 37
+        },
+        "end": {
+          "row": 25,
+          "col": 36
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": -1
+        },
+        "direction_deg": 225.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 40,
+        "start": {
+          "row": 25,
+          "col": 36
+        },
+        "end": {
+          "row": 26,
+          "col": 36
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.3926990816987241,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 41,
+        "start": {
+          "row": 26,
+          "col": 36
+        },
+        "end": {
+          "row": 28,
+          "col": 36
+        },
+        "delta": {
+          "d_row": 2,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.0,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 42,
+        "start": {
+          "row": 28,
+          "col": 36
+        },
+        "end": {
+          "row": 30,
+          "col": 36
+        },
+        "delta": {
+          "d_row": 2,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.0,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 43,
+        "start": {
+          "row": 30,
+          "col": 36
+        },
+        "end": {
+          "row": 31,
+          "col": 36
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.0,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 44,
+        "start": {
+          "row": 31,
+          "col": 36
+        },
+        "end": {
+          "row": 33,
+          "col": 36
+        },
+        "delta": {
+          "d_row": 2,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.0,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 45,
+        "start": {
+          "row": 33,
+          "col": 36
+        },
+        "end": {
+          "row": 34,
+          "col": 37
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 1
+        },
+        "direction_deg": 135.0,
+        "turn_angle_deg": -45.0,
+        "grid_distance": 1.4142135623730951,
+        "distance_m": 0.4242640687119285,
+        "estimated_time_s": 1.8069126440718193,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 46,
+        "start": {
+          "row": 34,
+          "col": 37
+        },
+        "end": {
+          "row": 36,
+          "col": 37
+        },
+        "delta": {
+          "d_row": 2,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 45.0,
+        "grid_distance": 2.0,
+        "distance_m": 0.6,
+        "estimated_time_s": 2.392699081698724,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      {
+        "index": 47,
+        "start": {
+          "row": 36,
+          "col": 37
+        },
+        "end": {
+          "row": 37,
+          "col": 37
+        },
+        "delta": {
+          "d_row": 1,
+          "d_col": 0
+        },
+        "direction_deg": 180.0,
+        "turn_angle_deg": 0.0,
+        "grid_distance": 1.0,
+        "distance_m": 0.3,
+        "estimated_time_s": 1.0,
+        "motion_type": "turn",
+        "units": {
+          "direction_deg": "deg",
+          "turn_angle_deg": "deg",
+          "grid_distance": "grid_cell",
+          "distance_m": "m",
+          "estimated_time_s": "s"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      }
+    ],
+    "smoothing": {
+      "method": "none",
+      "applied": false,
+      "fallback": false,
+      "sample_spacing_grid": 0.25
+    },
+    "metrics": {
+      "values": {
+        "raw_node_count": 15,
+        "raw_path_length_grid": 63.7915373664066,
+        "raw_path_length_m": 19.13746120992198,
+        "smoothed_node_count": 15,
+        "smoothed_path_length_grid": 63.7915373664066,
+        "smoothed_path_length_m": 19.13746120992198,
+        "segment_count": 48,
+        "estimated_time_s": 83.16380739066467,
+        "smoothing_fallback": false
+      },
+      "units": {
+        "raw_node_count": "count",
+        "raw_path_length_grid": "grid_cell",
+        "raw_path_length_m": "m",
+        "smoothed_node_count": "count",
+        "smoothed_path_length_grid": "grid_cell",
+        "smoothed_path_length_m": "m",
+        "segment_count": "count",
+        "estimated_time_s": "s",
+        "smoothing_fallback": "boolean"
+      }
+    }
+  },
+  "parameters": {
+    "smooth": false,
+    "sample_spacing_grid": 0.25,
+    "max_segment_length_grid": 2.0,
+    "move_speed_m_s": 0.3,
+    "turn_speed_rad_s": 2.0,
+    "initial_heading": "north"
+  },
+  "logs": [
+    "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-rrt-nosmooth\\path_postprocess\\module.log"
+  ],
+  "errors": [],
+  "metadata": {}
+}

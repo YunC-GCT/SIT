@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "run_id": "diag-astar-nosmooth",
+  "created_at": "2026-11-03T03:43:43.338614+00:00",
+  "updated_at": "2026-11-03T03:43:49.756203+00:00",
+  "status": "success",
+  "version": {
+    "python": "3.13.14",
+    "platform": "Windows-11-10.0.26300-SP0"
+  },
+  "modules": [
+    {
+      "name": "map_pipeline",
+      "status": "success",
+      "updated_at": "2026-11-03T03:43:45.736140+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-astar-nosmooth\\map_pipeline\\result.json"
+    },
+    {
+      "name": "path_planner",
+      "status": "success",
+      "updated_at": "2026-11-03T03:43:47.703936+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-astar-nosmooth\\path_planner\\result.json"
+    },
+    {
+      "name": "path_postprocess",
+      "status": "success",
+      "updated_at": "2026-11-03T03:43:49.369762+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-astar-nosmooth\\path_postprocess\\result.json"
+    },
+    {
+      "name": "motion_control",
+      "status": "pending",
+      "updated_at": "2026-11-03T03:43:49.744384+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {}
+    }
+  ],
+  "stages": {
+    "map_pipeline": {
+      "status": "success",
+      "updated_at": "2026-11-03T03:43:45.736118+00:00",
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-astar-nosmooth\\map_pipeline\\result.json",
+      "error": null
+    },
+    "path_planner": {
+      "status": "success",
+      "updated_at": "2026-11-03T03:43:47.703862+00:00",
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-astar-nosmooth\\path_planner\\result.json",
+      "error": null
+    },
+    "path_postprocess": {
+      "status": "success",
+      "updated_at": "2026-11-03T03:43:49.369724+00:00",
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-astar-nosmooth\\path_postprocess\\result.json",
+      "error": null
+    },
+    "motion_control": {
+      "status": "pending",
+      "updated_at": "2026-11-03T03:43:49.744333+00:00",
+      "result": null,
+      "error": null
+    }
+  },
+  "artifacts": {
+    "path_preview": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-astar-nosmooth\\preview\\path_preview.png"
+  },
+  "events": [],
+  "workflow": {
+    "mode": "normal",
+    "headless": true,
+    "drive": false,
+    "seed": null,
+    "image": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\map_pipeline\\data\\input\\01_scattered.png",
+    "start": [
+      2,
+      2
+    ],
+    "goal": [
+      37,
+      37
+    ],
+    "algorithm": "astar",
+    "algorithms": [],
+    "parameters": {},
+    "postprocess_parameters": {
+      "smooth": false
+    },
+    "motion_skipped_reason": "research or drive disabled"
+  },
+  "finished_at": "2026-11-03T03:43:49.755856+00:00"
+}

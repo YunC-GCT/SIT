@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "status": "failed",
+  "module": "map_pipeline",
+  "run_id": "20261103T071512Z-f0e87b56",
+  "created_at": "2026-11-03T07:15:12.896409+00:00",
+  "inputs": {
+    "image": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\tmplnv5gpbh\\map.png"
+  },
+  "outputs": {},
+  "parameters": {
+    "default_width": 500,
+    "threshold": 0,
+    "obstacle_ratio": 0.5,
+    "invert": false,
+    "blur_ksize": 5,
+    "grid_size": 0.3,
+    "rectify": false,
+    "rectify_output_width": 0,
+    "arena_width_m": 0,
+    "arena_height_m": 0,
+    "min_obstacle_area_px": 0,
+    "morphology_kernel": 0
+  },
+  "logs": [
+    "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T071512Z-f0e87b56\\map_pipeline\\module.log"
+  ],
+  "errors": [
+    {
+      "code": "MAP_INTERACTION_ERROR",
+      "module": "map_pipeline",
+      "stage": "prepare_or_select",
+      "error_type": "ValueError",
+      "reason": "无显示器或 --headless 模式必须同时提供 --start/--goal 或 --start-px/--goal-px；也可使用 --headless --select-terminal 在终端输入起终点",
+      "input": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\tmplnv5gpbh\\map.png",
+      "suggestion": "无显示器时使用 --headless --select-terminal 在终端输入起终点，或显式提供 --start/--goal；否则检查图片和栅格参数"
+    }
+  ],
+  "metadata": {}
+}

@@ -8,7 +8,7 @@ from __future__ import annotations
 import math
 import heapq
 import numpy as np
-from typing import List, Tuple
+from typing import Tuple
 from ..planner_base import GlobalPlanner, Path
 from ..grid_utils import line_of_sight
 

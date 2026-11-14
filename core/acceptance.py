@@ -23,7 +23,8 @@ from .contracts import (
     require_success,
     write_result,
 )
-from .orchestrator import PROJECT_ROOT, run_pipeline
+from .orchestrator import run_pipeline
+from .process_runner import PROJECT_ROOT
 
 
 MODULE = "acceptance"

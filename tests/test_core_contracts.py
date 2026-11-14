@@ -25,10 +25,34 @@ from core.contracts import (
     module_entry,
     path_payload,
     path_segment_payload,
+    validate_error,
+    validate_result,
 )
 
 
 class ContractTests(unittest.TestCase):
+    def test_validation_error_branches_are_explicit(self):
+        with self.assertRaises(ContractError):
+            make_result("m", "r", "unknown")
+        with self.assertRaises(ContractError):
+            validate_result({"status": "success"})
+
+        valid = make_result("m", "r", STATUS_SUCCESS)
+        with self.assertRaises(ContractError):
+            validate_result({**valid, "schema_version": "999"})
+        with self.assertRaises(ContractError):
+            validate_result({**valid, "status": STATUS_FAILED, "errors": []})
+        with self.assertRaises(ContractError):
+            validate_error({"code": "only-code"})
+        with self.assertRaises(ContractError):
+            module_entry("m", "unknown")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            invalid_path = os.path.join(tmp, "invalid.json")
+            Path(invalid_path).write_text("not-json", encoding="utf-8")
+            with self.assertRaises(json.JSONDecodeError):
+                read_result(invalid_path)
+
     def test_success_result_contains_declared_map_path_segments_metrics_and_modules(self):
         result = make_result(
             "contract_example",

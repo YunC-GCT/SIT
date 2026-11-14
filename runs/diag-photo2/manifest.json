@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "run_id": "diag-photo2",
+  "created_at": "2026-11-03T04:20:57.823191+00:00",
+  "updated_at": "2026-11-03T04:21:11.999824+00:00",
+  "status": "failed",
+  "version": {
+    "python": "3.13.14",
+    "platform": "Windows-11-10.0.26300-SP0"
+  },
+  "modules": [
+    {
+      "name": "map_pipeline",
+      "status": "failed",
+      "updated_at": "2026-11-03T04:21:11.976476+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-photo2\\map_pipeline\\result.json"
+    }
+  ],
+  "stages": {
+    "map_pipeline": {
+      "status": "failed",
+      "updated_at": "2026-11-03T04:21:11.976262+00:00",
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-photo2\\map_pipeline\\result.json",
+      "error": [
+        {
+          "code": "MAP_PROCESSING_ERROR",
+          "module": "map_pipeline",
+          "stage": "process",
+          "error_type": "ValueError",
+          "reason": "start 落在障碍栅格 (20, 20)，请重新选择",
+          "input": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\map_pipeline\\data\\input\\图1.jpg",
+          "suggestion": "检查图片、栅格参数以及起终点是否位于空闲栅格"
+        }
+      ]
+    }
+  },
+  "artifacts": {},
+  "events": [],
+  "workflow": {},
+  "finished_at": "2026-11-03T04:21:11.997418+00:00"
+}

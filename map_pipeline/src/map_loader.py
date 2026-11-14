@@ -34,6 +34,44 @@ def binarize(img: np.ndarray, threshold: int = 0, blur_ksize: int = 5,
         binary = cv2.bitwise_not(binary)
     return binary
 
+
+def clean_binary(
+    binary: np.ndarray,
+    *,
+    min_area_px: int = 0,
+    morphology_kernel: int = 0,
+) -> np.ndarray:
+    """Remove small obstacle specks and optionally apply morphological cleanup."""
+    if not isinstance(binary, np.ndarray) or binary.ndim != 2:
+        raise ValueError("binary 必须是二维 numpy 数组")
+    if min_area_px < 0:
+        raise ValueError("min_area_px 不能为负数")
+    if morphology_kernel < 0:
+        raise ValueError("morphology_kernel 不能为负数")
+    cleaned = binary
+    if morphology_kernel >= 3:
+        kernel_size = morphology_kernel
+        if kernel_size % 2 == 0:
+            kernel_size += 1
+        kernel = cv2.getStructuringElement(
+            cv2.MORPH_RECT,
+            (kernel_size, kernel_size),
+        )
+        cleaned = cv2.morphologyEx(cleaned, cv2.MORPH_OPEN, kernel)
+        cleaned = cv2.morphologyEx(cleaned, cv2.MORPH_CLOSE, kernel)
+    if min_area_px > 0:
+        obstacle_mask = cv2.bitwise_not(cleaned)
+        count, labels, stats, _ = cv2.connectedComponentsWithStats(
+            obstacle_mask,
+            connectivity=8,
+        )
+        filtered = obstacle_mask.copy()
+        for index in range(1, count):
+            if stats[index, cv2.CC_STAT_AREA] < min_area_px:
+                filtered[labels == index] = 0
+        cleaned = cv2.bitwise_not(filtered)
+    return cleaned
+
 def create_grid_map(binary: np.ndarray, target_width: int,
                     obstacle_ratio: float = 0.5,
                     grid_size: float = 0.3) -> Tuple[GridMap, float]:
@@ -75,5 +113,5 @@ def create_grid_map(binary: np.ndarray, target_width: int,
             black_ratio = np.sum(cell == 0) / cell.size
             if black_ratio > obstacle_ratio:
                 grid_map[i, j] = 1
-    return GridMap(grid_map, int(cell_w), int(cell_h), (used_h, used_w),
+    return GridMap(grid_map, cell_w, cell_h, (used_h, used_w),
                    grid_size=grid_size), cell_w

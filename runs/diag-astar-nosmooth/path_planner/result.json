@@ -1,0 +1,365 @@
+{
+  "schema_version": "1.0",
+  "status": "success",
+  "module": "path_planner",
+  "run_id": "diag-astar-nosmooth",
+  "created_at": "2026-11-03T03:43:47.694789+00:00",
+  "inputs": {
+    "map_result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-astar-nosmooth\\map_pipeline\\result.json",
+    "start": {
+      "row": 2,
+      "col": 2
+    },
+    "goal": {
+      "row": 37,
+      "col": 37
+    }
+  },
+  "outputs": {
+    "raw_path": {
+      "points": {
+        "values": [
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            2,
+            12
+          ],
+          [
+            2,
+            13
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            2,
+            15
+          ],
+          [
+            2,
+            16
+          ],
+          [
+            2,
+            17
+          ],
+          [
+            2,
+            18
+          ],
+          [
+            2,
+            19
+          ],
+          [
+            2,
+            20
+          ],
+          [
+            2,
+            21
+          ],
+          [
+            2,
+            22
+          ],
+          [
+            2,
+            23
+          ],
+          [
+            2,
+            24
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            2,
+            26
+          ],
+          [
+            2,
+            27
+          ],
+          [
+            2,
+            28
+          ],
+          [
+            2,
+            29
+          ],
+          [
+            2,
+            30
+          ],
+          [
+            2,
+            31
+          ],
+          [
+            2,
+            32
+          ],
+          [
+            2,
+            33
+          ],
+          [
+            2,
+            34
+          ],
+          [
+            2,
+            35
+          ],
+          [
+            2,
+            36
+          ],
+          [
+            3,
+            36
+          ],
+          [
+            4,
+            36
+          ],
+          [
+            5,
+            36
+          ],
+          [
+            6,
+            36
+          ],
+          [
+            7,
+            36
+          ],
+          [
+            8,
+            36
+          ],
+          [
+            9,
+            36
+          ],
+          [
+            10,
+            36
+          ],
+          [
+            11,
+            36
+          ],
+          [
+            12,
+            36
+          ],
+          [
+            13,
+            36
+          ],
+          [
+            14,
+            36
+          ],
+          [
+            15,
+            36
+          ],
+          [
+            16,
+            36
+          ],
+          [
+            17,
+            36
+          ],
+          [
+            18,
+            36
+          ],
+          [
+            19,
+            36
+          ],
+          [
+            20,
+            36
+          ],
+          [
+            20,
+            37
+          ],
+          [
+            21,
+            37
+          ],
+          [
+            22,
+            37
+          ],
+          [
+            23,
+            37
+          ],
+          [
+            24,
+            37
+          ],
+          [
+            25,
+            37
+          ],
+          [
+            26,
+            37
+          ],
+          [
+            27,
+            37
+          ],
+          [
+            28,
+            37
+          ],
+          [
+            29,
+            37
+          ],
+          [
+            30,
+            37
+          ],
+          [
+            31,
+            37
+          ],
+          [
+            32,
+            37
+          ],
+          [
+            33,
+            37
+          ],
+          [
+            34,
+            37
+          ],
+          [
+            35,
+            37
+          ],
+          [
+            36,
+            37
+          ],
+          [
+            37,
+            37
+          ]
+        ],
+        "shape": [
+          71,
+          2
+        ],
+        "dtype": "int",
+        "units": {
+          "coordinates": "grid_cell"
+        },
+        "coordinate_system": {
+          "axes": [
+            "row",
+            "col"
+          ],
+          "row": "increases_south",
+          "col": "increases_east",
+          "unit": "grid_cell"
+        }
+      },
+      "coordinate_system": {
+        "axes": [
+          "row",
+          "col"
+        ],
+        "row": "increases_south",
+        "col": "increases_east",
+        "unit": "grid_cell"
+      }
+    },
+    "metrics": {
+      "values": {
+        "found_path": true,
+        "planning_time_s": 0.02151859999867156,
+        "raw_node_count": 71,
+        "raw_path_length_grid": 70.0,
+        "raw_path_length_m": 21.0,
+        "random_seed": null
+      },
+      "units": {
+        "found_path": "boolean",
+        "planning_time_s": "s",
+        "raw_node_count": "count",
+        "raw_path_length_grid": "grid_cell",
+        "raw_path_length_m": "m",
+        "random_seed": "seed"
+      }
+    }
+  },
+  "parameters": {
+    "algorithm": "astar",
+    "algorithm_parameters": {},
+    "seed": null,
+    "grid_size_m": 0.3
+  },
+  "logs": [
+    "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-astar-nosmooth\\path_planner\\module.log"
+  ],
+  "errors": [],
+  "metadata": {}
+}

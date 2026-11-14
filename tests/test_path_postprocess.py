@@ -14,7 +14,12 @@ from core import (
     read_result,
     write_result,
 )
-from path_postprocess import process_path
+from path_postprocess import (
+    PathPostprocessParameterError,
+    process_path,
+    resolve_postprocess_parameters,
+)
+from path_postprocess.run_postprocess import main as postprocess_main
 
 
 class CollidingSmoother:
@@ -109,6 +114,95 @@ class PathPostprocessTests(unittest.TestCase):
         self.assertEqual(segments[0]["distance_m"], 0.6)
         self.assertGreater(segments[0]["estimated_time_s"], 0.0)
 
+    def test_execution_segments_do_not_depend_on_planner_node_density(self):
+        grid = np.zeros((3, 11), dtype=np.uint8)
+        dense_path = [(0, col) for col in range(11)]
+        sparse_path = [(0, 0), (0, 10)]
+        parameters = {"smooth": False, "max_segment_length_grid": 2.0}
+
+        dense_result = process_path(grid, dense_path, parameters=parameters)
+        sparse_result = process_path(grid, sparse_path, parameters=parameters)
+
+        self.assertEqual(dense_result["status"], "success")
+        self.assertEqual(sparse_result["status"], "success")
+        dense_segments = [
+            (item["start"], item["end"])
+            for item in dense_result["outputs"]["segments"]
+        ]
+        sparse_segments = [
+            (item["start"], item["end"])
+            for item in sparse_result["outputs"]["segments"]
+        ]
+        self.assertEqual(dense_segments, sparse_segments)
+        self.assertEqual(len(dense_segments), 5)
+
+    def test_execution_segments_keep_sharp_corners(self):
+        grid = np.zeros((4, 4), dtype=np.uint8)
+
+        result = process_path(
+            grid,
+            [(0, 0), (0, 2), (2, 2)],
+            parameters={"smooth": False, "max_segment_length_grid": 4.0},
+            run_id="corner-001",
+        )
+
+        self.assertEqual(result["status"], "success")
+        segments = result["outputs"]["segments"]
+        self.assertEqual(len(segments), 2)
+        self.assertEqual(segments[0]["start"], {"row": 0, "col": 0})
+        self.assertEqual(segments[0]["end"], {"row": 0, "col": 2})
+        self.assertEqual(segments[1]["end"], {"row": 2, "col": 2})
+
+    def test_max_segment_length_below_one_grid_is_invalid(self):
+        result = process_path(
+            np.zeros((3, 3), dtype=np.uint8),
+            [(0, 0), (0, 2)],
+            parameters={"max_segment_length_grid": 0.5},
+        )
+
+        self.assertEqual(result["status"], "failed")
+        self.assertEqual(result["errors"][0]["code"], "INVALID_PARAMETERS")
+
+    def test_parameter_aliases_and_validation_errors(self):
+        resolved = resolve_postprocess_parameters(
+            {
+                "sample_spacing_m": 0.06,
+                "max_segment_length_m": 0.6,
+            },
+            grid_size_m=0.3,
+        )
+        self.assertAlmostEqual(resolved["sample_spacing_grid"], 0.2)
+        self.assertAlmostEqual(resolved["max_segment_length_grid"], 2.0)
+
+        with self.assertRaises(PathPostprocessParameterError):
+            resolve_postprocess_parameters({"unknown": 1})
+        with self.assertRaises(PathPostprocessParameterError):
+            resolve_postprocess_parameters({"move_speed_m_s": 0})
+        with self.assertRaises(PathPostprocessParameterError):
+            resolve_postprocess_parameters({"initial_heading": "up"})
+        with self.assertRaises(PathPostprocessParameterError):
+            resolve_postprocess_parameters({"max_segment_length_grid": 0.5})
+
+    def test_smoothing_can_be_disabled_and_endpoint_mismatch_fails(self):
+        disabled = process_path(
+            np.zeros((4, 6), dtype=np.uint8),
+            [(0, 0), (0, 5)],
+            parameters={"smooth": False, "max_segment_length_grid": 2.0},
+        )
+        self.assertEqual(disabled["status"], "success")
+        self.assertFalse(disabled["outputs"]["smoothing"]["applied"])
+        self.assertEqual(disabled["outputs"]["smoothing"]["method"], "none")
+
+        mismatch = process_path(
+            np.zeros((4, 6), dtype=np.uint8),
+            [(0, 0), (0, 5)],
+            start=(0, 1),
+            goal=(0, 5),
+            parameters={"smooth": False, "max_segment_length_grid": 2.0},
+        )
+        self.assertEqual(mismatch["status"], "failed")
+        self.assertEqual(mismatch["errors"][0]["code"], "INVALID_RAW_PATH")
+
     def test_invalid_raw_path_is_a_structured_failure(self):
         grid = np.zeros((3, 3), dtype=np.uint8)
         grid[1, 1] = 1
@@ -123,6 +217,102 @@ class PathPostprocessTests(unittest.TestCase):
         self.assertEqual(result["errors"][0]["code"], "INVALID_RAW_PATH")
         self.assertEqual(result["errors"][0]["module"], "path_postprocess")
         self.assertEqual(result["errors"][0]["stage"], "validate_raw_path")
+
+    def test_cli_success_writes_result_with_segments(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            map_path = os.path.join(tmp, "map.json")
+            planner_path = os.path.join(tmp, "planner.json")
+            output_path = os.path.join(tmp, "postprocess.json")
+            write_result(
+                map_path,
+                make_result(
+                    "map_pipeline",
+                    "map-post",
+                    "success",
+                    outputs={
+                        "map": grid_map_payload(
+                            np.zeros((4, 6), dtype=np.uint8),
+                            grid_size_m=0.3,
+                            start=(0, 0),
+                            goal=(0, 5),
+                        )
+                    },
+                ),
+            )
+            write_result(
+                planner_path,
+                make_result(
+                    "path_planner",
+                    "planner-post",
+                    "success",
+                    outputs={"raw_path": path_payload([(0, 0), (0, 5)])},
+                ),
+            )
+
+            exit_code = postprocess_main(
+                [
+                    "--map-result",
+                    map_path,
+                    "--planner-result",
+                    planner_path,
+                    "--output",
+                    output_path,
+                    "--run-root",
+                    tmp,
+                    "--run-id",
+                    "post-success",
+                ]
+            )
+            result = read_result(output_path)
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(result["status"], "success")
+        self.assertGreater(len(result["outputs"]["segments"]), 0)
+
+    def test_cli_reports_config_and_map_input_failures(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result_path = os.path.join(tmp, "failure.json")
+            exit_code = postprocess_main(
+                [
+                    "--map-result",
+                    os.path.join(tmp, "missing-map.json"),
+                    "--planner-result",
+                    os.path.join(tmp, "missing-planner.json"),
+                    "--output",
+                    result_path,
+                    "--run-root",
+                    tmp,
+                    "--run-id",
+                    "post-failure",
+                ]
+            )
+            result = read_result(result_path)
+
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(result["errors"][0]["code"], "POSTPROCESS_MAP_INPUT_ERROR")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            result_path = os.path.join(tmp, "config-failure.json")
+            exit_code = postprocess_main(
+                [
+                    "--map-result",
+                    os.path.join(tmp, "missing-map.json"),
+                    "--planner-result",
+                    os.path.join(tmp, "missing-planner.json"),
+                    "--params",
+                    "not-json",
+                    "--output",
+                    result_path,
+                    "--run-root",
+                    tmp,
+                    "--run-id",
+                    "post-config-failure",
+                ]
+            )
+            result = read_result(result_path)
+
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(result["errors"][0]["code"], "POSTPROCESS_CONFIG_ERROR")
 
     def test_cli_reads_upstream_results_and_writes_an_isolated_result(self):
         with tempfile.TemporaryDirectory() as tmp:

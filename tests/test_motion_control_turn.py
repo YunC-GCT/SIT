@@ -7,9 +7,18 @@ from unittest.mock import patch
 from core import make_result, path_segment_payload, read_result, write_result
 from motion_control import run_follower
 from motion_control.src.ros2_interface import (
+    CmdVelPreflight,
+    ExecutionReport,
     MotionSafetyError,
     Ros2PathExecutor,
     compute_segment_turns,
+    compute_turn_angles,
+    delta_to_dir,
+    estimate_runtime,
+    heading_degrees,
+    is_zero_twist,
+    make_twist,
+    normalize_angle_deg,
     split_turn_angle_deg,
 )
 
@@ -90,11 +99,248 @@ class FakeClock:
         self.now += seconds
 
 
+class ZeroFailingPublisher(FakePublisher):
+    def publish(self, twist):
+        raise RuntimeError("publish failed")
+
+
 def non_zero(messages):
     return [message for message in messages if message != (0.0, 0.0, 0.0)]
 
 
 class MotionControlTurnTests(unittest.TestCase):
+    def test_geometry_helpers_cover_cardinal_and_angle_mapping(self):
+        self.assertEqual(delta_to_dir(-1, 0), 0)
+        self.assertEqual(delta_to_dir(0, 1), 1)
+        self.assertEqual(delta_to_dir(1, 0), 2)
+        self.assertEqual(delta_to_dir(0, -1), 3)
+        self.assertEqual(delta_to_dir(1, 1), 0)
+        self.assertEqual(
+            compute_turn_angles([1, 2, 3, 0], "north"),
+            [90, 90, 90, 90],
+        )
+        self.assertEqual(heading_degrees("east"), 90.0)
+        self.assertEqual(heading_degrees(370), 10.0)
+        self.assertEqual(normalize_angle_deg(180), 180.0)
+        self.assertEqual(normalize_angle_deg(-180), 180.0)
+        self.assertEqual(normalize_angle_deg(540), 180.0)
+        self.assertAlmostEqual(
+            estimate_runtime([90.0, -90.0], 0.3, math.pi / 2.0, 0.3),
+            4.0,
+        )
+
+    def test_twist_zero_helpers(self):
+        self.assertTrue(is_zero_twist(make_twist()))
+        self.assertFalse(is_zero_twist(make_twist(linear_x=0.1)))
+        self.assertFalse(is_zero_twist(make_twist(angular_z=0.2)))
+
+    def test_confirm_start_rejects_non_yes_and_non_tty(self):
+        class Stream:
+            def __init__(self, tty):
+                self._tty = tty
+
+            def isatty(self):
+                return self._tty
+
+        with patch("builtins.input", return_value="no"):
+            with self.assertRaises(MotionSafetyError):
+                run_follower._confirm_start(
+                    assume_yes=False,
+                    input_stream=Stream(True),
+                )
+        with self.assertRaises(MotionSafetyError):
+            run_follower._confirm_start(
+                assume_yes=False,
+                input_stream=Stream(False),
+            )
+
+    def test_stop_only_connects_and_stops_without_writing_a_motion_result(self):
+        class FakeExecutor:
+            def __init__(self):
+                self.stopped = False
+                self.closed = False
+
+            def setup_ros2(self):
+                pass
+
+            def stop_robot(self):
+                self.stopped = True
+
+            def close(self):
+                self.closed = True
+
+        executor = FakeExecutor()
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(
+                run_follower,
+                "_build_executor",
+                return_value=executor,
+            ):
+                exit_code = run_follower.main(
+                    [
+                        "--stop-only",
+                        "--run-root",
+                        tmp,
+                        "--run-id",
+                        "stop-001",
+                    ]
+                )
+
+        self.assertEqual(exit_code, 0)
+        self.assertTrue(executor.stopped)
+        self.assertTrue(executor.closed)
+
+    def test_motion_cli_success_writes_execution_evidence(self):
+        class FakeExecutor:
+            def setup_ros2(self):
+                pass
+
+            def preflight_check(self, **_kwargs):
+                return CmdVelPreflight(
+                    topic="/cmd_vel",
+                    subscribers=("/mecanum_chassis_node",),
+                    publishers=("/path_follower",),
+                    chassis_subscriber_seen=True,
+                    other_publishers=(),
+                    confirmed=True,
+                    warnings=(),
+                )
+
+            def execute_segments(self, segments, require_preflight=False):
+                return ExecutionReport(
+                    segment_count=len(segments),
+                    command_count=3,
+                    open_loop=True,
+                    completed=True,
+                    stopped=True,
+                )
+
+            def close(self):
+                pass
+
+        with tempfile.TemporaryDirectory() as tmp:
+            postprocess_path = os.path.join(tmp, "postprocess.json")
+            write_result(
+                postprocess_path,
+                make_result(
+                    "path_postprocess",
+                    "post-001",
+                    "success",
+                    outputs={
+                        "segments": [
+                            path_segment_payload(
+                                0,
+                                start=(0, 0),
+                                end=(0, 1),
+                                direction_deg=90.0,
+                                turn_angle_deg=90.0,
+                                grid_distance=1.0,
+                                distance_m=0.3,
+                                estimated_time_s=2.0,
+                            )
+                        ]
+                    },
+                ),
+            )
+            with patch.object(
+                run_follower,
+                "_build_executor",
+                return_value=FakeExecutor(),
+            ):
+                exit_code = run_follower.main(
+                    [
+                        "--postprocess-result",
+                        postprocess_path,
+                        "--yes",
+                        "--run-root",
+                        tmp,
+                        "--run-id",
+                        "motion-ok",
+                    ]
+                )
+
+            result = read_result(
+                os.path.join(tmp, "motion-ok", "motion_control", "result.json")
+            )
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(result["status"], "success")
+        self.assertTrue(result["outputs"]["execution"]["completed"])
+        self.assertTrue(result["outputs"]["execution"]["stopped"])
+
+    def test_motion_cli_preflight_failure_is_structured(self):
+        class FakeExecutor:
+            def setup_ros2(self):
+                pass
+
+            def preflight_check(self, **_kwargs):
+                return CmdVelPreflight(
+                    topic="/cmd_vel",
+                    subscribers=(),
+                    publishers=("/gesture_control_node",),
+                    chassis_subscriber_seen=False,
+                    other_publishers=("/gesture_control_node",),
+                    confirmed=False,
+                    warnings=("other publisher",),
+                )
+
+            def close(self):
+                pass
+
+        with tempfile.TemporaryDirectory() as tmp:
+            postprocess_path = os.path.join(tmp, "postprocess.json")
+            write_result(
+                postprocess_path,
+                make_result(
+                    "path_postprocess",
+                    "post-002",
+                    "success",
+                    outputs={
+                        "segments": [
+                            path_segment_payload(
+                                0,
+                                start=(0, 0),
+                                end=(0, 1),
+                                direction_deg=90.0,
+                                turn_angle_deg=90.0,
+                                grid_distance=1.0,
+                                distance_m=0.3,
+                                estimated_time_s=2.0,
+                            )
+                        ]
+                    },
+                ),
+            )
+            with patch.object(
+                run_follower,
+                "_build_executor",
+                return_value=FakeExecutor(),
+            ):
+                exit_code = run_follower.main(
+                    [
+                        "--postprocess-result",
+                        postprocess_path,
+                        "--yes",
+                        "--run-root",
+                        tmp,
+                        "--run-id",
+                        "motion-preflight",
+                    ]
+                )
+
+            result = read_result(
+                os.path.join(
+                    tmp,
+                    "motion-preflight",
+                    "motion_control",
+                    "result.json",
+                )
+            )
+
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(result["status"], "failed")
+        self.assertEqual(result["errors"][0]["code"], "MOTION_PREFLIGHT_FAILED")
+
     def make_executor(self, clock=None):
         clock = clock or FakeClock()
         return Ros2PathExecutor(
@@ -148,6 +394,63 @@ class MotionControlTurnTests(unittest.TestCase):
                 (0.5, 0.0, 0.0),
             ],
         )
+
+    def test_total_forward_time_is_independent_of_segment_split(self):
+        def forward_count(segments):
+            node = FakeNode(
+                subscribers=[FakeEndpointInfo("mecanum_chassis_node")],
+                publishers=[FakeEndpointInfo("path_follower")],
+            )
+            pub = FakePublisher()
+            self.make_executor().execute_segments(segments, node=node, pub=pub)
+            return sum(1 for message in pub.messages if message == (0.5, 0.0, 0.0))
+
+        one_segment = [{"index": 0, "direction_deg": 0.0, "distance_m": 3.0}]
+        ten_segments = [
+            {"index": index, "direction_deg": 0.0, "distance_m": 0.3}
+            for index in range(10)
+        ]
+
+        self.assertEqual(forward_count(one_segment), forward_count(ten_segments))
+        self.assertEqual(forward_count(one_segment), 20)
+
+    def test_forward_rounding_is_carried_across_segments(self):
+        def forward_count(segments):
+            node = FakeNode(
+                subscribers=[FakeEndpointInfo("mecanum_chassis_node")],
+                publishers=[FakeEndpointInfo("path_follower")],
+            )
+            pub = FakePublisher()
+            self.make_executor().execute_segments(segments, node=node, pub=pub)
+            return sum(1 for message in pub.messages if message == (0.5, 0.0, 0.0))
+
+        seven_segments = [
+            {"index": index, "direction_deg": 0.0, "distance_m": 0.42}
+            for index in range(7)
+        ]
+        three_segments = [
+            {"index": index, "direction_deg": 0.0, "distance_m": 0.98}
+            for index in range(3)
+        ]
+
+        self.assertEqual(forward_count(seven_segments), forward_count(three_segments))
+        self.assertEqual(forward_count(seven_segments), 20)
+
+    def test_stop_publish_failure_is_not_reported_as_stopped(self):
+        node = FakeNode(
+            subscribers=[FakeEndpointInfo("mecanum_chassis_node")],
+            publishers=[FakeEndpointInfo("path_follower")],
+        )
+        executor = self.make_executor()
+
+        with self.assertRaises(RuntimeError):
+            executor.execute_segments(
+                [{"index": 0, "direction_deg": 0.0, "distance_m": 0.3}],
+                node=node,
+                pub=ZeroFailingPublisher(),
+            )
+
+        self.assertFalse(executor._stopped)
 
     def test_preflight_blocks_other_cmd_vel_publishers_before_motion(self):
         node = FakeNode(

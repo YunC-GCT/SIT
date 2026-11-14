@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "run_id": "20261103T135713Z-7d189313",
+  "created_at": "2026-11-03T13:57:13.560156+00:00",
+  "updated_at": "2026-11-03T13:57:13.643194+00:00",
+  "status": "success",
+  "version": {
+    "python": "3.13.14",
+    "platform": "Windows-11-10.0.26300-SP0"
+  },
+  "modules": [
+    {
+      "name": "map_pipeline",
+      "status": "success",
+      "updated_at": "2026-11-03T13:57:13.641449+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\tmppyae2v2w\\map_result.json"
+    }
+  ],
+  "stages": {
+    "map_pipeline": {
+      "status": "success",
+      "updated_at": "2026-11-03T13:57:13.641436+00:00",
+      "result": "C:\\Users\\YunCeH\\AppData\\Local\\Temp\\tmppyae2v2w\\map_result.json",
+      "error": null
+    }
+  },
+  "artifacts": {},
+  "events": [],
+  "workflow": {},
+  "finished_at": "2026-11-03T13:57:13.643144+00:00"
+}

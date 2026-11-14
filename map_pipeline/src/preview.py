@@ -23,8 +23,8 @@ def safe_imwrite(filepath: str, image: np.ndarray) -> str:
 
 def build_grid_preview(
     grid_map: np.ndarray,
-    start_grid: tuple[int, int],
-    goal_grid: tuple[int, int],
+    start_grid: tuple[int, int] | None,
+    goal_grid: tuple[int, int] | None,
     *,
     cell_size: int = 4,
     draw_grid_lines: bool = True,
@@ -63,6 +63,8 @@ def build_grid_preview(
         (start_grid, (0, 200, 0)),
         (goal_grid, (0, 0, 220)),
     ):
+        if point is None:
+            continue
         row, col = point
         center = (
             int((col + 0.5) * cell_size),
@@ -75,8 +77,8 @@ def build_grid_preview(
 
 def save_grid_preview(
     grid_map: np.ndarray,
-    start_grid: tuple[int, int],
-    goal_grid: tuple[int, int],
+    start_grid: tuple[int, int] | None,
+    goal_grid: tuple[int, int] | None,
     save_path: str,
     *,
     cell_size: int = 4,

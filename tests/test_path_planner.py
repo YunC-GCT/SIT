@@ -1,4 +1,3 @@
-import json
 import os
 import subprocess
 import sys
@@ -16,10 +15,209 @@ from core import (
     read_result,
     write_result,
 )
+from path_planner import json_pipeline as planner_cli
+from path_planner.src.planner_factory import (
+    PlannerParameterError,
+    create_planner,
+    list_algorithms,
+    resolve_algorithm_parameters,
+    validate_algorithm_parameters,
+)
 from path_planner.src.planner_pipeline import run_algorithm, run_planning
+from path_planner.src.planner_validation import (
+    _normalize_path,
+    _point,
+    _validate_grid,
+    _validate_inputs,
+)
 
 
 class PlannerPipelineTests(unittest.TestCase):
+    def test_cli_runs_a_planner_and_writes_a_structured_result(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            map_path = os.path.join(tmp, "map.json")
+            write_result(
+                map_path,
+                make_result(
+                    "map_pipeline",
+                    "map-cli",
+                    STATUS_SUCCESS,
+                    outputs={
+                        "map": grid_map_payload(
+                            np.zeros((6, 6), dtype=np.uint8),
+                            grid_size_m=0.3,
+                            start=(0, 0),
+                            goal=(5, 5),
+                        )
+                    },
+                ),
+            )
+            output_path = os.path.join(tmp, "planner.json")
+
+            exit_code = planner_cli.main(
+                [
+                    "--map-result",
+                    map_path,
+                    "--algorithm",
+                    "astar",
+                    "--output",
+                    output_path,
+                    "--run-root",
+                    tmp,
+                    "--run-id",
+                    "planner-cli",
+                ]
+            )
+            result = read_result(output_path)
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(result["status"], STATUS_SUCCESS)
+        self.assertEqual(result["parameters"]["algorithm"], "astar")
+
+    def test_cli_reports_invalid_map_and_conflicting_arguments(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            missing_map = os.path.join(tmp, "missing.json")
+            invalid_output = os.path.join(tmp, "invalid.json")
+
+            exit_code = planner_cli.main(
+                [
+                    "--map-result",
+                    missing_map,
+                    "--algorithm",
+                    "astar",
+                    "--output",
+                    invalid_output,
+                    "--run-root",
+                    tmp,
+                    "--run-id",
+                    "planner-invalid-map",
+                ]
+            )
+            invalid = read_result(invalid_output)
+
+            map_path = os.path.join(tmp, "map.json")
+            write_result(
+                map_path,
+                make_result(
+                    "map_pipeline",
+                    "map-cli",
+                    STATUS_SUCCESS,
+                    outputs={
+                        "map": grid_map_payload(
+                            np.zeros((6, 6), dtype=np.uint8),
+                            grid_size_m=0.3,
+                            start=(0, 0),
+                            goal=(5, 5),
+                        )
+                    },
+                ),
+            )
+            conflict_output = os.path.join(tmp, "conflict.json")
+            conflict_code = planner_cli.main(
+                [
+                    "--map-result",
+                    map_path,
+                    "--algorithm",
+                    "astar",
+                    "--algorithms",
+                    "rrt",
+                    "--output",
+                    conflict_output,
+                    "--run-root",
+                    tmp,
+                    "--run-id",
+                    "planner-conflict",
+                ]
+            )
+            conflict = read_result(conflict_output)
+
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(invalid["status"], STATUS_FAILED)
+        self.assertEqual(invalid["errors"][0]["code"], "PLANNER_INPUT_ERROR")
+        self.assertEqual(conflict_code, 2)
+        self.assertEqual(conflict["status"], STATUS_FAILED)
+
+    def test_cli_parameter_helpers_validate_input(self):
+        with self.assertRaises(Exception):
+            planner_cli._parse_row_col("bad")
+        values = planner_cli._parameters_from_cli(
+            ["astar"],
+            {"algorithm_params": {"astar": {"weight": 1}}},
+            '{"astar": {"weight": 2}}',
+        )
+        self.assertEqual(values["astar"]["weight"], 2)
+        global_values = planner_cli._parameters_from_cli(
+            ["astar"],
+            {},
+            '{"weight": 3}',
+        )
+        self.assertEqual(global_values["astar"]["weight"], 3)
+        with self.assertRaises(ValueError):
+            planner_cli._parameters_from_cli(
+                ["astar"],
+                {},
+                '{"rrt": {"max_iter": 10}}',
+            )
+
+    def test_run_planner_wrapper_exposes_main(self):
+        import path_planner.run_planner as wrapper
+
+        self.assertTrue(callable(wrapper.main))
+
+    def test_factory_parameter_validation_and_seed_conflict(self):
+        with self.assertRaises(PlannerParameterError):
+            validate_algorithm_parameters("missing")
+        with self.assertRaises(PlannerParameterError):
+            validate_algorithm_parameters("rrt", {"unknown": 1})
+        with self.assertRaises(PlannerParameterError):
+            validate_algorithm_parameters("rrt", {"max_iter": 0})
+        with self.assertRaises(PlannerParameterError):
+            validate_algorithm_parameters("rrt", {"step_size": -1})
+        with self.assertRaises(PlannerParameterError):
+            validate_algorithm_parameters("rrt", {"goal_sample_rate": 2})
+
+        resolved = resolve_algorithm_parameters("rrt", {"max_iter": 10})
+        self.assertEqual(resolved["max_iter"], 10)
+        self.assertIn("step_size", resolved)
+
+        grid = np.zeros((4, 4), dtype=np.uint8)
+        with self.assertRaises(PlannerParameterError):
+            create_planner("rrt", grid, params={"seed": 1}, seed=2)
+        planner = create_planner("astar", grid)
+        self.assertEqual(planner.plan((0, 0), (3, 3))[0], (0, 0))
+        self.assertIn("astar", list_algorithms())
+
+    def test_validation_helpers_reject_bad_grid_and_paths(self):
+        with self.assertRaises(PlannerParameterError):
+            _point((0,), "start")
+        with self.assertRaises(PlannerParameterError):
+            _point((0.5, 1), "start")
+        with self.assertRaises(PlannerParameterError):
+            _validate_grid(np.zeros(3))
+        with self.assertRaises(PlannerParameterError):
+            _validate_grid(np.zeros((0, 3)))
+
+        grid = np.zeros((3, 3), dtype=np.uint8)
+        grid[1, 1] = 1
+        with self.assertRaises(PlannerParameterError):
+            _validate_inputs(grid, (0, 0), (3, 3), 0.3)
+        with self.assertRaises(PlannerParameterError):
+            _validate_inputs(grid, (0, 0), (1, 1), 0.3)
+        with self.assertRaises(PlannerParameterError):
+            _validate_inputs(grid, (0, 0), (2, 2), 0)
+
+        self.assertEqual(_normalize_path(None, grid, (0, 0), (2, 2)), [])
+        self.assertEqual(
+            _normalize_path([(0, 0), (2, 2)], grid, (0, 0), (2, 2)),
+            [(0, 0), (2, 2)],
+        )
+        with self.assertRaises(ValueError):
+            _normalize_path([(0, 0)], grid, (0, 0), (2, 2))
+        with self.assertRaises(ValueError):
+            _normalize_path([(0, 0), (1, 1)], grid, (0, 0), (1, 1))
+        with self.assertRaises(ValueError):
+            _normalize_path([(0, 0), (3, 3)], grid, (0, 0), (3, 3))
+
     def test_all_registered_algorithms_share_the_same_result_shape(self):
         grid = np.zeros((12, 12), dtype=np.uint8)
         parameters = {

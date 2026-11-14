@@ -9,12 +9,12 @@ from typing import Tuple
 class GridMap:
     """封装栅格地图及基础查询"""
 
-    def __init__(self, grid: np.ndarray, cell_width: int, cell_height: int,
+    def __init__(self, grid: np.ndarray, cell_width: float, cell_height: float,
                  img_shape: Tuple[int, int], grid_size: float = 0.3):
         """
         :param grid: 二维 uint8 数组，0=空闲, 1=障碍
-        :param cell_width: 每个栅格在原始图像中的像素宽度
-        :param cell_height: 每个栅格在原始图像中的像素高度
+        :param cell_width: 每个栅格在原始图像中的像素宽度，可为非整数
+        :param cell_height: 每个栅格在原始图像中的像素高度，可为非整数
         :param img_shape: 原始二值图的 (高, 宽)
         :param grid_size: 每个栅格对应真实世界的物理尺寸（米），默认 0.3m
         """
@@ -63,7 +63,7 @@ class GridMap:
     def load(filepath: str) -> 'GridMap':
         data = np.load(filepath)
         return GridMap(data['grid'],
-                       int(data['cell_width']),
-                       int(data['cell_height']),
+                       float(data['cell_width']),
+                       float(data['cell_height']),
                        tuple(data['img_shape']),
                        grid_size=float(data.get('grid_size', 0.3)))

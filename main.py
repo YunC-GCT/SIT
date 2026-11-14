@@ -9,6 +9,7 @@ import os
 import sys
 from typing import Sequence
 
+from core import display_available, interactive_terminal
 from core.orchestrator import PipelineReport, run_pipeline
 
 
@@ -48,7 +49,7 @@ def _choose_image(requested: str | None, *, interactive: bool) -> str | None:
     ]
     if not files:
         return None
-    if interactive and len(files) > 1:
+    if interactive:
         print("Available maps:")
         for index, name in enumerate(files, 1):
             print(f"  [{index}] {name}")
@@ -86,7 +87,45 @@ def main(argv: Sequence[str] | None = None) -> int:
         type=lambda value: _json_object(value, "--postprocess-params"),
     )
     parser.add_argument("--seed", type=int)
-    parser.add_argument("--headless", action="store_true")
+    parser.add_argument(
+        "--headless",
+        action="store_true",
+        help="run without GUI selection or preview windows",
+    )
+    parser.add_argument(
+        "--select-terminal",
+        action="store_true",
+        help="prompt for start/goal row,col in the terminal instead of a GUI",
+    )
+    parser.add_argument(
+        "--rectify",
+        action="store_true",
+        help="perspective-rectify the map image before gridding",
+    )
+    parser.add_argument(
+        "--corners",
+        help="four source corners x,y;x,y;x,y;x,y for rectification",
+    )
+    parser.add_argument(
+        "--arena-width-m",
+        type=float,
+        help="real arena width in meters for grid scale calibration",
+    )
+    parser.add_argument(
+        "--arena-height-m",
+        type=float,
+        help="real arena height in meters for rectified aspect ratio",
+    )
+    parser.add_argument(
+        "--rectify-output-width",
+        type=int,
+        help="rectified image width in pixels",
+    )
+    parser.add_argument(
+        "--grid-size-m",
+        type=float,
+        help="physical grid cell size in meters",
+    )
     parser.add_argument("--drive", dest="drive", action="store_true")
     parser.add_argument("--no-drive", dest="drive", action="store_false")
     parser.set_defaults(drive=None)
@@ -108,7 +147,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--motion-config")
     args = parser.parse_args(argv)
 
-    headless = bool(args.headless or not sys.stdin.isatty())
+    headless = bool(args.headless or not interactive_terminal())
+    terminal_select = bool(args.select_terminal)
+    if terminal_select and not interactive_terminal():
+        parser.error("--select-terminal requires interactive stdin and stdout")
+    if not terminal_select and not headless and not display_available():
+        terminal_select = True
     mode = "research" if args.research else args.mode
     if (args.start is None) != (args.goal is None):
         parser.error("--start and --goal must be provided together")
@@ -134,6 +178,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             postprocess_parameters=args.postprocess_params,
             seed=args.seed,
             headless=headless,
+            terminal_select=terminal_select,
+            rectify=args.rectify or bool(args.corners),
+            corners=args.corners,
+            arena_width_m=args.arena_width_m,
+            arena_height_m=args.arena_height_m,
+            rectify_output_width=args.rectify_output_width,
+            grid_size_m=args.grid_size_m,
             drive=args.drive,
             accept_path=args.accept_path,
             confirm_drive=args.yes,

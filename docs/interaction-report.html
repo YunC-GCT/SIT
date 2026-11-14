@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIT_LJGH 交互形式说明</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111b2e;
+    --panel-2: #16233a;
+    --line: #26344f;
+    --text: #e6edf7;
+    --muted: #93a3bd;
+    --cyan: #5eead4;
+    --blue: #7dd3fc;
+    --amber: #fbbf24;
+    --red: #fb7185;
+    --green: #86efac;
+    --terminal: #070c15;
+    --terminal-line: #1c2942;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 500px at 85% -10%, rgba(94,234,212,.10), transparent 60%),
+      radial-gradient(900px 500px at 0% 10%, rgba(125,211,252,.08), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Segoe UI", sans-serif;
+    line-height: 1.7;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 48px 24px 80px; }
+  header { margin-bottom: 36px; }
+  .eyebrow {
+    display: inline-block; font-size: 12px; letter-spacing: .16em;
+    color: var(--cyan); text-transform: uppercase; margin-bottom: 12px;
+  }
+  h1 { font-size: clamp(28px, 4vw, 44px); line-height: 1.2; margin: 0 0 14px; letter-spacing: -.02em; }
+  h1 span { color: var(--cyan); }
+  .sub { color: var(--muted); max-width: 780px; font-size: 16px; margin: 0; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .badge {
+    font-size: 12px; padding: 5px 10px; border-radius: 999px;
+    border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--muted);
+  }
+  .badge.cyan { color: var(--cyan); border-color: rgba(94,234,212,.35); }
+  .badge.amber { color: var(--amber); border-color: rgba(251,191,36,.35); }
+  nav.toc {
+    display: flex; flex-wrap: wrap; gap: 8px 18px;
+    padding: 16px 18px; margin: 28px 0 36px;
+    border: 1px solid var(--line); border-radius: 14px;
+    background: rgba(17,27,46,.65);
+  }
+  nav.toc a { color: var(--muted); text-decoration: none; font-size: 13px; }
+  nav.toc a:hover { color: var(--cyan); }
+  section {
+    margin: 34px 0; padding: 26px 26px 28px;
+    border: 1px solid var(--line); border-radius: 18px;
+    background: linear-gradient(180deg, rgba(22,35,58,.82), rgba(14,23,39,.86));
+    box-shadow: 0 18px 50px rgba(0,0,0,.22);
+  }
+  h2 { font-size: 22px; margin: 0 0 6px; letter-spacing: -.01em; }
+  h2 .num {
+    display: inline-grid; place-items: center; width: 28px; height: 28px;
+    margin-right: 10px; border-radius: 9px; font-size: 13px;
+    background: rgba(94,234,212,.12); color: var(--cyan);
+    border: 1px solid rgba(94,234,212,.3); vertical-align: 2px;
+  }
+  .lead { color: var(--muted); margin: 0 0 18px; font-size: 14.5px; }
+  h3 { font-size: 15px; margin: 22px 0 10px; color: var(--text); }
+  p { margin: 10px 0; }
+  .muted { color: var(--muted); }
+  code {
+    font-family: Consolas, "Cascadia Mono", "SFMono-Regular", monospace;
+    font-size: .92em; color: var(--blue);
+    background: rgba(125,211,252,.08); padding: 1px 6px; border-radius: 5px;
+  }
+  .terminal {
+    position: relative; margin: 14px 0 18px; border-radius: 12px;
+    border: 1px solid var(--terminal-line); background: var(--terminal);
+    overflow: hidden;
+  }
+  .terminal::before {
+    content: "● ● ●"; display: block; padding: 9px 14px 7px;
+    color: #33415c; font-size: 10px; letter-spacing: 4px;
+    border-bottom: 1px solid var(--terminal-line); background: #0a101b;
+  }
+  .terminal pre {
+    margin: 0; padding: 16px 18px 18px; overflow-x: auto;
+    font-family: Consolas, "Cascadia Mono", "SFMono-Regular", monospace;
+    font-size: 12.8px; line-height: 1.62; color: #cbd5e1;
+  }
+  .p { color: var(--green); }
+  .c { color: var(--cyan); }
+  .y { color: var(--amber); }
+  .r { color: var(--red); }
+  .b { color: var(--blue); }
+  .dim { color: #64748b; }
+  .flow {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;
+    align-items: stretch; margin: 8px 0 18px;
+  }
+  .flow .step {
+    position: relative; padding: 14px 12px; border-radius: 12px;
+    border: 1px solid var(--line); background: rgba(255,255,255,.025);
+    font-size: 12.5px; color: var(--muted);
+  }
+  .flow .step b { display: block; color: var(--text); font-size: 13px; margin-bottom: 4px; }
+  .flow .step::after {
+    content: "→"; position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+    color: var(--cyan); font-size: 14px;
+  }
+  .flow .step:last-child::after { display: none; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 860px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .flow { grid-template-columns: repeat(2, 1fr); }
+    .flow .step::after { display: none; }
+  }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 6px; font-size: 13.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+  tr:last-child td { border-bottom: none; }
+  kbd {
+    font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px;
+    padding: 2px 7px; border-radius: 6px; border: 1px solid #334155;
+    border-bottom-width: 2px; background: #0f172a; color: #e2e8f0;
+  }
+  .callout {
+    margin: 16px 0; padding: 14px 16px; border-radius: 12px;
+    border-left: 3px solid var(--amber); background: rgba(251,191,36,.06);
+    color: #e9d8a6; font-size: 13.5px;
+  }
+  .callout.info { border-left-color: var(--cyan); background: rgba(94,234,212,.06); color: #b8f3e8; }
+  .callout.danger { border-left-color: var(--red); background: rgba(251,113,133,.07); color: #fecdd3; }
+  .pill {
+    display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px;
+    margin-right: 6px; border: 1px solid var(--line); color: var(--muted);
+  }
+  .pill.term { color: var(--green); border-color: rgba(134,239,172,.3); }
+  .pill.gui { color: var(--blue); border-color: rgba(125,211,252,.3); }
+  .pill.safe { color: var(--amber); border-color: rgba(251,191,36,.3); }
+  footer { margin-top: 42px; color: var(--muted); font-size: 12.5px; text-align: center; }
+  a { color: var(--blue); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">SIT_LJGH_PROJECT · Interaction Report</div>
+    <h1>目前系统交互形式<span> 一览</span></h1>
+    <p class="sub">
+      当前交互由“终端命令 + 图形选点/预览窗口 + 驱动前安全确认”组成。
+      本报告按一次普通模式的真实流程展示每一步会看到什么、要输入什么，以及无显示器时如何退化到纯终端。
+    </p>
+    <div class="badges">
+      <span class="badge cyan">主入口：main.py</span>
+      <span class="badge">GUI：Tk / OpenCV</span>
+      <span class="badge">终端：stdin/stdout</span>
+      <span class="badge amber">安全确认：/cmd_vel 预检 + yes</span>
+      <span class="badge">报告日期：2026-11-03</span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <a href="#overview">流程概览</a>
+    <a href="#start">1 启动与选图</a>
+    <a href="#map-pick">2 图形选点</a>
+    <a href="#rectify">3 四角矫正</a>
+    <a href="#preview">4 路径预览</a>
+    <a href="#drive">5 驱动前确认</a>
+    <a href="#menus">6 完成/恢复菜单</a>
+    <a href="#headless">7 纯终端流程</a>
+    <a href="#notes">8 现状与注意</a>
+  </nav>
+
+  <section id="overview">
+    <h2><span class="num">00</span>一次普通模式的交互流程</h2>
+    <p class="lead">普通模式面向一次实车任务：只保留选图、起终点、路径确认和驱动确认。</p>
+    <div class="flow">
+      <div class="step"><b>启动</b>python main.py</div>
+      <div class="step"><b>选图</b>终端编号或直接给路径</div>
+      <div class="step"><b>起终点</b>GUI 点两次 / 终端输入</div>
+      <div class="step"><b>预览</b>原始路径、平滑路径、执行段</div>
+      <div class="step"><b>驱动确认</b>预检 /cmd_vel + 输入 yes</div>
+      <div class="step"><b>完成菜单</b>重跑 / 换算法 / 退出</div>
+    </div>
+    <div class="callout info">
+      可选前置步骤：如果输入是俯拍照片而不是干净的正视地图，会在选点之前插入
+      <code>--rectify</code> 四角矫正与裁剪。它发生在“选图”和“起终点”之间。
+    </div>
+  </section>
+
+  <section id="start">
+    <h2><span class="num">01</span>启动与选图</h2>
+    <p class="lead"><span class="pill term">终端</span>如果命令行没有给图片路径，程序会列出 <code>map_pipeline/data/input</code> 下的图片。</p>
+    <div class="terminal"><pre><span class="p">$</span> python main.py
+<span class="c">Available maps:</span>
+  [1] 01_scattered.png
+  [2] 02_maze.png
+  [3] 03_narrow.png
+  [4] 04_rooms.png
+  [5] 05_spiral.png
+  [6] 图1.jpg
+<span class="y">Map number (blank uses first):</span> 1</pre></div>
+    <p class="muted">只要处于交互终端，就会始终列出图片并询问编号，即使只有一张也会询问；直接回车使用第一张。直接写图片路径或非交互模式时不会询问。图片路径也可以作为第一个位置参数传入。</p>
+    <div class="terminal"><pre><span class="p">$</span> python main.py map_pipeline/data/input/图1.jpg</pre></div>
+  </section>
+
+  <section id="map-pick">
+    <h2><span class="num">02</span>图形选点窗口</h2>
+    <p class="lead"><span class="pill gui">GUI</span>有图形界面时，会打开 Tk（Windows 优先）或 OpenCV 窗口；只接受起点和终点两次点击。</p>
+    <div class="terminal"><pre>┌─ Select Start &amp; Goal ─────────────────────────────────────┐
+│  S: grid=(2,2) FREE                                        │
+│  G: grid=(37,37) FREE                                      │
+│                                                            │
+│        ███                 █████                           │
+│   S ●                     ██        ████                   │
+│         █████                  G ●                         │
+│                                                            │
+│ Select start, then goal (Enter=confirm, R=reset,           │
+│ Esc=cancel)                                                │
+└────────────────────────────────────────────────────────────┘</pre></div>
+    <table>
+      <tr><th>操作</th><th>结果</th></tr>
+      <tr><td><kbd>左键</kbd> 第 1 次</td><td>设置起点，显示所在栅格与 FREE/OBSTACLE</td></tr>
+      <tr><td><kbd>左键</kbd> 第 2 次</td><td>设置终点；第三次点击提示先重置或撤销</td></tr>
+      <tr><td><kbd>Enter</kbd></td><td>两点都已选且都在空闲格时确认</td></tr>
+      <tr><td><kbd>R</kbd></td><td>清空起点和终点</td></tr>
+      <tr><td><kbd>右键</kbd></td><td>撤销最近一次点击</td></tr>
+      <tr><td><kbd>Esc</kbd> / 关闭窗口</td><td>取消本次选点，记录为结构化失败</td></tr>
+    </table>
+    <div class="callout">
+      起点或终点落在障碍格时，窗口只提示并保留该点，不会自动移动到最近空闲格；必须重新点或撤销。
+    </div>
+  </section>
+
+  <section id="rectify">
+    <h2><span class="num">03</span>四角透视矫正（可选）</h2>
+    <p class="lead"><span class="pill gui">GUI</span>使用 <code>--rectify</code> 且没有给 <code>--corners</code> 时，会先打开四角选择窗口；有终端但无图形显示时改为逐个输入 <code>x,y</code>。</p>
+    <div class="terminal"><pre>┌─ Select Arena Corners ─────────────────────────────────────┐
+│                                                            │
+│   ①──────────────────────────────────────────②             │
+│   │                                          │             │
+│   │            场地内部（物体=障碍）          │             │
+│   │                                          │             │
+│   ④──────────────────────────────────────────③             │
+│                                                            │
+│ Click 4 arena corners (Enter=confirm, R=reset,             │
+│ right-click=undo, Esc=cancel)                              │
+└────────────────────────────────────────────────────────────┘</pre></div>
+    <p class="muted">也可以完全跳过窗口，直接用原图像素坐标指定：</p>
+    <div class="terminal"><pre><span class="p">$</span> python main.py map_pipeline/data/input/图1.jpg --headless --no-drive \
+    --rectify \
+    --corners <span class="c">"35,15;1225,15;1225,1420;35,1420"</span> \
+    --arena-width-m <span class="y">2.0</span> --grid-size-m <span class="y">0.05</span> \
+    --start 5,5 --goal 25,25</pre></div>
+    <p>纯终端、没有 <code>--corners</code> 时的提示：</p>
+    <div class="terminal"><pre><span class="c">原图尺寸: 1252 x 1465（x,y 像素坐标）</span>
+按任意顺序输入四个场地角点，程序会自动排序
+<span class="y">第1个角 x,y:</span> 35,15
+<span class="y">第2个角 x,y:</span> 1225,15
+<span class="y">第3个角 x,y:</span> 1225,1420
+<span class="y">第4个角 x,y:</span> 35,1420</pre></div>
+    <div class="callout info">
+      矫正后会保存 <code>*_rectified.png</code>，并在结果 JSON 的
+      <code>outputs.rectification</code> 中记录四角、单应矩阵和尺度。
+      输入非法、越界或四点不构成凸四边形时会重新提示或报错，不会静默裁剪。
+    </div>
+  </section>
+
+  <section id="preview">
+    <h2><span class="num">04</span>路径预览确认</h2>
+    <p class="lead"><span class="pill gui">GUI</span>规划与后处理完成后，会弹出路径预览；预览窗口本身就是“接受路径”的确认。</p>
+    <div class="terminal"><pre>┌─ Path Preview ─────────────────────────────────────────────┐
+│ segments=36  estimated=73.14s  open-loop                   │
+│                                                            │
+│    S ●──────┐                                              │
+│             │        ████                                  │
+│             └──────┐ ██                                    │
+│                    │        █████                         │
+│                    G ●                                     │
+│                                                            │
+│              原始路径 / 平滑路径 / 执行段                    │
+└────────────────────────────────────────────────────────────┘</pre></div>
+    <p class="muted">按 <kbd>Enter</kbd>、<kbd>Space</kbd> 或 <kbd>y</kbd> 接受；直接关闭窗口视为拒绝，流程以 <code>PATH_ACCEPTANCE_REQUIRED</code> 结束，不会启动小车。</p>
+    <p>无显示器但终端可交互时，预览确认退化为一句话：</p>
+    <div class="terminal"><pre><span class="c">路径预览已保存: runs/20261103T.../preview/path_preview.png</span>
+<span class="y">确认接受该路径？输入 yes 继续:</span> yes</pre></div>
+  </section>
+
+  <section id="drive">
+    <h2><span class="num">05</span>驱动前预检与启动确认</h2>
+    <p class="lead"><span class="pill term">终端</span><span class="pill safe">安全门禁</span>运动控制启动前会打印 <code>/cmd_vel</code> 的订阅者、发布者、运动模式和预计时间，然后要求输入 <code>yes</code>。</p>
+    <div class="terminal"><pre><span class="c">[Follower] 读取路径段:</span> runs/.../path_postprocess/result.json
+<span class="c">[Follower] 路径段数:</span> 36
+<span class="c">[Follower] 后处理参数:</span> initial_heading=north
+<span class="c">[Follower] 运动模式:</span> turn, /odom 不可用时使用 timer 开环估算；经验速度只用于粗略时间控制。
+<span class="c">[Follower] 后处理预计时间:</span> 73.14s
+<span class="c">[Follower] /cmd_vel 预检话题:</span> /cmd_vel
+<span class="c">[Follower] /cmd_vel 订阅者:</span> ['/mecanum_chassis_node']
+<span class="c">[Follower] /cmd_vel 发布者:</span> ['/path_follower']
+<span class="y">确认启动小车运动？输入 yes 继续:</span> yes</pre></div>
+    <table>
+      <tr><th>情况</th><th>行为</th></tr>
+      <tr><td>存在其他 <code>/cmd_vel</code> 发布者</td><td>打印警告并拒绝启动；需先停用 <code>gesture_control_node</code>、<code>object_tracking</code>、<code>line_following</code>、<code>avoidance_node</code>、<code>qrcode</code></td></tr>
+      <tr><td>未看到 <code>/mecanum_chassis_node</code> 订阅</td><td>拒绝启动</td></tr>
+      <tr><td>输入不是 <code>yes</code></td><td>不驱动，记录为安全预检失败</td></tr>
+      <tr><td>无交互终端</td><td>必须显式传 <code>--yes</code>；否则拒绝</td></tr>
+    </table>
+    <p>运动执行期间按路径段依次输出状态：</p>
+    <div class="terminal"><pre><span class="dim">[path_follower] segment 0 rotate 90.0deg: 1.57s</span>
+<span class="dim">[path_follower] segment 0 zero transition: 0.10s</span>
+<span class="dim">[path_follower] segment 0 forward 0.600m open-loop: 2.00s -&gt; 20 ticks</span>
+...
+<span class="c">[Follower] 执行完成:</span> completed=True, commands=908, stopped=True</pre></div>
+    <div class="callout danger">
+      运动中按一次 <kbd>Ctrl+C</kbd>，程序会先重复发布零速度并等待通信缓冲，再退出。
+      不要按 <kbd>Ctrl+Z</kbd>（挂起进程，车可能保持最后一条速度命令），也不要直接关终端。
+    </div>
+  </section>
+
+  <section id="menus">
+    <h2><span class="num">06</span>完成菜单与错误恢复</h2>
+    <div class="grid2">
+      <div>
+        <h3>任务完成</h3>
+        <div class="terminal"><pre><span class="y">Task complete:</span> rerun [r], change algorithm [a],
+reprocess [p], reselect points [s], change map [m], quit [q]:</pre></div>
+        <table>
+          <tr><th>输入</th><th>动作</th></tr>
+          <tr><td><kbd>r</kbd></td><td>相同批次重跑</td></tr>
+          <tr><td><kbd>a</kbd></td><td>更换算法（可逗号分隔多个）</td></tr>
+          <tr><td><kbd>p</kbd></td><td>修改后处理参数后重跑</td></tr>
+          <tr><td><kbd>s</kbd></td><td>重新选择起终点</td></tr>
+          <tr><td><kbd>m</kbd></td><td>切换地图</td></tr>
+          <tr><td><kbd>q</kbd></td><td>退出</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>模块失败</h3>
+        <div class="terminal"><pre><span class="r">[top-level] path_planner execute:</span>
+input=... reason=... Suggestion: ...
+<span class="y">Choose retry [r], edit parameters [p],</span>
+<span class="y">back [b], or exit [q]:</span></pre></div>
+        <p class="muted">失败会保留运行目录、日志和已成功阶段；交互模式可重试、改参数、返回或退出。headless/批处理模式不提示，直接返回非零状态并跳过后续阶段。</p>
+      </div>
+    </div>
+    <div class="callout">
+      当前实现对无法识别的菜单输入采用“默认退出”（完成菜单落到 quit，恢复菜单落到 exit），不会重新提示。这是一个已知的交互优化点。
+    </div>
+  </section>
+
+  <section id="headless">
+    <h2><span class="num">07</span>纯终端 / 无显示器流程</h2>
+    <p class="lead">终端-only 时不打开任何窗口，起终点和四角都通过文字输入；路径预览用 <code>yes</code> 确认。</p>
+    <h3>方式 A：显式坐标，适合脚本</h3>
+    <div class="terminal"><pre><span class="p">$</span> python main.py map_pipeline/data/input/01_scattered.png \
+    --headless --start 2,2 --goal 37,37 --no-drive</pre></div>
+    <h3>方式 B：终端输入起终点</h3>
+    <div class="terminal"><pre><span class="p">$</span> python main.py map_pipeline/data/input/图1.jpg \
+    --headless --select-terminal \
+    --rectify --arena-width-m 2.0 --grid-size-m 0.05</pre></div>
+    <div class="terminal"><pre><span class="dim">（先输入四个角点）</span>
+<span class="c">栅格地图: 40 行 x 47 列，栅格边长 0.05 m</span>
+无标记预览: runs/.../result_preview.png
+请输入栅格坐标 row,col（地图上方为北；直接回车取消）
+<span class="y">起点 row,col:</span> 5,5
+<span class="y">终点 row,col:</span> 25,25</pre></div>
+    <h3>方式 C：自动检测</h3>
+    <p class="muted">有交互终端但检测不到图形显示时，主入口会自动切到终端选点；stdin/stdout 不是终端时必须显式给 <code>--start/--goal</code>，否则直接报错，不会挂起等待。</p>
+    <table>
+      <tr><th>参数</th><th>作用</th></tr>
+      <tr><td><code>--headless</code></td><td>不打开图形窗口</td></tr>
+      <tr><td><code>--select-terminal</code></td><td>在终端输入 row,col 起终点</td></tr>
+      <tr><td><code>--rectify</code></td><td>先做四角透视矫正和裁剪</td></tr>
+      <tr><td><code>--corners</code></td><td>直接给四个原图像素角点</td></tr>
+      <tr><td><code>--arena-width-m</code> / <code>--grid-size-m</code></td><td>物理尺度与栅格边长</td></tr>
+      <tr><td><code>--accept-path</code> / <code>--yes</code></td><td>跳过路径确认 / 驱动确认（自动化用）</td></tr>
+    </table>
+  </section>
+
+  <section id="notes">
+    <h2><span class="num">08</span>交互层现状与注意</h2>
+    <table>
+      <tr><th>项目</th><th>当前状态</th></tr>
+      <tr><td>主入口</td><td><code>main.py</code>，普通/研究模式；普通模式默认尝试驱动，研究模式默认不驱动</td></tr>
+      <tr><td>图形窗口</td><td>选点用 Tk/OpenCV；路径预览用 OpenCV；都需要显示器</td></tr>
+      <tr><td>终端窗口</td><td>菜单、错误恢复、驱动确认、纯终端选点/四角输入</td></tr>
+      <tr><td>确认点</td><td>路径预览确认 + 驱动前 <code>yes</code>，共两次</td></tr>
+      <tr><td>运行目录</td><td>每次交互生成 <code>runs/&lt;run-id&gt;/</code>，保存各阶段 result.json、日志、预览</td></tr>
+      <tr><td>退出码</td><td>成功 0；失败 2；运动中 Ctrl+C 为 130</td></tr>
+      <tr><td>已知体验问题</td><td>菜单中英文混杂；无效菜单输入默认退出；运动中只有分段日志，没有紧凑进度条</td></tr>
+    </table>
+    <div class="callout info">
+      代码位置：<code>main.py</code>（CLI）、<code>core/orchestrator.py</code>（调度）、
+      <code>core/interaction.py</code>（菜单/确认）、<code>core/commands.py</code>（命令构建）、
+      <code>map_pipeline/src/interactive_picker.py</code>（图形选点/四角）、
+      <code>map_pipeline/json_pipeline.py</code>（终端选点/矫正）、
+      <code>motion_control/run_follower.py</code>（预检/驱动确认）。
+    </div>
+  </section>
+
+  <footer>
+    SIT_LJGH_PROJECT · 交互形式说明 · 生成于 2026-11-03
+  </footer>
+</div>
+</body>
+</html>

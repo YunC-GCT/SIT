@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "status": "failed",
+  "module": "map_pipeline",
+  "run_id": "cli-missing-image",
+  "created_at": "2026-09-15T05:00:26.921992+00:00",
+  "inputs": {
+    "image": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\map_pipeline\\data\\input\\01_scattered.png",
+    "coordinate": "grid"
+  },
+  "outputs": {},
+  "parameters": {
+    "default_width": 500,
+    "threshold": 0,
+    "obstacle_ratio": 0.5,
+    "invert": false,
+    "blur_ksize": 5,
+    "grid_size": 0.3
+  },
+  "logs": [],
+  "errors": [
+    {
+      "code": "MAP_PROCESSING_ERROR",
+      "module": "map_pipeline",
+      "stage": "process",
+      "error_type": "ValueError",
+      "reason": "target_width (500) 不能大于图片宽度 (80)",
+      "input": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\map_pipeline\\data\\input\\01_scattered.png",
+      "suggestion": "检查图片、栅格参数以及起终点是否位于空闲栅格"
+    }
+  ],
+  "metadata": {}
+}

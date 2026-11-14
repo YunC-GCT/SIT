@@ -14,6 +14,7 @@ import yaml
 try:
     from .json_pipeline import (
         _record_failed_batch,
+        _select_terminal_points,
         prepare_grid_map,
         process,
     )
@@ -21,7 +22,12 @@ try:
     from .src.interactive_picker import PointSelectionCancelled, pick_points
     from .src.preview import build_grid_preview, safe_imwrite
 except ImportError:
-    from json_pipeline import _record_failed_batch, prepare_grid_map, process
+    from json_pipeline import (
+        _record_failed_batch,
+        _select_terminal_points,
+        prepare_grid_map,
+        process,
+    )
     from src.grid_resolution_tuner import tune_resolution
     from src.interactive_picker import PointSelectionCancelled, pick_points
     from src.preview import build_grid_preview, safe_imwrite
@@ -30,6 +36,8 @@ from core import (
     RunBatch,
     STATUS_FAILED,
     STATUS_SUCCESS,
+    display_available,
+    interactive_terminal,
 )
 
 
@@ -85,7 +93,7 @@ def _find_image(input_dir: str, requested: str | None) -> str:
     )
     if not files:
         raise FileNotFoundError("data/input 目录下无图片，请放入图片后重试")
-    if len(files) == 1 or not sys.stdin.isatty():
+    if not sys.stdin.isatty():
         return os.path.join(input_dir, files[0])
 
     print("可用地图:")
@@ -119,6 +127,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--adjust-grid",
         action="store_true",
         help="主动进入终端栅格宽度设置；默认直接使用配置值",
+    )
+    parser.add_argument(
+        "--headless",
+        action="store_true",
+        help="不打开图形窗口；需配合 --select-terminal",
+    )
+    parser.add_argument(
+        "--select-terminal",
+        action="store_true",
+        help="在终端输入 row,col 起终点",
     )
     args = parser.parse_args(argv)
 
@@ -155,7 +173,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"使用图片: {image_path}")
         print(f"图片尺寸: {image_width} x {image_height}")
         print(f"栅格尺寸: {grid_map.rows} 行 x {grid_map.cols} 列")
-        start_px, goal_px = pick_points(image, grid_map=grid_map)
+        terminal_ok = interactive_terminal()
+        gui_ok = terminal_ok and display_available()
+        if args.select_terminal or (not args.headless and not gui_ok and terminal_ok):
+            start, goal = _select_terminal_points(grid_map, preview_path)
+            coordinate = "grid"
+        elif not args.headless and gui_ok:
+            start, goal = pick_points(image, grid_map=grid_map)
+            coordinate = "pixel"
+        else:
+            raise ValueError(
+                "无显示器模式需要起终点：请使用 --select-terminal 在终端输入"
+            )
     except PointSelectionCancelled as exc:
         result = _record_failed_batch(
             batch,
@@ -187,9 +216,9 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     result = process(
         image_path,
-        start=start_px,
-        goal=goal_px,
-        coordinate="pixel",
+        start=start,
+        goal=goal,
+        coordinate=coordinate,
         config=effective_config,
         output_path=result_path,
         preview_path=preview_path,

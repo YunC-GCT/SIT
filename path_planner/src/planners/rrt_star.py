@@ -5,7 +5,7 @@ from __future__ import annotations
 继承 RRT，在其基础上增加重选父节点和重布线，使路径渐进最优。
 """
 
-from typing import List, Tuple
+from typing import Tuple
 from .rrt import RRTPlanner
 from ..planner_base import Path
 from ..grid_utils import line_of_sight

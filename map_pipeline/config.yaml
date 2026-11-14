@@ -5,3 +5,13 @@ obstacle_ratio: 0.5         # 栅格单元内黑色像素占比超过此值则�
 invert: false               # 是否反转二值图（true: 白色为障碍）
 blur_ksize: 5               # 高斯模糊核大小（奇数）
 grid_size: 0.3              # 每个栅格对应的真实世界物理尺寸（米）
+
+# 透视矫正（命令行 --rectify 可覆盖）
+rectify: false              # true 时先做四点透视矫正和裁剪
+rectify_output_width: 0     # 0 表示使用四边形平均宽度
+arena_width_m: 0            # >0 时按场地真实宽度计算 grid_size
+arena_height_m: 0           # >0 时用于确定矫正后长宽比
+
+# 二值清理（0 表示关闭）
+min_obstacle_area_px: 0     # 小于该面积的黑色连通域会被移除
+morphology_kernel: 0        # >=3 时先开运算再闭运算

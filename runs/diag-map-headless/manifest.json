@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "run_id": "diag-map-headless",
+  "created_at": "2026-11-03T04:07:19.462243+00:00",
+  "updated_at": "2026-11-03T04:07:19.759184+00:00",
+  "status": "failed",
+  "version": {
+    "python": "3.13.14",
+    "platform": "Windows-11-10.0.26300-SP0"
+  },
+  "modules": [
+    {
+      "name": "map_pipeline",
+      "status": "failed",
+      "updated_at": "2026-11-03T04:07:19.753143+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-map-headless\\map_pipeline\\result.json"
+    }
+  ],
+  "stages": {
+    "map_pipeline": {
+      "status": "failed",
+      "updated_at": "2026-11-03T04:07:19.753070+00:00",
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag-map-headless\\map_pipeline\\result.json",
+      "error": [
+        {
+          "code": "MAP_INTERACTION_ERROR",
+          "module": "map_pipeline",
+          "stage": "prepare_or_select",
+          "error_type": "ValueError",
+          "reason": "无显示器模式必须同时提供 --start/--goal 或 --start-px/--goal-px；也可使用 --headless --select-terminal 在终端输入起终点",
+          "input": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\map_pipeline\\data\\input\\01_scattered.png",
+          "suggestion": "无显示器时使用 --headless --select-terminal 在终端输入起终点，或显式提供 --start/--goal；否则检查图片和栅格参数"
+        }
+      ]
+    }
+  },
+  "artifacts": {},
+  "events": [],
+  "workflow": {},
+  "finished_at": "2026-11-03T04:07:19.758624+00:00"
+}

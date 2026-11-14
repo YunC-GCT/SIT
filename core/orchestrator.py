@@ -2,29 +2,24 @@
 
 from __future__ import annotations
 
-import json
 import os
-import signal
-import subprocess
-import sys
 from dataclasses import dataclass, field
 from typing import Any, Callable, Sequence
 
-import cv2
-import numpy as np
-
 from .batch import RunBatch
+from .commands import CommandMixin
 from .contracts import (
     STATUS_FAILED,
     STATUS_PENDING,
     STATUS_SUCCESS,
     make_error,
-    make_result,
-    require_success,
     read_result,
 )
+from .display import display_available, interactive_terminal
+from .interaction import InteractionMixin
+from .preview import save_path_preview
+from .process_runner import _subprocess_runner
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODULE_STAGES = ("map_pipeline", "path_planner", "path_postprocess")
 
 
@@ -43,201 +38,7 @@ class PipelineReport:
         return 0 if self.status == STATUS_SUCCESS else 2
 
 
-def _option(command: Sequence[str], name: str) -> str | None:
-    try:
-        index = command.index(name)
-    except ValueError:
-        return None
-    if index + 1 >= len(command):
-        return None
-    return command[index + 1]
-
-
-def _subprocess_runner(command: Sequence[str]) -> int:
-    """Run one module CLI while preserving safe Ctrl+C delivery to children."""
-    kwargs: dict[str, Any] = {"cwd": PROJECT_ROOT}
-    if sys.platform == "win32":
-        kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
-    else:
-        kwargs["start_new_session"] = True
-
-    process = subprocess.Popen(list(command), **kwargs)
-    try:
-        return process.wait()
-    except KeyboardInterrupt:
-        try:
-            process.send_signal(
-                signal.CTRL_C_EVENT if sys.platform == "win32" else signal.SIGINT
-            )
-            process.wait(timeout=8)
-        except subprocess.TimeoutExpired:
-            if _is_motion_command(command):
-                _run_stop_only(command)
-            process.terminate()
-            try:
-                process.wait(timeout=3)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.wait(timeout=2)
-        raise
-
-
-def _is_motion_command(command: Sequence[str]) -> bool:
-    return "-m" in command and "motion_control.run_follower" in command
-
-
-def _run_stop_only(command: Sequence[str]) -> None:
-    stop_command = [
-        sys.executable,
-        "-m",
-        "motion_control.run_follower",
-        "--stop-only",
-    ]
-    if "--config" in command:
-        index = command.index("--config")
-        if index + 1 < len(command):
-            stop_command.extend(["--config", command[index + 1]])
-    kwargs: dict[str, Any] = {"cwd": PROJECT_ROOT}
-    if sys.platform == "win32":
-        kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
-    else:
-        kwargs["start_new_session"] = True
-    try:
-        stop_process = subprocess.Popen(stop_command, **kwargs)
-        stop_process.wait(timeout=8)
-    except (OSError, subprocess.TimeoutExpired):
-        # The original process is still terminated below; no successful
-        # stop-only command can be claimed when ROS2 is unavailable.
-        try:
-            stop_process.kill()
-        except (UnboundLocalError, OSError):
-            pass
-
-
-def _as_path(points_payload: dict) -> list[tuple[float, float]]:
-    values = points_payload.get("points", {}).get("values", [])
-    return [(float(point[0]), float(point[1])) for point in values]
-
-
-def save_path_preview(
-    map_result_path: str,
-    planner_result_path: str,
-    postprocess_result_path: str,
-    output_path: str,
-) -> str:
-    """Render the accepted path view from public JSON result payloads."""
-    map_result = require_success(map_result_path, module="map_pipeline")
-    planner_result = require_success(planner_result_path, module="path_planner")
-    postprocess_result = require_success(
-        postprocess_result_path,
-        module="path_postprocess",
-    )
-    grid_payload = map_result["outputs"]["map"]
-    grid = np.asarray(grid_payload["grid"]["values"], dtype=np.uint8)
-    start_payload = grid_payload["start"]
-    goal_payload = grid_payload["goal"]
-    start = (int(start_payload["row"]), int(start_payload["col"]))
-    goal = (int(goal_payload["row"]), int(goal_payload["col"]))
-
-    from path_planner.preview import draw_comparison, draw_path
-
-    comparisons = planner_result["outputs"].get("comparisons")
-    if isinstance(comparisons, list):
-        comparison_data = {}
-        for item in comparisons:
-            raw_path = item.get("raw_path", {})
-            comparison_data[item.get("algorithm", "planner")] = {
-                "path": [
-                    (int(point[0]), int(point[1]))
-                    for point in raw_path.get("points", {}).get("values", [])
-                ],
-                "time": item.get("metrics", {}).get("values", {}).get(
-                    "planning_time_s", 0.0
-                ),
-            }
-        image = draw_comparison(grid, comparison_data, start, goal)
-    else:
-        raw_path = planner_result["outputs"].get("raw_path", {})
-        image = draw_path(
-            grid,
-            [
-                (int(point[0]), int(point[1]))
-                for point in raw_path.get("points", {}).get("values", [])
-            ],
-            start,
-            goal,
-        )
-
-    effective_cell = max(1, image.shape[1] // max(grid.shape[1], 1))
-    smoothed = _as_path(postprocess_result["outputs"].get("smoothed_path", {}))
-    if len(smoothed) >= 2:
-        points = np.asarray(
-            [
-                [
-                    int(round(col * effective_cell + effective_cell / 2)),
-                    int(round(row * effective_cell + effective_cell / 2)),
-                ]
-                for row, col in smoothed
-            ],
-            dtype=np.int32,
-        )
-        cv2.polylines(image, [points], False, (0, 128, 255), 2)
-
-    segments = postprocess_result["outputs"].get("segments", [])
-    postprocess_comparisons = postprocess_result["outputs"].get("comparisons")
-    if not segments and isinstance(postprocess_comparisons, list):
-        segments = [
-            segment
-            for comparison in postprocess_comparisons
-            for segment in comparison.get("outputs", {}).get("segments", [])
-        ]
-    for segment in segments:
-        begin = segment["start"]
-        end = segment["end"]
-        p1 = (
-            int(begin["col"] * effective_cell + effective_cell / 2),
-            int(begin["row"] * effective_cell + effective_cell / 2),
-        )
-        p2 = (
-            int(end["col"] * effective_cell + effective_cell / 2),
-            int(end["row"] * effective_cell + effective_cell / 2),
-        )
-        cv2.line(image, p1, p2, (0, 165, 0), 1)
-
-    postprocess_outputs = postprocess_result["outputs"]
-    if "comparisons" in postprocess_outputs:
-        successful = [
-            item
-            for item in postprocess_outputs["comparisons"]
-            if item.get("status") == STATUS_SUCCESS
-        ]
-        if not successful:
-            raise ValueError("postprocess result contains no successful comparison")
-        postprocess_outputs = successful[0]["outputs"]
-        segments = postprocess_outputs.get("segments", [])
-    metrics = postprocess_outputs.get("metrics", {}).get("values", {})
-    estimated = metrics.get(
-        "estimated_time_s",
-        metrics.get("estimated_execution_time_s", 0.0),
-    )
-    cv2.rectangle(image, (0, 0), (min(image.shape[1], 620), 30), (0, 0, 0), -1)
-    cv2.putText(
-        image,
-        f"segments={len(segments)} estimated={float(estimated):.2f}s open-loop",
-        (8, 20),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.5,
-        (255, 255, 255),
-        1,
-        cv2.LINE_AA,
-    )
-    os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
-    if not cv2.imwrite(output_path, image):
-        raise OSError(f"unable to write path preview: {output_path}")
-    return os.path.abspath(output_path)
-
-
-class PipelineOrchestrator:
+class PipelineOrchestrator(CommandMixin, InteractionMixin):
     """Deep top-level module for normal and research workflow modes."""
 
     def __init__(
@@ -253,6 +54,13 @@ class PipelineOrchestrator:
         postprocess_parameters: dict | None = None,
         seed: int | None = None,
         headless: bool = False,
+        terminal_select: bool = False,
+        rectify: bool = False,
+        corners: str | None = None,
+        arena_width_m: float | None = None,
+        arena_height_m: float | None = None,
+        rectify_output_width: int | None = None,
+        grid_size_m: float | None = None,
         drive: bool | None = None,
         accept_path: bool = False,
         confirm_drive: bool = False,
@@ -283,6 +91,13 @@ class PipelineOrchestrator:
         self.postprocess_parameters = dict(postprocess_parameters or {})
         self.seed = seed
         self.headless = bool(headless)
+        self.terminal_select = bool(terminal_select)
+        self.rectify = bool(rectify)
+        self.corners = corners
+        self.arena_width_m = arena_width_m
+        self.arena_height_m = arena_height_m
+        self.rectify_output_width = rectify_output_width
+        self.grid_size_m = grid_size_m
         self.drive = (
             mode == "normal" and not self.headless
             if drive is None
@@ -318,6 +133,21 @@ class PipelineOrchestrator:
     def run(self) -> PipelineReport:
         try:
             self._validate_inputs()
+        except ValueError as exc:
+            error = make_error(
+                "TOP_LEVEL_INPUT_ERROR",
+                module="top_level",
+                stage="validate",
+                error_type=type(exc).__name__,
+                reason=str(exc),
+                input_ref=self.image_path or self.batch.manifest_path,
+                suggestion=(
+                    "提供 --start/--goal，或使用 --select-terminal "
+                    "在终端输入起终点；否则检查图片路径和配置"
+                ),
+            )
+            return self._failure_report("workflow", error, finish=True)
+        try:
             start_index = 0
             while True:
                 report = self._run_once(start_index)
@@ -436,10 +266,26 @@ class PipelineOrchestrator:
     def _validate_inputs(self) -> None:
         if self.image_path is None:
             raise ValueError("an image path is required")
-        if self.headless and self.start is None:
-            raise ValueError("headless mode requires explicit start and goal")
-        if not self.headless and self.start is None:
-            self.output_fn("start and goal will be selected by the map module")
+        if self.start is None and not self.terminal_select:
+            if self.headless:
+                raise ValueError(
+                    "无显示器模式需要显式 --start/--goal，"
+                    "或使用 --select-terminal 在终端输入起终点"
+                )
+            if not display_available():
+                raise ValueError(
+                    "未检测到图形显示：请使用 --headless --start row,col "
+                    "--goal row,col，或使用 --select-terminal 在终端输入起终点"
+                )
+        if self.rectify and not self.corners and not interactive_terminal():
+            raise ValueError(
+                "透视矫正需要 --corners，或在交互式终端/图形界面中运行"
+            )
+        if self.start is None:
+            if self.terminal_select:
+                self.output_fn("start and goal will be entered in the terminal")
+            elif not self.headless:
+                self.output_fn("start and goal will be selected by the map module")
 
     def _run_modules(self, start_index: int) -> int | PipelineReport | None:
         for index in range(start_index, len(MODULE_STAGES)):
@@ -643,99 +489,6 @@ class PipelineOrchestrator:
             "result.json",
         )
 
-    def _command_for(self, module: str) -> Callable[[str], list[str]]:
-        return {
-            "map_pipeline": self._map_command,
-            "path_planner": self._planner_command,
-            "path_postprocess": self._postprocess_command,
-        }[module]
-
-    def _common_args(self, output_path: str) -> list[str]:
-        return [
-            "--output",
-            output_path,
-            "--run-root",
-            self.batch.root,
-            "--run-id",
-            self.batch.run_id,
-        ]
-
-    def _map_command(self, output_path: str) -> list[str]:
-        command = [
-            sys.executable,
-            "-m",
-            "map_pipeline.json_pipeline",
-            self.image_path or "",
-        ]
-        if self.start is not None:
-            command += ["--start", f"{self.start[0]},{self.start[1]}"]
-            command += ["--goal", f"{self.goal[0]},{self.goal[1]}"]
-        if self.map_config:
-            command += ["--config", os.path.abspath(self.map_config)]
-        return command + self._common_args(output_path)
-
-    def _planner_command(self, output_path: str) -> list[str]:
-        command = [
-            sys.executable,
-            "-m",
-            "path_planner.json_pipeline",
-            "--map-result",
-            self._current_result("map_pipeline"),
-        ]
-        if self.mode == "research":
-            command.append("--research")
-            if self.algorithms:
-                command += ["--algorithms", ",".join(self.algorithms)]
-        elif self.algorithm:
-            command += ["--algorithm", self.algorithm]
-        if self.seed is not None:
-            command += ["--seed", str(self.seed)]
-        if self.parameters:
-            command += ["--params", json.dumps(self.parameters, ensure_ascii=False)]
-        if self.planner_config:
-            command += ["--config", os.path.abspath(self.planner_config)]
-        return command + self._common_args(output_path)
-
-    def _postprocess_command(self, output_path: str) -> list[str]:
-        command = [
-            sys.executable,
-            "-m",
-            "path_postprocess.run_postprocess",
-            "--map-result",
-            self._current_result("map_pipeline"),
-            "--planner-result",
-            self._current_result("path_planner"),
-        ]
-        if self.postprocess_parameters:
-            command += [
-                "--params",
-                json.dumps(self.postprocess_parameters, ensure_ascii=False),
-            ]
-        if self.postprocess_config:
-            command += ["--config", os.path.abspath(self.postprocess_config)]
-        return command + self._common_args(output_path)
-
-    def _motion_command(self, output_path: str) -> list[str]:
-        command = [
-            sys.executable,
-            "-m",
-            "motion_control.run_follower",
-            "--postprocess-result",
-            self._current_result("path_postprocess"),
-        ]
-        if self.confirm_drive:
-            command.append("--yes")
-        if self.motion_config:
-            command += ["--config", os.path.abspath(self.motion_config)]
-        return command + self._common_args(output_path)
-
-    def _current_result(self, module: str) -> str:
-        stage = self.batch.manifest.get("stages", {}).get(module, {})
-        result = stage.get("result")
-        if not result:
-            raise ValueError(f"stage {module} has no result")
-        return os.path.abspath(result)
-
     def _create_preview(self) -> str:
         map_result = self._current_result("map_pipeline")
         planner_result = self._current_result("path_planner")
@@ -749,141 +502,6 @@ class PipelineOrchestrator:
         )
         self.batch.record_artifact("path_preview", path)
         return path
-
-    def _accept_preview(self) -> bool:
-        if not self.drive:
-            return True
-        if self.headless:
-            return self.accept_path
-        if self.accept_path:
-            return True
-        image_path = self.batch.manifest.get("artifacts", {}).get("path_preview")
-        if not image_path:
-            return False
-        image = cv2.imread(image_path)
-        if image is None:
-            return False
-        cv2.namedWindow("Path Preview", cv2.WINDOW_NORMAL)
-        cv2.imshow("Path Preview", image)
-        key = cv2.waitKey(0) & 0xFF
-        cv2.destroyWindow("Path Preview")
-        return key in {10, 13, 32, ord("y"), ord("Y")}
-
-    def _confirm_drive(self) -> bool:
-        if self.headless:
-            return self.confirm_drive
-        # The motion-control CLI performs the /cmd_vel preflight and asks for
-        # the final interactive confirmation after printing its graph report.
-        return True
-
-    def _recovery_action(self, module: str, errors: list[dict]) -> str:
-        for error in errors:
-            self.output_fn(
-                f"[top-level] {error.get('module', module)} "
-                f"{error.get('stage', 'unknown')}: "
-                f"input={error.get('input', '<unknown>')} "
-                f"{error.get('reason', 'unknown error')} "
-                f"Suggestion: {error.get('suggestion', 'retry')}"
-            )
-        if self.recovery is not None:
-            return self.recovery(module, errors)
-        if self.headless:
-            return "exit"
-        answer = self.input_fn(
-            "Choose retry [r], edit parameters [p], back [b], or exit [q]: "
-        ).strip().lower()
-        return {"r": "retry", "p": "edit", "b": "back"}.get(answer, "exit")
-
-    def _edit_parameters(self, module: str) -> None:
-        if module == "path_planner":
-            raw = self.input_fn("New planner parameters as JSON (blank keeps current): ").strip()
-            if raw:
-                self.parameters = json.loads(raw)
-        elif module == "path_postprocess":
-            raw = self.input_fn(
-                "New postprocess parameters as JSON (blank keeps current): "
-            ).strip()
-            if raw:
-                self.postprocess_parameters = json.loads(raw)
-        elif module == "map_pipeline":
-            path = self.input_fn(
-                "Map config path (blank keeps current): "
-            ).strip()
-            if path:
-                self.map_config = os.path.abspath(path)
-        elif module == "motion_control":
-            path = self.input_fn(
-                "Motion config path (blank keeps current): "
-            ).strip()
-            if path:
-                self.motion_config = os.path.abspath(path)
-        self.batch.set_workflow(
-            map_config=self.map_config,
-            planner_config=self.planner_config,
-            postprocess_config=self.postprocess_config,
-            motion_config=self.motion_config,
-            parameters=self.parameters,
-            postprocess_parameters=self.postprocess_parameters,
-        )
-
-    def _completion_action(self) -> str:
-        answer = self.input_fn(
-            "Task complete: rerun [r], change algorithm [a], "
-            "reprocess [p], reselect points [s], change map [m], quit [q]: "
-        ).strip().lower()
-        action = {
-            "r": "rerun",
-            "a": "algorithm",
-            "p": "postprocess",
-            "s": "select",
-            "m": "map",
-            "q": "quit",
-        }.get(answer, "quit")
-        self.batch.record_event({"type": "completion_action", "action": action})
-        return action
-
-    def _apply_completion_action(self, action: str) -> int:
-        if action == "algorithm":
-            selected = self.input_fn(
-                "Algorithm name (or comma-separated names): "
-            ).strip()
-            names = [name.strip() for name in selected.split(",") if name.strip()]
-            if self.mode == "research" or len(names) > 1:
-                self.mode = "research"
-                self.algorithms = names
-                self.algorithm = None
-                self.drive = False
-            else:
-                self.mode = "normal"
-                self.algorithm = names[0] if names else None
-                self.algorithms = []
-                self.drive = not self.headless
-            self.batch.set_workflow(mode=self.mode, drive=self.drive)
-            return 1
-        if action == "postprocess":
-            raw = self.input_fn(
-                "Postprocess parameters as JSON (blank keeps current): "
-            ).strip()
-            if raw:
-                self.postprocess_parameters = json.loads(raw)
-            self.batch.set_workflow(
-                postprocess_parameters=self.postprocess_parameters,
-            )
-            return 2
-        if action == "select":
-            self.start = None
-            self.goal = None
-            self.batch.set_workflow(start=None, goal=None)
-            return 0
-        if action == "map":
-            self.image_path = os.path.abspath(
-                self.input_fn("Map image path: ").strip()
-            )
-            self.start = None
-            self.goal = None
-            self.batch.set_workflow(image=self.image_path, start=None, goal=None)
-            return 0
-        return 1
 
 
 def run_pipeline(

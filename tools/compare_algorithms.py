@@ -6,7 +6,6 @@ import cv2, numpy as np
 from collections import deque
 from path_planner.src.planners.a_star import AStarPlanner
 from path_planner.src.planners.rrt_star import RRTStarPlanner
-from path_planner.src.grid_utils import line_of_sight
 
 MAPS_DIR = os.path.join(os.path.dirname(__file__), "map_pipeline", "data", "input")
 START = (3, 3)

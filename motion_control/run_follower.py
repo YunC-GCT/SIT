@@ -256,6 +256,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         raise KeyboardInterrupt
 
     signal.signal(signal.SIGINT, _raise_keyboard_interrupt)
+    # SSH/terminal disconnect and service shutdown should also stop the car
+    # before exiting, not just Ctrl+C.
+    for signal_name in ("SIGTERM", "SIGHUP"):
+        signal_value = getattr(signal, signal_name, None)
+        if signal_value is not None:
+            try:
+                signal.signal(signal_value, _raise_keyboard_interrupt)
+            except (OSError, ValueError):
+                pass
 
     try:
         config = _load_config(args.config)

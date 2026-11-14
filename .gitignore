@@ -49,11 +49,9 @@ map_pipeline/data/output/maps/
 
 # =====================================================
 # 说明:
-# 下面这些文件 **不** 忽略,因为它们是项目必要的数据:
-#   - data/input/*.jpg   (输入地图示例)
-#   - data/output/*.npz  (栅格地图输出)
-#   - data/output/*.npy  (规划路径输出)
-#   - data/output/*.png  (可视化结果)
-#   - config.yaml        (各模块配置)
+# 模块之间使用版本化 JSON 结果和独立 runs/<run-id>/ 运行批次传递数据。
+# 已删除的旧 path_planner/data/ 输入、输出文件不再作为必要数据维护。
+# 配置文件保持跟踪:
+#   - config.yaml
 #   - global_config.yaml
 # =====================================================

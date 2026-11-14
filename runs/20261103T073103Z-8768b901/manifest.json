@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "run_id": "20261103T073103Z-8768b901",
+  "created_at": "2026-11-03T07:31:03.691400+00:00",
+  "updated_at": "2026-11-03T07:31:05.801645+00:00",
+  "status": "success",
+  "version": {
+    "python": "3.13.14",
+    "platform": "Windows-11-10.0.26300-SP0"
+  },
+  "modules": [
+    {
+      "name": "map_pipeline",
+      "status": "success",
+      "updated_at": "2026-11-03T07:31:04.360746+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T073103Z-8768b901\\map_pipeline\\result.json"
+    },
+    {
+      "name": "path_planner",
+      "status": "success",
+      "updated_at": "2026-11-03T07:31:05.313102+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T073103Z-8768b901\\path_planner\\result.json"
+    },
+    {
+      "name": "path_postprocess",
+      "status": "success",
+      "updated_at": "2026-11-03T07:31:05.695943+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T073103Z-8768b901\\path_postprocess\\result.json"
+    },
+    {
+      "name": "motion_control",
+      "status": "pending",
+      "updated_at": "2026-11-03T07:31:05.764509+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {}
+    },
+    {
+      "name": "acceptance",
+      "status": "success",
+      "updated_at": "2026-11-03T07:31:05.800492+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T073103Z-8768b901\\acceptance\\result.json"
+    }
+  ],
+  "stages": {
+    "map_pipeline": {
+      "status": "success",
+      "updated_at": "2026-11-03T07:31:04.360722+00:00",
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T073103Z-8768b901\\map_pipeline\\result.json",
+      "error": null
+    },
+    "path_planner": {
+      "status": "success",
+      "updated_at": "2026-11-03T07:31:05.313084+00:00",
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T073103Z-8768b901\\path_planner\\result.json",
+      "error": null
+    },
+    "path_postprocess": {
+      "status": "success",
+      "updated_at": "2026-11-03T07:31:05.695927+00:00",
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T073103Z-8768b901\\path_postprocess\\result.json",
+      "error": null
+    },
+    "motion_control": {
+      "status": "pending",
+      "updated_at": "2026-11-03T07:31:05.764496+00:00",
+      "result": null,
+      "error": null
+    },
+    "acceptance": {
+      "status": "success",
+      "updated_at": "2026-11-03T07:31:05.800473+00:00",
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T073103Z-8768b901\\acceptance\\result.json",
+      "error": null
+    }
+  },
+  "artifacts": {
+    "path_preview": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T073103Z-8768b901\\preview\\path_preview.png",
+    "manual_hardware_record": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\20261103T073103Z-8768b901\\acceptance\\manual_record.json"
+  },
+  "events": [],
+  "workflow": {
+    "mode": "normal",
+    "headless": true,
+    "drive": false,
+    "seed": 42,
+    "image": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\map_pipeline\\data\\input\\01_scattered.png",
+    "start": [
+      2,
+      2
+    ],
+    "goal": [
+      37,
+      37
+    ],
+    "algorithm": null,
+    "algorithms": [],
+    "parameters": {},
+    "postprocess_parameters": {},
+    "motion_skipped_reason": "research or drive disabled"
+  },
+  "finished_at": "2026-11-03T07:31:05.801560+00:00"
+}

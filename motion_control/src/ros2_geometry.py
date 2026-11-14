@@ -1,0 +1,136 @@
+"""Direction, heading, and turn-angle helpers."""
+
+from __future__ import annotations
+
+import math
+from typing import Sequence
+
+DIR_NORTH, DIR_EAST, DIR_SOUTH, DIR_WEST = 0, 1, 2, 3
+
+HEADING_TO_DIR = {
+    "north": DIR_NORTH,
+    "east": DIR_EAST,
+    "south": DIR_SOUTH,
+    "west": DIR_WEST,
+    "n": DIR_NORTH,
+    "e": DIR_EAST,
+    "s": DIR_SOUTH,
+    "w": DIR_WEST,
+}
+HEADING_TO_DEG = {
+    "north": 0.0,
+    "east": 90.0,
+    "south": 180.0,
+    "west": 270.0,
+    "n": 0.0,
+    "e": 90.0,
+    "s": 180.0,
+    "w": 270.0,
+}
+
+def _diff_to_turn(diff: int) -> int:
+    if diff == 0:
+        return 0
+    if diff == 1:
+        return 90
+    if diff == 2:
+        return 180
+    return -90
+
+def delta_to_dir(dr: int, dc: int) -> int:
+    if dr < 0 and dc == 0:
+        return DIR_NORTH
+    if dr == 0 and dc > 0:
+        return DIR_EAST
+    if dr > 0 and dc == 0:
+        return DIR_SOUTH
+    if dr == 0 and dc < 0:
+        return DIR_WEST
+    return DIR_NORTH
+
+def compute_turn_angles(
+    directions: Sequence[int],
+    initial_heading: str | int = "north",
+) -> list[int]:
+    if not directions:
+        return []
+    if isinstance(initial_heading, str):
+        try:
+            current = HEADING_TO_DIR[initial_heading.lower()]
+        except KeyError as exc:
+            raise ValueError(
+                "initial_heading must be north, east, south, west, or a direction code"
+            ) from exc
+    else:
+        current = int(initial_heading)
+    angles = []
+    for target in directions:
+        angles.append(_diff_to_turn((int(target) - current) % 4))
+        current = int(target)
+    return angles
+
+def estimate_runtime(
+    turn_angles: Sequence[float],
+    grid_size: float,
+    turn_speed: float,
+    move_speed: float,
+) -> float:
+    if not turn_angles:
+        return 0.0
+    turn_time = sum(math.radians(abs(angle)) for angle in turn_angles) / turn_speed
+    move_time = len(turn_angles) * grid_size / move_speed
+    return turn_time + move_time
+
+def normalize_angle_deg(angle: float) -> float:
+    normalized = (float(angle) + 180.0) % 360.0 - 180.0
+    if math.isclose(normalized, -180.0, abs_tol=1e-9):
+        return 180.0
+    return normalized
+
+def split_turn_angle_deg(angle: float) -> list[float]:
+    angle = normalize_angle_deg(angle)
+    if math.isclose(abs(angle), 180.0, abs_tol=1e-9):
+        sign = 1.0 if angle >= 0 else -1.0
+        return [90.0 * sign, 90.0 * sign]
+    return [angle] if not math.isclose(angle, 0.0, abs_tol=1e-9) else []
+
+def heading_degrees(value: str | float | int) -> float:
+    if isinstance(value, str):
+        try:
+            return HEADING_TO_DEG[value.lower()]
+        except KeyError as exc:
+            raise ValueError(
+                "initial_heading must be north, east, south, west, or degrees"
+            ) from exc
+    return float(value) % 360.0
+
+def compute_segment_turns(
+    segments: Sequence[dict],
+    *,
+    initial_heading: str | float = "north",
+) -> list[float]:
+    current_heading = heading_degrees(initial_heading)
+    turns = []
+    for segment in segments:
+        target = float(segment["direction_deg"]) % 360.0
+        turn = normalize_angle_deg(target - current_heading)
+        turns.append(turn)
+        current_heading = target
+    return turns
+
+
+__all__ = [
+    "DIR_EAST",
+    "DIR_NORTH",
+    "DIR_SOUTH",
+    "DIR_WEST",
+    "HEADING_TO_DEG",
+    "HEADING_TO_DIR",
+    "compute_segment_turns",
+    "compute_turn_angles",
+    "delta_to_dir",
+    "estimate_runtime",
+    "heading_degrees",
+    "normalize_angle_deg",
+    "split_turn_angle_deg",
+]

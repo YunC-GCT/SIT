@@ -1,5 +1,5 @@
 import heapq
-from ..planner_base import GlobalPlanner, Path
+from ..planner_base import GlobalPlanner
 
 class DijkstraPlanner(GlobalPlanner):
     def plan(self, start, goal):

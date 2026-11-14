@@ -21,11 +21,12 @@ from .contracts import (
     require_success,
 )
 from .batch import RunBatch
+from .display import display_available, interactive_terminal
+from .preview import save_path_preview
 from .orchestrator import (
     PipelineOrchestrator,
     PipelineReport,
     run_pipeline,
-    save_path_preview,
 )
 
 __all__ = [
@@ -48,6 +49,8 @@ __all__ = [
     "write_result",
     "require_success",
     "RunBatch",
+    "display_available",
+    "interactive_terminal",
     "PipelineOrchestrator",
     "PipelineReport",
     "run_pipeline",

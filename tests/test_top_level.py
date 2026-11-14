@@ -1,8 +1,15 @@
+import io
 import json
 import os
+import subprocess
+import sys
 import tempfile
 import unittest
+
+import main as main_module
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 import cv2
 import numpy as np
@@ -19,7 +26,7 @@ from core import (
     save_path_preview,
     write_result,
 )
-from core.orchestrator import run_pipeline
+from core.orchestrator import PipelineOrchestrator, run_pipeline
 
 
 class FakeModuleRunner:
@@ -261,7 +268,7 @@ class TopLevelPipelineTests(unittest.TestCase):
                 map_path,
                 planner_path,
                 postprocess_path,
-                os.path.join(tmp, "preview.png"),
+                os.path.join(tmp, "中文输出", "preview.png"),
             )
             self.assertTrue(os.path.exists(preview_path))
 
@@ -466,6 +473,448 @@ class TopLevelPipelineTests(unittest.TestCase):
                 "motion_control",
                 [runner._module(command) for command in runner.commands],
             )
+
+    @patch("core.interaction.cv2")
+    def test_closing_path_preview_window_is_a_normal_rejection(self, cv2_mock):
+        cv2_mock.imread.return_value = np.zeros((8, 8, 3), dtype=np.uint8)
+        cv2_mock.waitKey.return_value = -1
+        cv2_mock.getWindowProperty.return_value = 0
+
+        orchestrator = PipelineOrchestrator.__new__(PipelineOrchestrator)
+        orchestrator.drive = True
+        orchestrator.headless = False
+        orchestrator.accept_path = False
+        orchestrator.batch = SimpleNamespace(
+            manifest={"artifacts": {"path_preview": "preview.png"}}
+        )
+
+        accepted = orchestrator._accept_preview()
+
+        self.assertFalse(accepted)
+        cv2_mock.destroyWindow.assert_not_called()
+
+
+    def test_headless_without_points_mentions_terminal_selection(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            orchestrator = PipelineOrchestrator(
+                "map.png",
+                headless=True,
+                run_root=tmp,
+                run_id="headless-001",
+            )
+            with self.assertRaises(ValueError) as raised:
+                orchestrator._validate_inputs()
+            self.assertIn("--select-terminal", str(raised.exception))
+
+            orchestrator.terminal_select = True
+            orchestrator._validate_inputs()
+
+    def test_map_command_passes_terminal_selection_flag(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            orchestrator = PipelineOrchestrator(
+                "map.png",
+                terminal_select=True,
+                run_root=tmp,
+                run_id="terminal-001",
+            )
+            command = orchestrator._map_command(os.path.join(tmp, "result.json"))
+
+            self.assertIn("--select-terminal", command)
+            self.assertNotIn("--start", command)
+
+    def test_map_command_passes_rectification_flags(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            orchestrator = PipelineOrchestrator(
+                "map.png",
+                rectify=True,
+                corners="0,0;10,0;10,10;0,10",
+                arena_width_m=2.0,
+                grid_size_m=0.05,
+                run_root=tmp,
+                run_id="rect-001",
+            )
+            command = orchestrator._map_command(os.path.join(tmp, "result.json"))
+
+            self.assertIn("--rectify", command)
+            self.assertIn("--corners", command)
+            self.assertIn("--arena-width-m", command)
+            self.assertIn("--grid-size-m", command)
+
+    @patch("core.interaction.display_available", return_value=False)
+    @patch("core.interaction.interactive_terminal", return_value=True)
+    def test_terminal_preview_confirmation_accepts_yes(self, _terminal, _display):
+        orchestrator = PipelineOrchestrator.__new__(PipelineOrchestrator)
+        orchestrator.drive = True
+        orchestrator.headless = False
+        orchestrator.accept_path = False
+        orchestrator.batch = SimpleNamespace(
+            manifest={"artifacts": {"path_preview": "preview.png"}}
+        )
+        orchestrator.output_fn = lambda _text: None
+        orchestrator.input_fn = lambda _prompt: "yes"
+
+        self.assertTrue(orchestrator._accept_preview())
+
+    @patch("core.interaction.display_available", return_value=False)
+    @patch("core.interaction.interactive_terminal", return_value=True)
+    def test_terminal_preview_confirmation_rejects_other_input(
+        self, _terminal, _display
+    ):
+        orchestrator = PipelineOrchestrator.__new__(PipelineOrchestrator)
+        orchestrator.drive = True
+        orchestrator.headless = False
+        orchestrator.accept_path = False
+        orchestrator.batch = SimpleNamespace(
+            manifest={"artifacts": {"path_preview": "preview.png"}}
+        )
+        orchestrator.output_fn = lambda _text: None
+        orchestrator.input_fn = lambda _prompt: "no"
+
+        self.assertFalse(orchestrator._accept_preview())
+
+
+class MapSelectionTests(unittest.TestCase):
+    @patch("main.os.listdir", return_value=["only.png"])
+    @patch("main.os.path.isdir", return_value=True)
+    def test_single_image_still_prompts_when_interactive(self, _isdir, _listdir):
+        with patch("builtins.input", return_value="1") as prompt:
+            path = main_module._choose_image(None, interactive=True)
+
+        self.assertTrue(path.endswith("only.png"))
+        prompt.assert_called_once()
+
+    @patch("main.os.listdir", return_value=["only.png"])
+    @patch("main.os.path.isdir", return_value=True)
+    def test_blank_choice_uses_the_only_image(self, _isdir, _listdir):
+        with patch("builtins.input", return_value=""):
+            path = main_module._choose_image(None, interactive=True)
+
+        self.assertTrue(path.endswith("only.png"))
+
+    @patch("main.os.listdir", return_value=["only.png"])
+    @patch("main.os.path.isdir", return_value=True)
+    def test_single_image_does_not_prompt_when_not_interactive(
+        self,
+        _isdir,
+        _listdir,
+    ):
+        with patch(
+            "builtins.input",
+            side_effect=AssertionError("should not prompt"),
+        ):
+            path = main_module._choose_image(None, interactive=False)
+
+        self.assertIsNone(path)
+
+
+class CommandBuilderAndProcessRunnerTests(unittest.TestCase):
+    def test_research_and_motion_commands_include_expected_flags(self):
+        from core.orchestrator import PipelineOrchestrator
+
+        with tempfile.TemporaryDirectory() as tmp:
+            orchestrator = PipelineOrchestrator(
+                "map.png",
+                mode="research",
+                algorithms=["astar", "rrt"],
+                seed=42,
+                parameters={"astar": {"weight": 2}},
+                postprocess_parameters={"smooth": False},
+                confirm_drive=True,
+                run_root=tmp,
+                run_id="commands-001",
+            )
+            orchestrator.batch.update_stage(
+                "map_pipeline",
+                STATUS_SUCCESS,
+                result="map.json",
+            )
+            orchestrator.batch.update_stage(
+                "path_planner",
+                STATUS_SUCCESS,
+                result="planner.json",
+            )
+            orchestrator.batch.update_stage(
+                "path_postprocess",
+                STATUS_SUCCESS,
+                result="post.json",
+            )
+
+            planner = orchestrator._planner_command("planner-out.json")
+            postprocess = orchestrator._postprocess_command("post-out.json")
+            motion = orchestrator._motion_command("motion-out.json")
+
+            self.assertIn("--research", planner)
+            self.assertIn("--algorithms", planner)
+            self.assertIn("astar,rrt", planner)
+            self.assertIn("--seed", planner)
+            self.assertIn("42", planner)
+            self.assertIn("--params", planner)
+            self.assertIn("--params", postprocess)
+            self.assertIn("--yes", motion)
+            self.assertIn("--postprocess-result", motion)
+            with self.assertRaises(ValueError):
+                orchestrator._current_result("missing_module")
+
+    def test_motion_command_detection_and_stop_only_runner(self):
+        from core import process_runner
+
+        self.assertTrue(
+            process_runner._is_motion_command(
+                [sys.executable, "-m", "motion_control.run_follower"]
+            )
+        )
+        self.assertFalse(
+            process_runner._is_motion_command(
+                [sys.executable, "-m", "path_planner.json_pipeline"]
+            )
+        )
+
+        class FakeProcess:
+            def __init__(self):
+                self.waited = False
+                self.killed = False
+
+            def wait(self, timeout=None):
+                self.waited = True
+
+            def kill(self):
+                self.killed = True
+
+        fake = FakeProcess()
+        with patch(
+            "core.process_runner.subprocess.Popen",
+            return_value=fake,
+        ) as popen:
+            process_runner._run_stop_only(
+                [
+                    sys.executable,
+                    "-m",
+                    "motion_control.run_follower",
+                    "--config",
+                    "motion.yaml",
+                ]
+            )
+
+        command = popen.call_args.args[0]
+        self.assertIn("--stop-only", command)
+        self.assertIn("--config", command)
+        self.assertTrue(fake.waited)
+
+    def test_subprocess_runner_returns_exit_code_and_forwards_ctrl_c(self):
+        from core import process_runner
+
+        class FakeProcess:
+            def wait(self, timeout=None):
+                return 7
+
+        with patch(
+            "core.process_runner.subprocess.Popen",
+            return_value=FakeProcess(),
+        ):
+            self.assertEqual(
+                process_runner._subprocess_runner(
+                    [sys.executable, "-m", "path_planner.json_pipeline"]
+                ),
+                7,
+            )
+
+        class InterruptProcess:
+            def __init__(self):
+                self.calls = 0
+                self.signaled = False
+
+            def wait(self, timeout=None):
+                self.calls += 1
+                if self.calls == 1:
+                    raise KeyboardInterrupt
+                return 0
+
+            def send_signal(self, _signal):
+                self.signaled = True
+
+        process = InterruptProcess()
+        with patch(
+            "core.process_runner.subprocess.Popen",
+            return_value=process,
+        ):
+            with self.assertRaises(KeyboardInterrupt):
+                process_runner._subprocess_runner(
+                    [sys.executable, "-m", "motion_control.run_follower"]
+                )
+
+        self.assertTrue(process.signaled)
+
+    def test_stop_only_failure_is_reported_to_stderr(self):
+        from core import process_runner
+
+        class TimeoutProcess:
+            def wait(self, timeout=None):
+                raise subprocess.TimeoutExpired(cmd="stop-only", timeout=timeout)
+
+            def kill(self):
+                pass
+
+        stderr = io.StringIO()
+        with patch(
+            "core.process_runner.subprocess.Popen",
+            return_value=TimeoutProcess(),
+        ), patch("sys.stderr", stderr):
+            process_runner._run_stop_only(
+                [sys.executable, "-m", "motion_control.run_follower"]
+            )
+
+        self.assertIn("stop-only 失败", stderr.getvalue())
+
+
+class InteractionMixinTests(unittest.TestCase):
+    class FakeBatch:
+        def __init__(self):
+            self.events = []
+            self.workflow = {}
+
+        def record_event(self, event):
+            self.events.append(event)
+
+        def set_workflow(self, **kwargs):
+            self.workflow.update(kwargs)
+
+    def make_orchestrator(self, answers, *, recovery=None, headless=False):
+        orchestrator = PipelineOrchestrator.__new__(PipelineOrchestrator)
+        orchestrator.drive = True
+        orchestrator.headless = headless
+        orchestrator.accept_path = False
+        orchestrator.confirm_drive = False
+        orchestrator.input_fn = lambda _prompt: next(answers)
+        orchestrator.output_fn = lambda _text: None
+        orchestrator.recovery = recovery
+        orchestrator.batch = self.FakeBatch()
+        orchestrator.mode = "normal"
+        orchestrator.algorithm = None
+        orchestrator.algorithms = []
+        orchestrator.parameters = {}
+        orchestrator.postprocess_parameters = {}
+        orchestrator.map_config = None
+        orchestrator.planner_config = None
+        orchestrator.postprocess_config = None
+        orchestrator.motion_config = None
+        orchestrator.start = (0, 0)
+        orchestrator.goal = (2, 2)
+        orchestrator.image_path = "map.png"
+        return orchestrator
+
+    def test_completion_action_maps_keys_and_defaults_to_quit(self):
+        cases = {
+            "r": "rerun",
+            "a": "algorithm",
+            "p": "postprocess",
+            "s": "select",
+            "m": "map",
+            "q": "quit",
+            "x": "quit",
+        }
+        for answer, expected in cases.items():
+            with self.subTest(answer=answer):
+                orchestrator = self.make_orchestrator(iter([answer]))
+                self.assertEqual(orchestrator._completion_action(), expected)
+                self.assertEqual(
+                    orchestrator.batch.events[-1]["type"],
+                    "completion_action",
+                )
+
+    def test_recovery_action_maps_keys_and_honors_headless_and_callback(self):
+        error = {
+            "module": "path_planner",
+            "stage": "plan",
+            "input": "input.json",
+            "reason": "boom",
+            "suggestion": "retry",
+        }
+        cases = {
+            "r": "retry",
+            "p": "edit",
+            "b": "back",
+            "q": "exit",
+            "x": "exit",
+        }
+        for answer, expected in cases.items():
+            with self.subTest(answer=answer):
+                orchestrator = self.make_orchestrator(iter([answer]))
+                self.assertEqual(
+                    orchestrator._recovery_action("path_planner", [error]),
+                    expected,
+                )
+
+        headless = self.make_orchestrator(iter([]), headless=True)
+        self.assertEqual(
+            headless._recovery_action("path_planner", [error]),
+            "exit",
+        )
+
+        callback = self.make_orchestrator(
+            iter([]),
+            recovery=lambda _module, _errors: "custom",
+        )
+        self.assertEqual(
+            callback._recovery_action("path_planner", [error]),
+            "custom",
+        )
+
+    def test_apply_completion_action_updates_mode_and_parameters(self):
+        single = self.make_orchestrator(iter(["rrt"]))
+        self.assertEqual(single._apply_completion_action("algorithm"), 1)
+        self.assertEqual(single.mode, "normal")
+        self.assertEqual(single.algorithm, "rrt")
+        self.assertEqual(single.batch.workflow["mode"], "normal")
+
+        research = self.make_orchestrator(iter(["astar,rrt"]))
+        self.assertEqual(research._apply_completion_action("algorithm"), 1)
+        self.assertEqual(research.mode, "research")
+        self.assertEqual(research.algorithms, ["astar", "rrt"])
+        self.assertFalse(research.drive)
+
+        postprocess = self.make_orchestrator(iter(['{"smooth": false}']))
+        self.assertEqual(postprocess._apply_completion_action("postprocess"), 2)
+        self.assertEqual(
+            postprocess.postprocess_parameters,
+            {"smooth": False},
+        )
+
+        select = self.make_orchestrator(iter([]))
+        self.assertEqual(select._apply_completion_action("select"), 0)
+        self.assertIsNone(select.start)
+        self.assertIsNone(select.goal)
+
+        change_map = self.make_orchestrator(iter(["new_map.png"]))
+        self.assertEqual(change_map._apply_completion_action("map"), 0)
+        self.assertTrue(change_map.image_path.endswith("new_map.png"))
+        self.assertIsNone(change_map.start)
+
+    def test_edit_parameters_updates_module_specific_values(self):
+        planner = self.make_orchestrator(iter(['{"max_iter": 10}']))
+        planner._edit_parameters("path_planner")
+        self.assertEqual(planner.parameters, {"max_iter": 10})
+
+        postprocess = self.make_orchestrator(iter(['{"smooth": false}']))
+        postprocess._edit_parameters("path_postprocess")
+        self.assertEqual(postprocess.postprocess_parameters, {"smooth": False})
+
+        map_config = self.make_orchestrator(iter(["map.yaml"]))
+        map_config._edit_parameters("map_pipeline")
+        self.assertTrue(map_config.map_config.endswith("map.yaml"))
+
+        motion_config = self.make_orchestrator(iter(["motion.yaml"]))
+        motion_config._edit_parameters("motion_control")
+        self.assertTrue(motion_config.motion_config.endswith("motion.yaml"))
+
+    def test_confirm_drive_uses_explicit_flag_only_in_headless_mode(self):
+        headless = self.make_orchestrator(iter([]), headless=True)
+        headless.confirm_drive = True
+        self.assertTrue(headless._confirm_drive())
+        headless.confirm_drive = False
+        self.assertFalse(headless._confirm_drive())
+
+        interactive = self.make_orchestrator(iter([]), headless=False)
+        self.assertTrue(interactive._confirm_drive())
 
 
 if __name__ == "__main__":

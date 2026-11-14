@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "run_id": "diag7-nopoints",
+  "created_at": "2026-11-03T04:09:03.926248+00:00",
+  "updated_at": "2026-11-03T04:09:04.475448+00:00",
+  "status": "failed",
+  "version": {
+    "python": "3.13.14",
+    "platform": "Windows-11-10.0.26300-SP0"
+  },
+  "modules": [
+    {
+      "name": "workflow",
+      "status": "failed",
+      "updated_at": "2026-11-03T04:09:04.471385+00:00",
+      "version": {
+        "python": "3.13.14"
+      },
+      "inputs": {},
+      "outputs": {},
+      "parameters": {},
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag7-nopoints\\manifest.json"
+    }
+  ],
+  "stages": {
+    "workflow": {
+      "status": "failed",
+      "updated_at": "2026-11-03T04:09:04.471333+00:00",
+      "result": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\runs\\diag7-nopoints\\manifest.json",
+      "error": [
+        {
+          "code": "TOP_LEVEL_INPUT_ERROR",
+          "module": "top_level",
+          "stage": "validate",
+          "error_type": "ValueError",
+          "reason": "无显示器模式需要显式 --start/--goal，或使用 --select-terminal 在终端输入起终点",
+          "input": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\map_pipeline\\data\\input\\01_scattered.png",
+          "suggestion": "提供 --start/--goal，或使用 --select-terminal 在终端输入起终点；否则检查图片路径和配置"
+        }
+      ]
+    }
+  },
+  "artifacts": {},
+  "events": [],
+  "workflow": {
+    "mode": "normal",
+    "headless": true,
+    "drive": false,
+    "seed": null,
+    "image": "D:\\大创算法代码文件包\\SIT_LJGH_PROJECT\\map_pipeline\\data\\input\\01_scattered.png",
+    "start": null,
+    "goal": null,
+    "algorithm": null,
+    "algorithms": [],
+    "parameters": {},
+    "postprocess_parameters": {}
+  },
+  "finished_at": "2026-11-03T04:09:04.475005+00:00"
+}
